@@ -160,19 +160,19 @@ extension CPU6502 {
     }
 
     func opCLC(mode: AddressingMode) {
-
+        registers.setCarryFlag(false)
     }
 
     func opCLD(mode: AddressingMode) {
-
+        registers.setDecimalFlag(false)
     }
 
     func opCLI(mode: AddressingMode) {
-
+        registers.setInterruptFlag(false)
     }
 
     func opCLV(mode: AddressingMode) {
-
+        registers.setOverflowFlag(false)
     }
 
     func opCMP(mode: AddressingMode) {
@@ -224,15 +224,18 @@ extension CPU6502 {
     }
 
     func opLDA(mode: AddressingMode) {
-
+        let value = valueForAddressingMode(mode)
+        registers.a = value
     }
 
     func opLDX(mode: AddressingMode) {
-
+        let value = valueForAddressingMode(mode)
+        registers.x = value
     }
 
     func opLDY(mode: AddressingMode) {
-
+        let value = valueForAddressingMode(mode)
+        registers.y = value
     }
 
     func opLSR(mode: AddressingMode) {
@@ -244,7 +247,8 @@ extension CPU6502 {
     }
 
     func opORA(mode: AddressingMode) {
-
+        let value = valueForAddressingMode(mode)
+        registers.a |= value
     }
 
     func opPHA(mode: AddressingMode) {
