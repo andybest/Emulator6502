@@ -108,4 +108,224 @@ extension CPU6502 {
 
         registers.a = UInt8(newVal & UInt16(0xFF))
     }
+
+    func opAND(mode: AddressingMode) {
+
+    }
+
+    func opASL(mode: AddressingMode) {
+
+    }
+
+    func opBCC(mode: AddressingMode) {
+
+    }
+
+    func opBCS(mode: AddressingMode) {
+
+    }
+
+    func opBEQ(mode: AddressingMode) {
+
+    }
+
+    func opBIT(mode: AddressingMode) {
+
+    }
+
+    func opBMI(mode: AddressingMode) {
+
+    }
+
+    func opBNE(mode: AddressingMode) {
+
+    }
+
+    func opBPL(mode: AddressingMode) {
+
+    }
+
+    func opBRK(mode: AddressingMode) {
+
+    }
+
+    func opBVC(mode: AddressingMode) {
+
+    }
+
+    func opBVS(mode: AddressingMode) {
+
+    }
+
+    func opCLC(mode: AddressingMode) {
+
+    }
+
+    func opCLD(mode: AddressingMode) {
+
+    }
+
+    func opCLI(mode: AddressingMode) {
+
+    }
+
+    func opCLV(mode: AddressingMode) {
+
+    }
+
+    func opCMP(mode: AddressingMode) {
+
+    }
+
+    func opCPX(mode: AddressingMode) {
+
+    }
+
+    func opCPY(mode: AddressingMode) {
+
+    }
+
+    func opDEC(mode: AddressingMode) {
+
+    }
+
+    func opDEX(mode: AddressingMode) {
+
+    }
+
+    func opDEY(mode: AddressingMode) {
+
+    }
+
+    func opEOR(mode: AddressingMode) {
+
+    }
+
+    func opINC(mode: AddressingMode) {
+
+    }
+
+    func opINX(mode: AddressingMode) {
+
+    }
+
+    func opINY(mode: AddressingMode) {
+
+    }
+
+    func opJMP(mode: AddressingMode) {
+
+    }
+
+    func opJSR(mode: AddressingMode) {
+
+    }
+
+    func opLDA(mode: AddressingMode) {
+
+    }
+
+    func opLDX(mode: AddressingMode) {
+
+    }
+
+    func opLDY(mode: AddressingMode) {
+
+    }
+
+    func opLSR(mode: AddressingMode) {
+
+    }
+
+    func opNOP(mode: AddressingMode) {
+
+    }
+
+    func opORA(mode: AddressingMode) {
+
+    }
+
+    func opPHA(mode: AddressingMode) {
+
+    }
+
+    func opPHP(mode: AddressingMode) {
+
+    }
+
+    func opPLA(mode: AddressingMode) {
+
+    }
+
+    func opPLP(mode: AddressingMode) {
+
+    }
+
+    func opROL(mode: AddressingMode) {
+
+    }
+
+    func opROR(mode: AddressingMode) {
+
+    }
+
+    func opRTI(mode: AddressingMode) {
+
+    }
+
+    func opRTS(mode: AddressingMode) {
+
+    }
+
+    func opSBC(mode: AddressingMode) {
+
+    }
+
+    func opSEC(mode: AddressingMode) {
+
+    }
+
+    func opSED(mode: AddressingMode) {
+
+    }
+
+    func opSEI(mode: AddressingMode) {
+
+    }
+
+    func opSTA(mode: AddressingMode) {
+
+    }
+
+    func opSTX(mode: AddressingMode) {
+
+    }
+
+    func opSTY(mode: AddressingMode) {
+
+    }
+
+    func opTAX(mode: AddressingMode) {
+
+    }
+
+    func opTAY(mode: AddressingMode) {
+
+    }
+
+    func opTSX(mode: AddressingMode) {
+
+    }
+
+    func opTXA(mode: AddressingMode) {
+
+    }
+
+    func opTXS(mode: AddressingMode) {
+
+    }
+
+    func opTYA(mode: AddressingMode) {
+
+    }
 }
