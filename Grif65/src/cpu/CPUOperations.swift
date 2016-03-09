@@ -110,7 +110,9 @@ extension CPU6502 {
     }
 
     func opAND(mode: AddressingMode) {
+        let value = valueForAddressingMode(mode)
 
+        registers.a &= value
     }
 
     func opASL(mode: AddressingMode) {
@@ -306,26 +308,26 @@ extension CPU6502 {
     }
 
     func opTAX(mode: AddressingMode) {
-
+        registers.x = registers.a
     }
 
     func opTAY(mode: AddressingMode) {
-
+        registers.y = registers.a
     }
 
     func opTSX(mode: AddressingMode) {
-
+        registers.x = registers.s
     }
 
     func opTXA(mode: AddressingMode) {
-
+        registers.a = registers.x
     }
 
     func opTXS(mode: AddressingMode) {
-
+        registers.s = registers.x
     }
 
     func opTYA(mode: AddressingMode) {
-
+        registers.a = registers.y
     }
 }
