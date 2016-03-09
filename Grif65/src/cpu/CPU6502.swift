@@ -29,6 +29,7 @@ enum AddressingMode {
 
 class CPU6502 {
     var registers: Registers
+    var memory = [UInt8](count:0xFFFF, repeatedValue:0x00)
 
     init() {
         self.registers = Registers()
@@ -42,8 +43,12 @@ class CPU6502 {
         self.registers.setBreakFlag(true)
     }
 
+    func setMem(address:UInt16, value:UInt8) {
+        memory[Int(address)] = value
+    }
+
     func getMem(address:UInt16) -> UInt8 {
-        return 0
+        return memory[Int(address)]
     }
 
     func getZero(address:UInt8) -> UInt8 {

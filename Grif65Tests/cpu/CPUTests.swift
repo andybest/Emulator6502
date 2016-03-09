@@ -10,7 +10,7 @@ import Nimble
 @testable import Grif65
 
 
-class InstructionTests: XCTestCase {
+class CPUTests: XCTestCase {
 
     var cpu:CPU6502 = CPU6502()
 
