@@ -90,6 +90,33 @@ extension CPU6502 {
             return getIndirectX(val)
         case .IndirectY(let val):
             return getIndirectY(val)
+        default: // This should raise an exception
+            return 0
+        }
+    }
+
+    func addressForAddressingMode(mode: AddressingMode) -> UInt16 {
+        switch mode {
+        case .Immediate(let val):
+            return UInt16(val)
+        case .ZeroPage(let val):
+            return UInt16(val)
+        case .ZeroPageX(let val):
+            return UInt16(val + registers.x)
+        case .Absolute(let val):
+            return val
+        case .AbsoluteX(let val):
+            return val + UInt16(registers.x)
+        case .AbsoluteY(let val):
+            return val + UInt16(registers.y)
+        case .Indirect(let val):
+            return UInt16(getIndirect(val))
+        case .IndirectX(let val):
+            return UInt16(getIndirectX(val))
+        case .IndirectY(let val):
+            return UInt16(getIndirectY(val))
+        default: // This should raise an exception
+            return 0
         }
     }
 

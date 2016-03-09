@@ -16,6 +16,7 @@ enum RegisterDef {
 }
 
 enum AddressingMode {
+    case None
     case Immediate(UInt8)
     case ZeroPage(UInt8)
     case ZeroPageX(UInt8)
