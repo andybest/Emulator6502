@@ -34,6 +34,14 @@ class CPU6502 {
         self.registers = Registers()
     }
 
+    func reset() {
+        self.registers.s = 0xFD
+
+        self.registers.setInterruptFlag(true)
+        self.registers.setDecimalFlag(true)
+        self.registers.setBreakFlag(true)
+    }
+
     func getMem(address:UInt16) -> UInt8 {
         return 0
     }
@@ -46,8 +54,16 @@ class CPU6502 {
 
 extension CPU6502 {
 
+    func getProgramCounter() -> UInt16 {
+        return registers.pc
+    }
+
     func setProgramCounter(value: UInt16) {
         registers.pc = value
+    }
+
+    func getStackPointer() -> UInt8 {
+        return registers.s
     }
 
 }

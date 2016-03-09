@@ -10,13 +10,15 @@
 		0379A274D1C2BD86E60EB656 /* Pods_Grif65Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */; };
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
 		A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
+		A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
 		C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8BB414F13E7780C954CA8E9 /* MainMenu.xib */; };
+		C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4F81E8481674BE15E39F /* InstructionTests.swift */; };
 		C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
 		C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
 		C8BB449D94ED4B7751106BA8 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C8BB45FC1AADC7D8E4452EEC /* Info.plist */; };
 		C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB47FEDF203C6E76135EE7 /* AppDelegate.swift */; };
 		C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8BB492B5E42C0132E103BFD /* Assets.xcassets */; };
-		C8BB49D02CCA5B220CF2A139 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
+		C8BB489FD572CF2BFC8DAB77 /* CPUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4C6AFDCBAAB675B0BAED /* CPUTests.swift */; };
 		C8BB49D056C93222FE7C43BB /* Grif65Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB415A56D4C11E994A706C /* Grif65Tests.swift */; };
 		C8BB4A5D0F95CA55418B2B2A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C8BB45745860432610D017FC /* Info.plist */; };
 		C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
@@ -46,7 +48,9 @@
 		C8BB4BC5215931FDE2F80EA4 /* Grif65.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Grif65.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPU6502.swift; sourceTree = "<group>"; };
 		C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistersTests.swift; sourceTree = "<group>"; };
+		C8BB4C6AFDCBAAB675B0BAED /* CPUTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUTests.swift; sourceTree = "<group>"; };
 		C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registers.swift; sourceTree = "<group>"; };
+		C8BB4F81E8481674BE15E39F /* InstructionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionTests.swift; sourceTree = "<group>"; };
 		EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grif65Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC814B0A29EE4CF72E65AC30 /* Pods-Grif65Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -123,6 +127,8 @@
 			isa = PBXGroup;
 			children = (
 				C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */,
+				C8BB4F81E8481674BE15E39F /* InstructionTests.swift */,
+				C8BB4C6AFDCBAAB675B0BAED /* CPUTests.swift */,
 			);
 			path = cpu;
 			sourceTree = "<group>";
@@ -298,9 +304,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */,
-				C8BB49D02CCA5B220CF2A139 /* CPU6502.swift in Sources */,
 				C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */,
 				C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */,
+				A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,6 +319,8 @@
 				C8BB49D056C93222FE7C43BB /* Grif65Tests.swift in Sources */,
 				C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */,
 				C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */,
+				C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */,
+				C8BB489FD572CF2BFC8DAB77 /* CPUTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
