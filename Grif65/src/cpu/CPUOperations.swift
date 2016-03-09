@@ -124,54 +124,85 @@ extension CPU6502 {
         let value = valueForAddressingMode(mode)
 
         // Add the value to accumulator, add 1 if carry flag is active
-        let newVal: UInt16 = UInt16(registers.a) +
+        let result: UInt16 = UInt16(registers.a) +
                 UInt16(value) +
                 UInt16(registers.boolToInt(registers.getCarryFlag()))
 
-        registers.setCarryFlag(calculateCarry(newVal))
-        registers.setZeroFlag(calculateZero(newVal))
-        registers.setOverflowFlag(calculateOverflow(newVal, acc: registers.a, value: value))
-        registers.setSignFlag(calculateSign(newVal))
+        registers.setCarryFlag(calculateCarry(result))
+        registers.setZeroFlag(calculateZero(result))
+        registers.setOverflowFlag(calculateOverflow(result, acc: registers.a, value: value))
+        registers.setSignFlag(calculateSign(result))
 
-        registers.a = UInt8(newVal & UInt16(0xFF))
+        registers.a = UInt8(result & UInt16(0xFF))
     }
 
     func opAND(mode: AddressingMode) {
         let value = valueForAddressingMode(mode)
 
         registers.a &= value
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opASL(mode: AddressingMode) {
+        let result:UInt16 = UInt16(registers.a) << UInt16(1);
 
+        registers.setCarryFlag(calculateCarry(result))
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+
+        registers.a = UInt8(result & 0xFF)
     }
 
     func opBCC(mode: AddressingMode) {
-
+        if !registers.getCarryFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBCS(mode: AddressingMode) {
-
+        if registers.getCarryFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBEQ(mode: AddressingMode) {
-
+        if registers.getZeroFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBIT(mode: AddressingMode) {
+        let value = valueForAddressingMode(mode)
+        let result = UInt16(registers.a) & UInt16(value)
 
+        registers.setZeroFlag(calculateZero(result))
+        registers.setOverflowFlag(calculateOverflow(result, acc: registers.a, value: value))
+        registers.setSignFlag(calculateSign(result))
     }
 
     func opBMI(mode: AddressingMode) {
-
+        if registers.getSignFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBNE(mode: AddressingMode) {
-
+        if !registers.getZeroFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBPL(mode: AddressingMode) {
-
+        if !registers.getSignFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBRK(mode: AddressingMode) {
@@ -179,11 +210,17 @@ extension CPU6502 {
     }
 
     func opBVC(mode: AddressingMode) {
-
+        if !registers.getOverflowFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opBVS(mode: AddressingMode) {
-
+        if registers.getOverflowFlag() {
+            let relativeAddress = addressForAddressingMode(mode)
+            setProgramCounter(getProgramCounter() + relativeAddress)
+        }
     }
 
     func opCLC(mode: AddressingMode) {
@@ -203,47 +240,118 @@ extension CPU6502 {
     }
 
     func opCMP(mode: AddressingMode) {
+        let value = valueForAddressingMode(mode)
+        let value8 = UInt8(value & 0xFF)
+        let result = UInt16(registers.a) - UInt16(value)
 
+        if registers.a >= value8 {
+            registers.setCarryFlag(true)
+        } else {
+            registers.setCarryFlag(false)
+        }
+
+        if registers.a == value8 {
+            registers.setZeroFlag(true)
+        } else {
+            registers.setZeroFlag(false)
+        }
+
+        registers.setSignFlag(calculateSign(result))
     }
 
     func opCPX(mode: AddressingMode) {
+        let value = valueForAddressingMode(mode)
+        let value8 = UInt8(value & 0xFF)
+        let result = UInt16(registers.x) - UInt16(value)
 
+        if registers.x >= value8 {
+            registers.setCarryFlag(true)
+        } else {
+            registers.setCarryFlag(false)
+        }
+
+        if registers.x == value8 {
+            registers.setZeroFlag(true)
+        } else {
+            registers.setZeroFlag(false)
+        }
+
+        registers.setSignFlag(calculateSign(result))
     }
 
     func opCPY(mode: AddressingMode) {
+        let value = valueForAddressingMode(mode)
+        let value8 = UInt8(value & 0xFF)
+        let result = UInt16(registers.y) - UInt16(value)
 
+        if registers.y >= value8 {
+            registers.setCarryFlag(true)
+        } else {
+            registers.setCarryFlag(false)
+        }
+
+        if registers.y == value8 {
+            registers.setZeroFlag(true)
+        } else {
+            registers.setZeroFlag(false)
+        }
+
+        registers.setSignFlag(calculateSign(result))
     }
 
     func opDEC(mode: AddressingMode) {
-
+        let result = UInt16(registers.a) - UInt16(1)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+        registers.a = UInt8(result & 0xFF)
     }
 
     func opDEX(mode: AddressingMode) {
-
+        let result = UInt16(registers.x) - UInt16(1)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+        registers.x = UInt8(result & 0xFF)
     }
 
     func opDEY(mode: AddressingMode) {
-
+        let result = UInt16(registers.y) - UInt16(1)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+        registers.y = UInt8(result & 0xFF)
     }
 
     func opEOR(mode: AddressingMode) {
+        let value = valueForAddressingMode(mode)
 
+        registers.a ^= value
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opINC(mode: AddressingMode) {
-
+        let result = UInt16(registers.a) + UInt16(1)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+        registers.a = UInt8(result & 0xFF)
     }
 
     func opINX(mode: AddressingMode) {
-
+        let result = UInt16(registers.x) + UInt16(1)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+        registers.x = UInt8(result & 0xFF)
     }
 
     func opINY(mode: AddressingMode) {
-
+        let result = UInt16(registers.y) + UInt16(1)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+        registers.y = UInt8(result & 0xFF)
     }
 
     func opJMP(mode: AddressingMode) {
-
+        let address = addressForAddressingMode(mode)
+        setProgramCounter(address)
     }
 
     func opJSR(mode: AddressingMode) {
