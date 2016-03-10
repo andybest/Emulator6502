@@ -37,6 +37,14 @@ struct Registers {
         return 0
     }
 
+    func getStatusByte() -> UInt8 {
+        return p
+    }
+
+    mutating func setStatusByte(value: UInt8) {
+        p = value
+    }
+
     func getCarryFlag() -> Bool {
         return (p & 0b00000001) == 1
     }

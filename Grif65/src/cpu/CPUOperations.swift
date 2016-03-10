@@ -374,7 +374,13 @@ extension CPU6502 {
     }
 
     func opLSR(mode: AddressingMode) {
+        let result:UInt16 = UInt16(registers.a) >> UInt16(1);
 
+        registers.setCarryFlag(registers.a & 0x1 > 0)
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
+
+        registers.a = UInt8(result & 0xFF)
     }
 
     func opNOP(mode: AddressingMode) {
@@ -383,27 +389,38 @@ extension CPU6502 {
 
     func opORA(mode: AddressingMode) {
         let value = valueForAddressingMode(mode)
+
         registers.a |= value
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opPHA(mode: AddressingMode) {
-
+        push8(registers.a)
     }
 
     func opPHP(mode: AddressingMode) {
-
+        // TODO: Check accuracy of implementation
+        push8(registers.getStatusByte())
     }
 
     func opPLA(mode: AddressingMode) {
-
+        registers.a = pop8()
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opPLP(mode: AddressingMode) {
-
+        // TODO: Check accuracy of implementation
+        registers.setStatusByte(pop8())
     }
 
     func opROL(mode: AddressingMode) {
+        let result = UInt16(registers.a) << UInt16(1)
 
+        registers.setCarryFlag(calculateCarry(result))
+        registers.setZeroFlag(calculateZero(result))
+        registers.setSignFlag(calculateSign(result))
     }
 
     func opROR(mode: AddressingMode) {

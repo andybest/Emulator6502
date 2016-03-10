@@ -72,5 +72,15 @@ extension CPU6502 {
         return registers.s
     }
 
+    func push8(value:UInt8) {
+        setMem(UInt16(registers.s), value:value)
+        registers.s -= 1
+    }
+
+    func pop8() -> UInt8 {
+        registers.s += 1
+        return getMem(UInt16(registers.s))
+    }
+
 }
 
