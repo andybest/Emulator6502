@@ -424,7 +424,12 @@ extension CPU6502 {
     }
 
     func opROR(mode: AddressingMode) {
+        let bit = registers.a & 0x01
+        let result = UInt16(registers.a) >> UInt16(1)
 
+        registers.setCarryFlag(bit > 0)
+        registers.setZeroFlag((calculateZero(result)))
+        registers.setSignFlag((calculateSign(result)))
     }
 
     func opRTI(mode: AddressingMode) {
@@ -432,7 +437,8 @@ extension CPU6502 {
     }
 
     func opRTS(mode: AddressingMode) {
-
+        let returnAddress = UInt16(pop8()) | UInt16(pop8()) << 8
+        setProgramCounter(returnAddress + 1)
     }
 
     func opSBC(mode: AddressingMode) {
@@ -452,15 +458,18 @@ extension CPU6502 {
     }
 
     func opSTA(mode: AddressingMode) {
-
+        let address = addressForAddressingMode(mode)
+        setMem(address, registers.a)
     }
 
     func opSTX(mode: AddressingMode) {
-
+        let address = addressForAddressingMode(mode)
+        setMem(address, registers.x)
     }
 
     func opSTY(mode: AddressingMode) {
-
+        let address = addressForAddressingMode(mode)
+        setMem(address, registers.y)
     }
 
     func opTAX(mode: AddressingMode) {
