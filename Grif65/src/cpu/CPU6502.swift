@@ -29,6 +29,49 @@ enum AddressingMode {
     case Indirect(UInt16)
     case IndirectX(UInt16)
     case IndirectY(UInt16)
+
+    func assemblyString() -> String {
+        switch self {
+        case Accumulator:
+            return "A"
+        case Implicit:
+            return ""
+        case Immediate(let val):
+            let str = String(format: "%02X", val)
+            return "#$\(str)"
+        case ZeroPage(let val):
+            let str = String(format: "%02X", val)
+            return "$\(str)"
+        case ZeroPageX(let val):
+            let str = String(format: "%02X", val)
+            return "$\(str),X"
+        case ZeroPageY(let val):
+            let str = String(format: "%02X", val)
+            return "$\(str),Y"
+        case Relative(let val):
+            let str = String(format: "%02X", val)
+            return "|$\(str)"
+        case Absolute(let val):
+            let str = String(format: "%04X", val)
+            return "$\(str)"
+        case AbsoluteX(let val):
+            let str = String(format: "%04X", val)
+            return "$\(str),X"
+        case AbsoluteY(let val):
+            let str = String(format: "%04X", val)
+            return "$\(str),Y"
+        case Indirect(let val):
+            let str = String(format: "%04X", val)
+            return "($\(str))"
+        case IndirectX(let val):
+            let str = String(format: "%04X", val)
+            return "($\(str)),X"
+        case IndirectY(let val):
+            let str = String(format: "%04X", val)
+            return "($\(str)),Y"
+
+        }
+    }
 }
 
 enum InstructionAddressingMode {
@@ -97,7 +140,7 @@ class CPU6502 {
         setMem(0x010A, value: 0xC8)
 
 
-        print(runCycles(10))
+        print(runCycles(14))
     }
 
     func reset() {
@@ -148,7 +191,7 @@ class CPU6502 {
 
     func runCycles(numCycles: Int) -> Int {
         var cycles = 0
-        while cycles <= numCycles {
+        while cycles < numCycles {
             let opcode = getMem(getProgramCounter())
             cycles += executeOpcode(opcode)
         }
@@ -191,9 +234,11 @@ class CPU6502 {
         let instruction    = instructionTable[Int(opcode)]
         let addressingMode = getModeForCurrentOpcode(instruction.addressingMode)
         let addr           = String(format: "0x%2X", getProgramCounter())
-        print("Executing instruction at \(addr): \(instruction.prettyDescription())")
+
         setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         instruction.instructionFunction(addressingMode)
+
+        print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
         printCPUState()
 
         return instruction.numCycles
