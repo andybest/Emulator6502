@@ -54,19 +54,17 @@ extension CPU6502 {
         return value & 0x0080 > 0
     }
 
-    func getIndirect(address: UInt8) -> UInt8 {
-        let addr = UInt16(address)
-        let indirectAddress: UInt16 = UInt16(getMem(addr)) | (UInt16(getMem(addr + 1)) << 8)
+    func getIndirect(address: UInt16) -> UInt8 {
+        let indirectAddress: UInt16 = address
         return getMem(indirectAddress | ((indirectAddress + 1) << 8))
     }
 
-    func getIndirectX(address: UInt8) -> UInt8 {
-        return getIndirect(address + registers.x)
+    func getIndirectX(address: UInt16) -> UInt8 {
+        return getIndirect(address + UInt16(registers.x))
     }
 
-    func getIndirectY(address: UInt8) -> UInt8 {
-        let addr = UInt16(address)
-        let indirectAddress: UInt16 = UInt16(getMem(addr)) | (UInt16(getMem(addr + 1)) << 8) + UInt16(registers.y)
+    func getIndirectY(address: UInt16) -> UInt8 {
+        let indirectAddress: UInt16 = address + UInt16(registers.y)
         return getMem(indirectAddress | ((indirectAddress + 1) << 8))
     }
 
@@ -459,17 +457,17 @@ extension CPU6502 {
 
     func opSTA(mode: AddressingMode) {
         let address = addressForAddressingMode(mode)
-        setMem(address, registers.a)
+        setMem(address, value: registers.a)
     }
 
     func opSTX(mode: AddressingMode) {
         let address = addressForAddressingMode(mode)
-        setMem(address, registers.x)
+        setMem(address, value: registers.x)
     }
 
     func opSTY(mode: AddressingMode) {
         let address = addressForAddressingMode(mode)
-        setMem(address, registers.y)
+        setMem(address, value: registers.y)
     }
 
     func opTAX(mode: AddressingMode) {

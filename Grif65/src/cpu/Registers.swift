@@ -30,6 +30,14 @@ struct Registers {
         self.pc = 0
     }
 
+    func stateString() -> String {
+        let aStr = String(format:"0x%02X", self.a)
+        let xStr = String(format:"0x%02X", self.x)
+        let yStr = String(format:"0x%02X", self.y)
+
+        return "A: \(aStr), X:\(xStr), Y:\(yStr)"
+    }
+
     func boolToInt(value: Bool) -> UInt8 {
         if value {
             return 1
