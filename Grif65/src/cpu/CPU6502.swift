@@ -112,7 +112,7 @@ class CPU6502 {
         self.registers = Registers()
         buildInstructionTable()
 
-        setProgramCounter(0x0100)
+        /*setProgramCounter(0x0100)
 
         // LDA #$01
         setMem(0x0100, value: 0xA9)
@@ -140,7 +140,7 @@ class CPU6502 {
         setMem(0x010A, value: 0xC8)
 
 
-        print(runCycles(14))
+        print(runCycles(14))*/
     }
 
     func reset() {
