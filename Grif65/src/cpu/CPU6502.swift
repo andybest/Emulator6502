@@ -74,7 +74,7 @@ enum AddressingMode {
     }
 }
 
-enum InstructionAddressingMode {
+enum AddressingModeRef {
     case Implicit
     case Accumulator
     case Immediate
@@ -93,7 +93,7 @@ enum InstructionAddressingMode {
 struct InstructionEntry {
     let instructionName:     String
     let instructionFunction: (AddressingMode) -> (Void)
-    let addressingMode:      (InstructionAddressingMode)
+    let addressingMode:      (AddressingModeRef)
     let numBytes:            Int
     let numCycles:           Int
     let specialCycles:       Bool
@@ -199,7 +199,7 @@ class CPU6502 {
         return cycles
     }
 
-    func getModeForCurrentOpcode(mode: InstructionAddressingMode) -> AddressingMode {
+    func getModeForCurrentOpcode(mode: AddressingModeRef) -> AddressingMode {
         switch (mode) {
         case .Implicit:
             return AddressingMode.Implicit

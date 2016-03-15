@@ -7,7 +7,7 @@ import Foundation
 
 extension CPU6502 {
 
-    typealias AM = InstructionAddressingMode
+    typealias AM = AddressingModeRef
 
     func buildInstructionTable() {
         let nopEntry = InstructionEntry(instructionName: "NOP", instructionFunction: opNOP, addressingMode: AM.Implicit,
@@ -18,7 +18,7 @@ extension CPU6502 {
     }
 
     func addInstruction(opcode: UInt8, ins: (AddressingMode) -> (Void), insName: String,
-                        addrMode: InstructionAddressingMode, numBytes: Int, numCycles: Int, specialCycles: Bool) {
+                        addrMode: AddressingModeRef, numBytes: Int, numCycles: Int, specialCycles: Bool) {
         instructionTable[Int(opcode)] = InstructionEntry(instructionName: insName, instructionFunction: ins,
                 addressingMode: addrMode, numBytes: numBytes, numCycles: numCycles, specialCycles: specialCycles)
     }
