@@ -184,9 +184,18 @@ class CPU6502 {
         registers.s -= 1
     }
 
+    func push16(value: UInt16) {
+        push8(UInt8((value >> 8) & 0xFF))
+        push8(UInt8(value & 0xFF))
+    }
+
     func pop8() -> UInt8 {
         registers.s += 1
         return getMem(UInt16(registers.s))
+    }
+
+    func pop16(value: UInt16) -> UInt16 {
+        return UInt16(pop8()) | (UInt16(pop8()) << 8)
     }
 
     func runCycles(numCycles: Int) -> Int {
@@ -242,6 +251,10 @@ class CPU6502 {
         printCPUState()
 
         return instruction.numCycles
+    }
+
+    func breakExecuted() {
+        
     }
 
 }

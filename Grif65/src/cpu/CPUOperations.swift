@@ -195,6 +195,12 @@ extension CPU6502 {
 
     func opBRK(mode: AddressingMode) {
         setProgramCounter(getProgramCounter() + 1)
+        push16(getProgramCounter())
+        push8(registers.getStatusByte())
+        registers.setInterruptFlag(true)
+        setProgramCounter(UInt16(getMem(0xFFFE)) | (UInt16(0xFFFF) << 8))
+
+        cpu.breakExecuted()
     }
 
     func opBVC(mode: AddressingMode) {
