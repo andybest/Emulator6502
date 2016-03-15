@@ -317,10 +317,11 @@ extension CPU6502 {
     }
 
     func opINC(mode: AddressingMode) {
-        let result = UInt16(registers.a) + UInt16(1)
+        let value = valueForAddressingMode(mode)
+        let result = value + 1
         registers.setZeroFlag(calculateZero(result))
         registers.setSignFlag(calculateSign(result))
-        registers.a = UInt8(result & 0xFF)
+        setValueForAddressingMode(UInt8(result & 0xFF), mode: mode)
     }
 
     func opINX(mode: AddressingMode) {
@@ -348,27 +349,33 @@ extension CPU6502 {
 
     func opLDA(mode: AddressingMode) {
         let value = valueForAddressingMode(mode)
+        registers.setZeroFlag(calculateZero(UInt16(value)))
+        registers.setSignFlag(calculateSign(UInt16(value)))
         registers.a = value
     }
 
     func opLDX(mode: AddressingMode) {
         let value = valueForAddressingMode(mode)
+        registers.setZeroFlag(calculateZero(UInt16(value)))
+        registers.setSignFlag(calculateSign(UInt16(value)))
         registers.x = value
     }
 
     func opLDY(mode: AddressingMode) {
         let value = valueForAddressingMode(mode)
+        registers.setZeroFlag(calculateZero(UInt16(value)))
+        registers.setSignFlag(calculateSign(UInt16(value)))
         registers.y = value
     }
 
     func opLSR(mode: AddressingMode) {
-        let result: UInt16 = UInt16(registers.a) >> UInt16(1);
+        let result: UInt16 = valueForAddressingMode(mode) >> UInt16(1);
 
         registers.setCarryFlag(registers.a & 0x1 > 0)
         registers.setZeroFlag(calculateZero(result))
         registers.setSignFlag(calculateSign(result))
 
-        registers.a = UInt8(result & 0xFF)
+        setValueForAddressingMode(UInt8(result & 0xFF), mode: mode)
     }
 
     func opNOP(mode: AddressingMode) {
@@ -388,7 +395,6 @@ extension CPU6502 {
     }
 
     func opPHP(mode: AddressingMode) {
-        // TODO: Check accuracy of implementation
         push8(registers.getStatusByte())
     }
 
@@ -399,25 +405,29 @@ extension CPU6502 {
     }
 
     func opPLP(mode: AddressingMode) {
-        // TODO: Check accuracy of implementation
         registers.setStatusByte(pop8())
     }
 
     func opROL(mode: AddressingMode) {
-        let result = UInt16(registers.a) << UInt16(1)
+        let result = valueForAddressingMode(mode) << UInt16(1)
 
         registers.setCarryFlag(calculateCarry(result))
         registers.setZeroFlag(calculateZero(result))
         registers.setSignFlag(calculateSign(result))
+
+        setValueForAddressingMode(UInt8(result), mode: mode)
     }
 
     func opROR(mode: AddressingMode) {
-        let bit    = registers.a & 0x01
-        let result = UInt16(registers.a) >> UInt16(1)
+        let value = valueForAddressingMode(mode)
+        let bit    = value & 0x01
+        let result = UInt16(value) >> UInt16(1)
 
         registers.setCarryFlag(bit > 0)
         registers.setZeroFlag((calculateZero(result)))
         registers.setSignFlag((calculateSign(result)))
+
+        setValueForAddressingMode(UInt8(result & 0xFF), mode: mode)
     }
 
     func opRTI(mode: AddressingMode) {
@@ -434,15 +444,15 @@ extension CPU6502 {
     }
 
     func opSEC(mode: AddressingMode) {
-
+        registers.setCarryFlag(true)
     }
 
     func opSED(mode: AddressingMode) {
-
+        registers.setDecimalFlag(true)
     }
 
     func opSEI(mode: AddressingMode) {
-
+        registers.setInterruptFlag(true)
     }
 
     func opSTA(mode: AddressingMode) {
@@ -462,25 +472,37 @@ extension CPU6502 {
 
     func opTAX(mode: AddressingMode) {
         registers.x = registers.a
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opTAY(mode: AddressingMode) {
         registers.y = registers.a
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opTSX(mode: AddressingMode) {
         registers.x = registers.s
+        registers.setSignFlag(calculateSign(registers.s))
+        registers.setZeroFlag(calculateSign(registers.s))
     }
 
     func opTXA(mode: AddressingMode) {
         registers.a = registers.x
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 
     func opTXS(mode: AddressingMode) {
         registers.s = registers.x
+        registers.setSignFlag(calculateSign(UInt16(registers.s)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.s)))
     }
 
     func opTYA(mode: AddressingMode) {
         registers.a = registers.y
+        registers.setSignFlag(calculateSign(UInt16(registers.a)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.a)))
     }
 }
