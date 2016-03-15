@@ -22,9 +22,11 @@
 		C8BB48B915F9C1C7D0ABCE8C /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */; };
 		C8BB490AA2DEC285A7E54599 /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */; };
 		C8BB49D056C93222FE7C43BB /* Grif65Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB415A56D4C11E994A706C /* Grif65Tests.swift */; };
+		C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
 		C8BB4A5D0F95CA55418B2B2A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C8BB45745860432610D017FC /* Info.plist */; };
 		C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
 		C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
+		C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,10 +41,12 @@
 
 /* Begin PBXFileReference section */
 		3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.release.xcconfig"; sourceTree = "<group>"; };
+		C8BB4132C69E4E285D71DE43 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disassembler.swift; sourceTree = "<group>"; };
 		C8BB415A56D4C11E994A706C /* Grif65Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grif65Tests.swift; sourceTree = "<group>"; };
 		C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUOperations.swift; sourceTree = "<group>"; };
 		C8BB4215C30E402989ACE7E6 /* Grif65Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Grif65Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionTable.swift; sourceTree = "<group>"; };
+		C8BB44029AB9188F9D282913 /* String+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Hex.swift"; sourceTree = "<group>"; };
 		C8BB45745860432610D017FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		C8BB45A39C874A151A6EBB5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		C8BB45FC1AADC7D8E4452EEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				C8BB4E9C81B44CBDFDC500B0 /* cpu */,
+				C8BB4D54FF3F01C70E67400C /* Utils */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -146,6 +151,14 @@
 			path = Grif65Tests;
 			sourceTree = "<group>";
 		};
+		C8BB4D54FF3F01C70E67400C /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				C8BB44029AB9188F9D282913 /* String+Hex.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		C8BB4E9C81B44CBDFDC500B0 /* cpu */ = {
 			isa = PBXGroup;
 			children = (
@@ -153,6 +166,7 @@
 				C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */,
 				C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */,
 				C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */,
+				C8BB4132C69E4E285D71DE43 /* Disassembler.swift */,
 			);
 			path = cpu;
 			sourceTree = "<group>";
@@ -312,6 +326,8 @@
 				C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */,
 				A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */,
 				C8BB48B915F9C1C7D0ABCE8C /* InstructionTable.swift in Sources */,
+				C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */,
+				C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
