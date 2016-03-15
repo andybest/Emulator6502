@@ -437,7 +437,8 @@ extension CPU6502 {
     }
 
     func opRTI(mode: AddressingMode) {
-
+        registers.setStatusByte(pop8())
+        setProgramCounter(pop16())
     }
 
     func opRTS(mode: AddressingMode) {

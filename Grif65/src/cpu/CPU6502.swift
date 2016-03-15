@@ -184,7 +184,7 @@ class CPU6502 {
         registers.s -= 1
     }
 
-    func push16(value: UInt16) {
+    func push16() {
         push8(UInt8((value >> 8) & 0xFF))
         push8(UInt8(value & 0xFF))
     }
@@ -254,7 +254,7 @@ class CPU6502 {
     }
 
     func breakExecuted() {
-        
+
     }
 
 }
