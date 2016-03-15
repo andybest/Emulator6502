@@ -15,7 +15,6 @@
 		C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4F81E8481674BE15E39F /* InstructionTests.swift */; };
 		C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
 		C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
-		C8BB449D94ED4B7751106BA8 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C8BB45FC1AADC7D8E4452EEC /* Info.plist */; };
 		C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB47FEDF203C6E76135EE7 /* AppDelegate.swift */; };
 		C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8BB492B5E42C0132E103BFD /* Assets.xcassets */; };
 		C8BB489FD572CF2BFC8DAB77 /* CPUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4C6AFDCBAAB675B0BAED /* CPUTests.swift */; };
@@ -23,7 +22,6 @@
 		C8BB490AA2DEC285A7E54599 /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */; };
 		C8BB49D056C93222FE7C43BB /* Grif65Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB415A56D4C11E994A706C /* Grif65Tests.swift */; };
 		C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
-		C8BB4A5D0F95CA55418B2B2A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C8BB45745860432610D017FC /* Info.plist */; };
 		C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
 		C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
 		C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
@@ -227,6 +225,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = andybest;
 			};
 			buildConfigurationList = C8BB43C206726B9E411B9E90 /* Build configuration list for PBXProject "Grif65" */;
@@ -252,7 +251,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8BB4A5D0F95CA55418B2B2A /* Info.plist in Resources */,
 				C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */,
 				C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */,
 			);
@@ -262,7 +260,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8BB449D94ED4B7751106BA8 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +386,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Grif65/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -445,6 +443,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Grif65/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
