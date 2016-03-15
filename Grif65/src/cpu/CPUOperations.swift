@@ -5,31 +5,6 @@
 
 import Foundation
 
-/*
-        switch mode {
-
-        case .Immediate(let val):
-            break
-        case .ZeroPage(let val):
-            break
-        case .ZeroPageX(let val):
-            break
-        case .Absolute(let val):
-            break
-        case .AbsoluteX(let val):
-            break
-        case .AbsoluteY(let val):
-            break
-        case .Indirect(let val):
-            break
-        case .IndirectX(let val):
-            break
-        case .IndirectY(let val):
-            break
-        }
-        */
-
-// Operations
 
 extension CPU6502 {
 
@@ -119,7 +94,7 @@ extension CPU6502 {
     }
 
     func opADC(mode: AddressingMode) {
-        let value = valueForAddressingMode(mode)
+        let value          = valueForAddressingMode(mode)
 
         // Add the value to accumulator, add 1 if carry flag is active
         let result: UInt16 = UInt16(registers.a) +
@@ -143,7 +118,7 @@ extension CPU6502 {
     }
 
     func opASL(mode: AddressingMode) {
-        let result:UInt16 = UInt16(registers.a) << UInt16(1);
+        let result: UInt16 = UInt16(registers.a) << UInt16(1);
 
         registers.setCarryFlag(calculateCarry(result))
         registers.setZeroFlag(calculateZero(result))
@@ -174,7 +149,7 @@ extension CPU6502 {
     }
 
     func opBIT(mode: AddressingMode) {
-        let value = valueForAddressingMode(mode)
+        let value  = valueForAddressingMode(mode)
         let result = UInt16(registers.a) & UInt16(value)
 
         registers.setZeroFlag(calculateZero(result))
@@ -238,7 +213,7 @@ extension CPU6502 {
     }
 
     func opCMP(mode: AddressingMode) {
-        let value = valueForAddressingMode(mode)
+        let value  = valueForAddressingMode(mode)
         let value8 = UInt8(value & 0xFF)
         let result = UInt16(registers.a) - UInt16(value)
 
@@ -258,7 +233,7 @@ extension CPU6502 {
     }
 
     func opCPX(mode: AddressingMode) {
-        let value = valueForAddressingMode(mode)
+        let value  = valueForAddressingMode(mode)
         let value8 = UInt8(value & 0xFF)
         let result = UInt16(registers.x) - UInt16(value)
 
@@ -278,7 +253,7 @@ extension CPU6502 {
     }
 
     func opCPY(mode: AddressingMode) {
-        let value = valueForAddressingMode(mode)
+        let value  = valueForAddressingMode(mode)
         let value8 = UInt8(value & 0xFF)
         let result = UInt16(registers.y) - UInt16(value)
 
@@ -372,7 +347,7 @@ extension CPU6502 {
     }
 
     func opLSR(mode: AddressingMode) {
-        let result:UInt16 = UInt16(registers.a) >> UInt16(1);
+        let result: UInt16 = UInt16(registers.a) >> UInt16(1);
 
         registers.setCarryFlag(registers.a & 0x1 > 0)
         registers.setZeroFlag(calculateZero(result))
@@ -422,7 +397,7 @@ extension CPU6502 {
     }
 
     func opROR(mode: AddressingMode) {
-        let bit = registers.a & 0x01
+        let bit    = registers.a & 0x01
         let result = UInt16(registers.a) >> UInt16(1)
 
         registers.setCarryFlag(bit > 0)

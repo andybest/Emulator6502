@@ -319,4 +319,53 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.registers.getZeroFlag()).to(beFalse())
     }
 
+    /* ASL */
+
+    func testASLAccumulatorSetsZFlag() {
+        self.cpu.registers.a = 0x00
+
+        self.cpu.opASL(AddressingMode.Accumulator)
+
+        expect(self.cpu.registers.a).to(equal(0x00))
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+        expect(self.cpu.registers.getSignFlag()).to(beFalse())
+    }
+
+    func testASLAccumulatorSetsNFlag() {
+        self.cpu.registers.a = 0x40
+
+        self.cpu.opASL(AddressingMode.Accumulator)
+
+        expect(self.cpu.registers.a).to(equal(0x80))
+        expect(self.cpu.registers.getZeroFlag()).to(beFalse())
+        expect(self.cpu.registers.getSignFlag()).to(beTrue())
+    }
+
+    func testASLAccumulatorShiftsOutZero() {
+        self.cpu.registers.a = 0x7F
+
+        self.cpu.opASL(AddressingMode.Accumulator)
+
+        expect(self.cpu.registers.a).to(equal(0xFE))
+        expect(self.cpu.registers.getCarryFlag()).to(beFalse())
+    }
+
+    func testASLAccumulatorShiftsOutOne() {
+        self.cpu.registers.a = 0xFF
+
+        self.cpu.opASL(AddressingMode.Accumulator)
+
+        expect(self.cpu.registers.a).to(equal(0xFE))
+        expect(self.cpu.registers.getCarryFlag()).to(beTrue())
+    }
+
+    func testASLAccumulator80SetsZFlag() {
+        self.cpu.registers.a = 0x80
+
+        self.cpu.opASL(AddressingMode.Accumulator)
+
+        expect(self.cpu.registers.a).to(equal(0x00))
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+    }
+
 }
