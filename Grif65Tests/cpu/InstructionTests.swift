@@ -319,7 +319,7 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.registers.getZeroFlag()).to(beFalse())
     }
 
-    /* ASL */
+    /* ASL Accumulator */
 
     func testASLAccumulatorSetsZFlag() {
         self.cpu.registers.a = 0x00
@@ -368,4 +368,52 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
     }
 
+    /* ASL Absolute */
+
+    func testASLAbsoluteSetsZFlag() {
+        self.cpu.setMem(0xABCD, value: 0x00)
+
+        self.cpu.opASL(AddressingMode.Absolute(0xABCD))
+
+        expect(self.cpu.getMem(0xABCD)).to(equal(0x00))
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+        expect(self.cpu.registers.getSignFlag()).to(beFalse())
+    }
+
+    func testASLAbsoluteSetsNFlag() {
+        self.cpu.setMem(0xABCD, value: 0x40)
+
+        self.cpu.opASL(AddressingMode.Absolute(0xABCD))
+
+        expect(self.cpu.getMem(0xABCD)).to(equal(0x80))
+        expect(self.cpu.registers.getZeroFlag()).to(beFalse())
+        expect(self.cpu.registers.getSignFlag()).to(beTrue())
+    }
+
+    func testASLAbsoluteShiftsOutZero() {
+        self.cpu.setMem(0xABCD, value: 0x7F)
+
+        self.cpu.opASL(AddressingMode.Absolute(0xABCD))
+        
+        expect(self.cpu.getMem(0xABCD)).to(equal(0xFE))
+        expect(self.cpu.registers.getCarryFlag()).to(beFalse())
+    }
+
+    func testASLAbsoluteShiftsOutOne() {
+        self.cpu.setMem(0xABCD, value: 0xFF)
+
+        self.cpu.opASL(AddressingMode.Absolute(0xABCD))
+
+        expect(self.cpu.getMem(0xABCD)).to(equal(0xFE))
+        expect(self.cpu.registers.getCarryFlag()).to(beTrue())
+    }
+
+    func testASLAbsolute80SetsZFlag() {
+        self.cpu.setMem(0xABCD, value: 0x80)
+
+        self.cpu.opASL(AddressingMode.Absolute(0xABCD))
+
+        expect(self.cpu.getMem(0xABCD)).to(equal(0x00))
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+    }
 }

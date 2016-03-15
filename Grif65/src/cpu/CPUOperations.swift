@@ -45,6 +45,8 @@ extension CPU6502 {
 
     func valueForAddressingMode(mode: AddressingMode) -> UInt8 {
         switch mode {
+        case .Accumulator:
+            return registers.a
         case .Immediate(let val):
             return val
         case .ZeroPage(let val):
@@ -93,6 +95,18 @@ extension CPU6502 {
         }
     }
 
+    func setValueForAddressingMode(value: UInt8, mode: AddressingMode) {
+        switch mode {
+        case .Accumulator:
+            registers.a = value;
+            break
+        default:
+            let addr = addressForAddressingMode(mode)
+            setMem(addr, value: value)
+            break
+        }
+    }
+
     func opADC(mode: AddressingMode) {
         let value          = valueForAddressingMode(mode)
 
@@ -118,13 +132,14 @@ extension CPU6502 {
     }
 
     func opASL(mode: AddressingMode) {
-        let result: UInt16 = UInt16(registers.a) << UInt16(1);
+        let value          = valueForAddressingMode(mode)
+        let result: UInt16 = UInt16(value) << UInt16(1)
 
         registers.setCarryFlag(calculateCarry(result))
         registers.setZeroFlag(calculateZero(result))
         registers.setSignFlag(calculateSign(result))
 
-        registers.a = UInt8(result & 0xFF)
+        setValueForAddressingMode(UInt8(result & 0xFF), mode: mode)
     }
 
     func opBCC(mode: AddressingMode) {
