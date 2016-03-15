@@ -194,7 +194,7 @@ extension CPU6502 {
     }
 
     func opBRK(mode: AddressingMode) {
-
+        setProgramCounter(getProgramCounter() + 1)
     }
 
     func opBVC(mode: AddressingMode) {
@@ -319,8 +319,8 @@ extension CPU6502 {
     func opINC(mode: AddressingMode) {
         let value = valueForAddressingMode(mode)
         let result = value + 1
-        registers.setZeroFlag(calculateZero(result))
-        registers.setSignFlag(calculateSign(result))
+        registers.setZeroFlag(calculateZero(UInt16(result)))
+        registers.setSignFlag(calculateSign(UInt16(result)))
         setValueForAddressingMode(UInt8(result & 0xFF), mode: mode)
     }
 
@@ -369,7 +369,7 @@ extension CPU6502 {
     }
 
     func opLSR(mode: AddressingMode) {
-        let result: UInt16 = valueForAddressingMode(mode) >> UInt16(1);
+        let result: UInt16 = UInt16(valueForAddressingMode(mode)) >> UInt16(1);
 
         registers.setCarryFlag(registers.a & 0x1 > 0)
         registers.setZeroFlag(calculateZero(result))
@@ -409,7 +409,7 @@ extension CPU6502 {
     }
 
     func opROL(mode: AddressingMode) {
-        let result = valueForAddressingMode(mode) << UInt16(1)
+        let result = UInt16(valueForAddressingMode(mode)) << UInt16(1)
 
         registers.setCarryFlag(calculateCarry(result))
         registers.setZeroFlag(calculateZero(result))
@@ -484,8 +484,8 @@ extension CPU6502 {
 
     func opTSX(mode: AddressingMode) {
         registers.x = registers.s
-        registers.setSignFlag(calculateSign(registers.s))
-        registers.setZeroFlag(calculateSign(registers.s))
+        registers.setSignFlag(calculateSign(UInt16(registers.s)))
+        registers.setZeroFlag(calculateSign(UInt16(registers.s)))
     }
 
     func opTXA(mode: AddressingMode) {
