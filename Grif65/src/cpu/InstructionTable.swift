@@ -17,7 +17,7 @@ extension CPU6502 {
         add6502Opcodes()
     }
 
-    func addInstruction(opcode: UInt8, ins: (AddressingMode) -> (Void), insName: String,
+    func addInstruction(opcode: UInt8, ins: (AddressingMode) -> (InstructionResponse), insName: String,
                         addrMode: AddressingModeRef, numBytes: Int, numCycles: Int, specialCycles: Bool) {
         instructionTable[Int(opcode)] = InstructionEntry(instructionName: insName, instructionFunction: ins,
                 addressingMode: addrMode, numBytes: numBytes, numCycles: numCycles, specialCycles: specialCycles)

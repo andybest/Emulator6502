@@ -92,7 +92,7 @@ enum AddressingModeRef {
 
 struct InstructionEntry {
     let instructionName:     String
-    let instructionFunction: (AddressingMode) -> (Void)
+    let instructionFunction: (AddressingMode) -> (InstructionResponse)
     let addressingMode:      (AddressingModeRef)
     let numBytes:            Int
     let numCycles:           Int
@@ -101,6 +101,10 @@ struct InstructionEntry {
     func prettyDescription() -> String {
         return "\(instructionName), Addressing mode: \(addressingMode), Cycles: \(numCycles)"
     }
+}
+
+struct InstructionResponse {
+    let handlesPC: Bool
 }
 
 class CPU6502 {
@@ -184,7 +188,7 @@ class CPU6502 {
         registers.s -= 1
     }
 
-    func push16() {
+    func push16(value: UInt16) {
         push8(UInt8((value >> 8) & 0xFF))
         push8(UInt8(value & 0xFF))
     }
@@ -194,7 +198,7 @@ class CPU6502 {
         return getMem(UInt16(registers.s))
     }
 
-    func pop16(value: UInt16) -> UInt16 {
+    func pop16() -> UInt16 {
         return UInt16(pop8()) | (UInt16(pop8()) << 8)
     }
 
@@ -244,8 +248,10 @@ class CPU6502 {
         let addressingMode = getModeForCurrentOpcode(instruction.addressingMode)
         let addr           = String(format: "0x%2X", getProgramCounter())
 
-        setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
-        instruction.instructionFunction(addressingMode)
+        let response = instruction.instructionFunction(addressingMode)
+        if !response.handlesPC {
+            setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
+        }
 
         print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
         printCPUState()
