@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0379A274D1C2BD86E60EB656 /* Pods_Grif65Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */; };
+		A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */; };
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
 		A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
 		A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.release.xcconfig"; sourceTree = "<group>"; };
+		A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifEmulator.swift; sourceTree = "<group>"; };
 		A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerialEmulatorWindowController.swift; path = viewControllers/SerialEmulatorWindowController.swift; sourceTree = "<group>"; };
 		A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SerialEmulatorWindow.xib; path = viewControllers/SerialEmulatorWindow.xib; sourceTree = "<group>"; };
 		C8BB4132C69E4E285D71DE43 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disassembler.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */,
 				C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */,
 				C8BB4132C69E4E285D71DE43 /* Disassembler.swift */,
+				A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */,
 			);
 			path = cpu;
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */,
+				A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */,
 				C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */,
 				C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */,
 				A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */,
