@@ -90,6 +90,8 @@ extension CPU6502 {
             return UInt16(getIndirectX(val))
         case .IndirectY(let val):
             return UInt16(getIndirectY(val))
+        case .Relative(let val):
+            return UInt16(val)
         default: // This should raise an exception
             return 0
         }
@@ -393,6 +395,9 @@ extension CPU6502 {
     }
 
     func opJSR(mode: AddressingMode) -> InstructionResponse {
+        let address = addressForAddressingMode(mode)
+        push16(getProgramCounter())
+        setProgramCounter(address)
         return InstructionResponse(handlesPC: true)
     }
 
@@ -497,8 +502,8 @@ extension CPU6502 {
     }
 
     func opRTS(mode: AddressingMode) -> InstructionResponse {
-        let returnAddress = UInt16(pop8()) | UInt16(pop8()) << 8
-        setProgramCounter(returnAddress + 1)
+        let returnAddress = pop16()
+        setProgramCounter(returnAddress)
         return InstructionResponse(handlesPC: true)
     }
 

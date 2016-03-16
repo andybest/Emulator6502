@@ -23,6 +23,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Insert code here to initialize your application
 
         var cpu = CPU6502()
+        cpu.setMemFromHexString("A2 FF 9A A9 05 85 00 A9 03 85 01 20 11 02 4C 0E 02 A5 00 65 01 60", address:0x200)
+        cpu.setProgramCounter(0x200)
+        cpu.runCycles(100)
 
     }
 

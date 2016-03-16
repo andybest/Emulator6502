@@ -167,6 +167,16 @@ class CPU6502 {
         return memory[Int(address)]
     }
 
+    func setMemFromHexString(str:String, address:UInt16) {
+        let data = str.uint8ArrayFromHexadecimalString()
+
+        var currentAddress = address
+        for byte in data {
+            setMem(currentAddress, value: byte)
+            currentAddress++
+        }
+    }
+
     func getZero(address: UInt8) -> UInt8 {
         return getMem(UInt16(address))
     }
@@ -248,10 +258,12 @@ class CPU6502 {
         let addressingMode = getModeForCurrentOpcode(instruction.addressingMode)
         let addr           = String(format: "0x%2X", getProgramCounter())
 
+        setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         let response = instruction.instructionFunction(addressingMode)
-        if !response.handlesPC {
+
+        /*if !response.handlesPC {
             setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
-        }
+        }*/
 
         print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
         printCPUState()
