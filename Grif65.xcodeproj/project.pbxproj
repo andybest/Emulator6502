@@ -11,6 +11,8 @@
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
 		A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
 		A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
+		A582BE7A1C99D62D00F38B04 /* SerialEmulatorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */; };
+		A582BE7B1C99D62D00F38B04 /* SerialEmulatorWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */; };
 		C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8BB414F13E7780C954CA8E9 /* MainMenu.xib */; };
 		C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4F81E8481674BE15E39F /* InstructionTests.swift */; };
 		C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
@@ -39,6 +41,8 @@
 
 /* Begin PBXFileReference section */
 		3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.release.xcconfig"; sourceTree = "<group>"; };
+		A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerialEmulatorWindowController.swift; path = viewControllers/SerialEmulatorWindowController.swift; sourceTree = "<group>"; };
+		A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SerialEmulatorWindow.xib; path = viewControllers/SerialEmulatorWindow.xib; sourceTree = "<group>"; };
 		C8BB4132C69E4E285D71DE43 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disassembler.swift; sourceTree = "<group>"; };
 		C8BB415A56D4C11E994A706C /* Grif65Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grif65Tests.swift; sourceTree = "<group>"; };
 		C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUOperations.swift; sourceTree = "<group>"; };
@@ -88,6 +92,22 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		A582BE741C99D57D00F38B04 /* views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
+		A582BE751C99D58600F38B04 /* viewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */,
+				A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */,
+			);
+			name = viewControllers;
+			sourceTree = "<group>";
+		};
 		C8BB4197F7D77EAD3848664F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -123,6 +143,8 @@
 		C8BB489BEC65630287A8BB39 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A582BE751C99D58600F38B04 /* viewControllers */,
+				A582BE741C99D57D00F38B04 /* views */,
 				C8BB4E9C81B44CBDFDC500B0 /* cpu */,
 				C8BB4D54FF3F01C70E67400C /* Utils */,
 			);
@@ -251,6 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A582BE7B1C99D62D00F38B04 /* SerialEmulatorWindow.xib in Resources */,
 				C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */,
 				C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */,
 			);
@@ -322,6 +345,7 @@
 				C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */,
 				C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */,
 				A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */,
+				A582BE7A1C99D62D00F38B04 /* SerialEmulatorWindowController.swift in Sources */,
 				C8BB48B915F9C1C7D0ABCE8C /* InstructionTable.swift in Sources */,
 				C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */,
 				C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */,

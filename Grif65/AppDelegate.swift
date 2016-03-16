@@ -15,26 +15,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
     @IBOutlet weak var window: NSWindow!
-
-
-
+    var serialWindowController: SerialEmulatorWindowController?
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-    // Insert code here to initialize your application
+
+        self.serialWindowController = SerialEmulatorWindowController(windowNibName: "SerialEmulatorWindow")
+        self.serialWindowController!.showWindow(self)
 
         var cpu = CPU6502()
-        cpu.setMemFromHexString("A2 FF 9A A9 05 85 00 A9 03 85 01 20 11 02 4C 0E 02 A5 00 65 01 60", address:0x200)
+        cpu.setMemFromHexString("A2 FF 9A A9 05 85 00 A9 03 85 01 20 11 02 4C 0E 02 A5 00 65 01 60", address: 0x200)
         cpu.setProgramCounter(0x200)
         cpu.runCycles(100)
 
     }
 
-
     func applicationWillTerminate(aNotification: NSNotification) {
-    // Insert code here to tear down your application
+        // Insert code here to tear down your application
     }
-
-
 
 
 }
