@@ -23,6 +23,7 @@ class GrifEmulator {
     init() {
         ram = [UInt8](count: 0xFFFF, repeatedValue: 0)
         ioDevices = [IODevice]()
+        ioDevices.append(DUART())
 
         cpu = CPU6502()
         cpu.readMemoryCallback = readMemory
