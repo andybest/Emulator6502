@@ -20,8 +20,14 @@ enum DUARTWriteRegisters: Int {
 
 class DUART: IODevice {
 
-    func readMemory(address: UInt8) {
+    var assertInterrupt: ((Void) -> (Void))?
 
+    func attachInterruptHandler(handler: (Void) -> (Void)) {
+        assertInterrupt = handler
+    }
+
+    func readMemory(address: UInt8) -> UInt8 {
+        return 0
     }
 
     func writeMemory(address: UInt8, value: UInt8) {

@@ -9,9 +9,9 @@
 import Foundation
 
 protocol IODevice {
-    func writeMem(address: UInt8, value: UInt8)
-
-    func readMem(address: UInt8) -> UInt8
+    func writeMemory(address: UInt8, value: UInt8)
+    func readMemory(address: UInt8) -> UInt8
+    func attachInterruptHandler(handler:(Void) -> (Void))
 }
 
 class GrifEmulator {
@@ -61,7 +61,7 @@ class GrifEmulator {
             return 0
         }
 
-        return dev.readMem(address)
+        return dev.readMemory(address)
     }
 
     func writePeripheral(address: UInt8, value: UInt8) {
@@ -69,7 +69,7 @@ class GrifEmulator {
             return
         }
 
-        dev.writeMem(address, value: value)
+        dev.writeMemory(address, value: value)
     }
 
 }
