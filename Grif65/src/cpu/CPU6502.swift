@@ -112,39 +112,12 @@ class CPU6502 {
     var memory           = [UInt8](count: 0xFFFF, repeatedValue: 0x00)
     var instructionTable = [InstructionEntry]()
 
+    var readMemoryCallback: ((UInt16) -> (UInt8))?
+    var writeMemoryCallback: ((UInt16, UInt8) -> (Void))?
+
     init() {
         self.registers = Registers()
         buildInstructionTable()
-
-        /*setProgramCounter(0x0100)
-
-        // LDA #$01
-        setMem(0x0100, value: 0xA9)
-        setMem(0x0101, value: 0x01)
-
-        // ADC #$01
-        setMem(0x0102, value: 0x69)
-        setMem(0x0103, value: 0x01)
-
-        // ADC #$01
-        setMem(0x0104, value: 0x69)
-        setMem(0x0105, value: 0x01)
-
-        // TAX
-        setMem(0x0106, value: 0xAA)
-
-        // ADC #$01
-        setMem(0x0107, value: 0x69)
-        setMem(0x0108, value: 0x01)
-
-        // TAY
-        setMem(0x0109, value: 0xA8)
-
-        // INY
-        setMem(0x010A, value: 0xC8)
-
-
-        print(runCycles(14))*/
     }
 
     func reset() {
@@ -160,11 +133,21 @@ class CPU6502 {
     }
 
     func setMem(address: UInt16, value: UInt8) {
-        memory[Int(address)] = value
+        guard let cb = self.writeMemoryCallback else {
+            print("Error, need to set write memory callback!")
+            return
+        }
+
+        cb(address, value)
     }
 
     func getMem(address: UInt16) -> UInt8 {
-        return memory[Int(address)]
+        guard let cb = self.readMemoryCallback else {
+            print("Error, neet to set read memory callback!")
+            return 0
+        }
+
+        return cb(address)
     }
 
     func setMemFromHexString(str:String, address:UInt16) {
@@ -194,8 +177,8 @@ class CPU6502 {
     }
 
     func push8(value: UInt8) {
-        setMem(UInt16(registers.s), value: value)
-        registers.s -= 1
+        setMem(UInt16(registers.s) + 0x0100, value: value)
+        UInt8.subtractWithOverflow(registers.s, 1)
     }
 
     func push16(value: UInt16) {
@@ -204,8 +187,8 @@ class CPU6502 {
     }
 
     func pop8() -> UInt8 {
-        registers.s += 1
-        return getMem(UInt16(registers.s))
+        UInt8.addWithOverflow(registers.s, 1)
+        return getMem(UInt16(registers.s) + 0x0100)
     }
 
     func pop16() -> UInt16 {
