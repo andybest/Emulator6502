@@ -12,13 +12,13 @@ extension Bool {
     }
 }
 
-enum DUARTReadRegisters: Int {
+enum DUARTReadRegisters: UInt8 {
     case ModeA = 0, StatusA, ClockSelectA, ReceiveBufferA, InputPortChange, InterruptStatus, CounterModeMSB,
          CounterModeLSB, ModeB, StatusB, ClockSelectB, ReceiveBufferB, InterruptVector, InputPort, StartCounterCommend,
          StopCounterCommand
 }
 
-enum DUARTWriteRegisters: Int {
+enum DUARTWriteRegisters: UInt8 {
     case ModeA = 0, ClockSelectA, CommandA, TransmitBufferA, AuxilaryControl, InterruptMask, CounterTimerUpper,
          CounterTimerLower, ModeB, ClockSelectB, CommandB, TransmitBufferB, InterruptVector, OutputPortConfiguration,
          BitSetCommand, BitResetCommand
@@ -104,17 +104,24 @@ class DUART: IODevice {
     // MARK - Register read/write
 
     func readMemory(address: UInt8) -> UInt8 {
+        if address == DUARTReadRegisters.ReceiveBufferA.rawValue || address == DUARTReadRegisters.ReceiveBufferB.rawValue {
+            let channel = address == DUARTReadRegisters.ReceiveBufferA.rawValue ? DUARTSerialChannel.SerialChannelA : DUARTSerialChannel.SerialChannelB
+
+        }
+
         return 0
     }
 
     func writeMemory(address: UInt8, value: UInt8) {
-
+        if address == 0x3 {
+            serialChannelTransmit(value, channel:DUARTSerialChannel.SerialChannelA)
+        }
     }
 
     // MARK - Serial Communications
 
     func serialChannelReceive(value: UInt8, channel: DUARTSerialChannel) {
-        var receiveBuffer: [UInt8]
+        var receiveBuffer:  [UInt8]
         var statusRegister: DUARTStatusRegister
 
         switch channel {
@@ -143,4 +150,10 @@ class DUART: IODevice {
         }
     }
 
+    func serialChannelTransmit(value: UInt8, channel: DUARTSerialChannel) {
+        if let cb = self.serialChannelSend {
+            cb(value: value, channel: channel)
+        }
+
+    }
 }

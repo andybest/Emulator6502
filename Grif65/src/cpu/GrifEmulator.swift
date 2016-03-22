@@ -10,8 +10,14 @@ import Foundation
 
 protocol IODevice {
     func writeMemory(address: UInt8, value: UInt8)
+
     func readMemory(address: UInt8) -> UInt8
-    func attachInterruptHandler(handler:(Void) -> (Void))
+
+    func attachInterruptHandler(handler: (Void) -> (Void))
+}
+
+protocol GrifEmulatorDelegate {
+    func emulatorDidSendSerial(value: UInt8)
 }
 
 class GrifEmulator {
@@ -19,15 +25,22 @@ class GrifEmulator {
     var ioDevices: [IODevice]
     var cpu:       CPU6502
     var ram:       [UInt8]
+    var delegate:  GrifEmulatorDelegate?
+
+    var duart: DUART
 
     init() {
         ram = [UInt8](count: 0xFFFF, repeatedValue: 0)
         ioDevices = [IODevice]()
-        ioDevices.append(DUART())
+
+        duart = DUART()
+        ioDevices.append(duart)
 
         cpu = CPU6502()
         cpu.readMemoryCallback = readMemory
         cpu.writeMemoryCallback = writeMemory
+
+        duart.attachSerialChannelSendCallback(serialChannelDidSend)
     }
 
     func readMemory(address: UInt16) -> UInt8 {
@@ -70,6 +83,12 @@ class GrifEmulator {
         }
 
         dev.writeMemory(address, value: value)
+    }
+
+    func serialChannelDidSend(value: UInt8, channel: DUARTSerialChannel) {
+        if self.delegate != nil {
+            self.delegate!.emulatorDidSendSerial(value)
+        }
     }
 
 }

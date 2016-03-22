@@ -13,18 +13,12 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
+    var emulatorController: GrifEmulatorController?
 
     @IBOutlet weak var window: NSWindow!
-    var serialWindowController: SerialEmulatorWindowController?
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-
-        self.serialWindowController = SerialEmulatorWindowController(windowNibName: "SerialEmulatorWindow")
-        self.serialWindowController!.showWindow(self)
-
-        var emulator = GrifEmulator()
-        emulator.cpu.setMemFromHexString("A2 FF 9A A9 05 85 00 A9 03 85 01 20 11 02 4C 0E 02 A5 00 65 01 60", address: 0x200)
-        emulator.cpu.runCycles(30)
+        self.emulatorController = GrifEmulatorController()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
