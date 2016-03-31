@@ -18,6 +18,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var window: NSWindow!
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
+        let isRunningTests = NSClassFromString("XCTestCase") != nil
+        
+        if isRunningTests {
+            return
+        }
+        
         self.emulatorController = GrifEmulatorController()
     }
 

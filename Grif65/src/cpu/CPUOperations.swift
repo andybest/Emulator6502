@@ -396,7 +396,7 @@ extension CPU6502 {
 
     func opJSR(mode: AddressingMode) -> InstructionResponse {
         let address = addressForAddressingMode(mode)
-        push16(getProgramCounter())
+        push16(getProgramCounter() - 1)
         setProgramCounter(address)
         return InstructionResponse(handlesPC: true)
     }

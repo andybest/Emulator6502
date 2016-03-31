@@ -178,7 +178,7 @@ class CPU6502 {
 
     func push8(value: UInt8) {
         setMem(UInt16(registers.s) + 0x0100, value: value)
-        UInt8.subtractWithOverflow(registers.s, 1)
+        registers.s = registers.s &- 1
     }
 
     func push16(value: UInt16) {
@@ -187,7 +187,7 @@ class CPU6502 {
     }
 
     func pop8() -> UInt8 {
-        UInt8.addWithOverflow(registers.s, 1)
+        registers.s = registers.s &+ 1
         return getMem(UInt16(registers.s) + 0x0100)
     }
 

@@ -16,10 +16,21 @@ import Nimble
 class InstructionTests: XCTestCase {
 
     var cpu:CPU6502 = CPU6502()
+    var mem:[UInt8] = [UInt8]()
 
     override func setUp() {
         super.setUp()
         cpu = CPU6502()
+        mem = [UInt8](count:0xFFFF, repeatedValue:0x0)
+
+        cpu.readMemoryCallback =  { (address:UInt16) -> UInt8 in
+            
+            return self.mem[Int(address)]
+        }
+
+        cpu.writeMemoryCallback =  { (address:UInt16, value:UInt8) in
+            self.mem[Int(address)] = value
+        }
     }
 
     override func tearDown() {
@@ -415,5 +426,18 @@ class InstructionTests: XCTestCase {
 
         expect(self.cpu.getMem(0xABCD)).to(equal(0x00))
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+    }
+
+    /* JSR */
+
+    func testJSR() {
+        self.cpu.setMemFromHexString("20 D2 FF", address:0xC000)
+        self.cpu.setProgramCounter(0xC000)
+        self.cpu.runCycles(1)
+
+        expect(self.cpu.registers.pc).to(equal(0xFFD2))
+        expect(self.cpu.getStackPointer()).to(equal(0xFD))
+        expect(self.mem[0x01FF]).to(equal(0xC0))
+        expect(self.mem[0x01FE]).to(equal(0x02))
     }
 }

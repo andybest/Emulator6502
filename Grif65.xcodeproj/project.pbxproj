@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0379A274D1C2BD86E60EB656 /* Pods_Grif65Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */; };
+		A5180EBF1CAD8D0E00DD3BF5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
+		A5180EC11CAD8D2900DD3BF5 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
 		A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */; };
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
 		A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
@@ -18,7 +20,6 @@
 		C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4F81E8481674BE15E39F /* InstructionTests.swift */; };
 		C8BB4265DCFCC7BB087C7267 /* DUART.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB454D4F7F77F0E28666B1 /* DUART.swift */; };
 		C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
-		C8BB43B19DC59BCEA065E4D9 /* DUART.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB454D4F7F77F0E28666B1 /* DUART.swift */; };
 		C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
 		C8BB46716975B62113EE8B53 /* GrifEmulatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BB78260CDA17F4EAF97 /* GrifEmulatorController.swift */; };
 		C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB47FEDF203C6E76135EE7 /* AppDelegate.swift */; };
@@ -29,7 +30,6 @@
 		C8BB49D056C93222FE7C43BB /* Grif65Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB415A56D4C11E994A706C /* Grif65Tests.swift */; };
 		C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
 		C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
-		C8BB4CCEC54F40DA22A651DC /* GrifEmulatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BB78260CDA17F4EAF97 /* GrifEmulatorController.swift */; };
 		C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
 		C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
 /* End PBXBuildFile section */
@@ -373,13 +373,13 @@
 				A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */,
 				A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */,
 				C8BB49D056C93222FE7C43BB /* Grif65Tests.swift in Sources */,
+				A5180EC11CAD8D2900DD3BF5 /* String+Hex.swift in Sources */,
 				C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */,
 				C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */,
 				C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */,
 				C8BB489FD572CF2BFC8DAB77 /* CPUTests.swift in Sources */,
 				C8BB490AA2DEC285A7E54599 /* InstructionTable.swift in Sources */,
-				C8BB43B19DC59BCEA065E4D9 /* DUART.swift in Sources */,
-				C8BB4CCEC54F40DA22A651DC /* GrifEmulatorController.swift in Sources */,
+				A5180EBF1CAD8D0E00DD3BF5 /* Disassembler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
