@@ -440,4 +440,18 @@ class InstructionTests: XCTestCase {
         expect(self.mem[0x01FF]).to(equal(0xC0))
         expect(self.mem[0x01FE]).to(equal(0x02))
     }
+    
+    /* RTS */
+    
+    func testRTS() {
+        self.cpu.setMem(0x0000, value: 0x60)
+        self.cpu.setMemFromHexString("03 C0", address:0x1FE)
+        self.cpu.setProgramCounter(0x0)
+        self.cpu.registers.s = 0xFD
+        
+        self.cpu.runCycles(1)
+        
+        expect(self.cpu.getProgramCounter()).to(equal(0xC004))
+        expect(self.cpu.registers.s).to(equal(0xFF))
+    }
 }

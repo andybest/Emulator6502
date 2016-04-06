@@ -503,7 +503,7 @@ extension CPU6502 {
 
     func opRTS(mode: AddressingMode) -> InstructionResponse {
         let returnAddress = pop16()
-        setProgramCounter(returnAddress)
+        setProgramCounter(returnAddress + 1)
         return InstructionResponse(handlesPC: true)
     }
 

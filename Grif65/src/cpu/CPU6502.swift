@@ -118,10 +118,11 @@ class CPU6502 {
     init() {
         self.registers = Registers()
         buildInstructionTable()
+        self.reset()
     }
 
     func reset() {
-        self.registers.s = 0xFD
+        self.registers.s = 0xFF
 
         self.registers.setInterruptFlag(true)
         self.registers.setDecimalFlag(true)
