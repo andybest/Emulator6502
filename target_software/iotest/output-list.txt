@@ -1,0 +1,15 @@
+------- FILE main.s LEVEL 1 PASS 1
+      1  0000					      PROCESSOR	6502
+      2  0000 ????
+      3  0300					      ORG	$300
+      4  0300
+      5  0300				   init
+      6  0300		       a2 ff		      LDX	#$FF	; Initialize stack pointer to $01FF
+      7  0302		       9a		      TXS
+      8  0303		       d8		      CLD		; Clear decimal mode
+      9  0304
+     10  0304				   done
+     11  0304		       4c 04 03 	      JMP	done
+     12  0307
+     13  0307				   helloText
+     14  0307		       48 65 6c 6c*	      .byte.b	"Hello, world\0"
