@@ -1,3 +1,3 @@
 #!/bin/sh
 
-dasm  main.s -loutput-list.txt -ooutput.bin
+dasm  main.dasm -lbuild/output-list.txt -obuild/output.bin

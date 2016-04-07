@@ -229,11 +229,11 @@ class CPU6502 {
         case .AbsoluteY:
             return AddressingMode.AbsoluteY(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
         case .Indirect:
-            return AddressingMode.Indirect(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
+            return AddressingMode.Indirect(UInt16(getMem(getProgramCounter() + 1)))
         case .IndirectX:
-            return AddressingMode.IndirectX(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
+            return AddressingMode.IndirectX(UInt16(getMem(getProgramCounter() + 1)))
         case .IndirectY:
-            return AddressingMode.IndirectY(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
+            return AddressingMode.IndirectY(UInt16(getMem(getProgramCounter() + 1)))
         }
     }
 
@@ -249,8 +249,8 @@ class CPU6502 {
             setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         }*/
 
-        //print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
-        //printCPUState()
+        print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
+        printCPUState()
         return instruction.numCycles
     }
 

@@ -31,7 +31,7 @@ extension CPU6502 {
 
     func getIndirect(address: UInt16) -> UInt8 {
         let indirectAddress: UInt16 = address
-        return getMem(indirectAddress | ((indirectAddress + 1) << 8))
+        return getMem(UInt16(getMem(indirectAddress)) | (UInt16(getMem(indirectAddress + 1)) << 8))
     }
 
     func getIndirectX(address: UInt16) -> UInt8 {
@@ -39,8 +39,8 @@ extension CPU6502 {
     }
 
     func getIndirectY(address: UInt16) -> UInt8 {
-        let indirectAddress: UInt16 = address + UInt16(registers.y)
-        return getMem(indirectAddress | ((indirectAddress + 1) << 8))
+        let indirectAddress: UInt16 = address
+        return getMem((UInt16(getMem(indirectAddress)) | (UInt16(getMem(indirectAddress + 1)) << 8)) + UInt16(registers.y))
     }
 
     func valueForAddressingMode(mode: AddressingMode) -> UInt8 {

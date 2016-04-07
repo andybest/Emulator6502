@@ -1,0 +1,19 @@
+  processor 6502
+  org $300
+  
+  jmp init
+
+  include "uart.dasm"
+
+init:  
+  ldx     #$FF                 ; Initialize stack pointer to $01FF
+  txs
+  cld                          ; Clear decimal mode
+
+  uarta_puts helloText
+
+done:
+  jmp done
+        
+helloText:
+  .byte "Hello, world", $0

@@ -16,7 +16,7 @@ class GrifEmulatorController : GrifEmulatorDelegate {
         var emulator = GrifEmulator()
         emulator.delegate = self
         //emulator.cpu.setMemFromHexString("a5 00 8d 03 02 69 01 4c 02 06 ", address: 0x600)
-        emulator.cpu.setMemFromHexString("A2FF9AD8200A034C1B03A200BD1E03E8C900F0068D03024C0C03604C1B0348656C6C6F2C20776F726C6400", address:0x300)
+        emulator.cpu.setMemFromHexString("4C1103A000B100F0078D0302C84C050360A2FF9AD8A9238500A90385012003034C200348656C6C6F2C20776F726C6400", address:0x300)
         emulator.cpu.setProgramCounter(0x0300)
         emulator.cpu.runCycles(500)
     }

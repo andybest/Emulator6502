@@ -1,0 +1,24 @@
+  processor 6502
+
+; UART Register locations
+DUART_BASE:     equ $0200
+DUART_TX_A:     equ DUART_BASE + 3
+
+  mac uarta_puts
+    lda #<[{1}]
+    sta $0
+    lda #>[{1}]
+    sta $1
+    jsr uarta_puts_impl
+  endm
+
+uarta_puts_impl subroutine
+  ldy #0
+.uarta_puts_loop:
+  lda ($0),y
+  beq .uarta_puts_done
+  sta DUART_TX_A
+  iny
+  jmp .uarta_puts_loop
+.uarta_puts_done:
+  rts
