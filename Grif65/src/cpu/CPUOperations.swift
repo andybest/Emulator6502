@@ -219,7 +219,7 @@ extension CPU6502 {
     }
 
     func opBRK(mode: AddressingMode) -> InstructionResponse {
-        setProgramCounter(getProgramCounter() + 1)
+        setProgramCounter(getProgramCounter() &+ 1)
         push16(getProgramCounter())
         push8(registers.getStatusByte())
         registers.setInterruptFlag(true)

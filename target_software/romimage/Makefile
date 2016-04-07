@@ -1,4 +1,4 @@
-SOURCES = foo.c bar.c
+SOURCES = main.c
 
 PROGRAM = romimage
 

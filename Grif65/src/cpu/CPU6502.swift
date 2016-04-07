@@ -107,6 +107,14 @@ struct InstructionResponse {
     let handlesPC: Bool
 }
 
+struct IntelHexRecord {
+    let byteCount: UInt8
+    let address: UInt16
+    let recordType: UInt8
+    let data: [UInt8]
+    let checksum: UInt8
+}
+
 class CPU6502 {
     var registers: Registers
     var memory           = [UInt8](count: 0xFFFF, repeatedValue: 0x00)
@@ -158,6 +166,29 @@ class CPU6502 {
         for byte in data {
             setMem(currentAddress, value: byte)
             currentAddress++
+        }
+    }
+
+    func loadHexFileToMemory(path:String) {
+        do {
+            var file = try String(contentsOfFile: path, encoding:NSASCIIStringEncoding)
+            let lines = file.stringByReplacingOccurrencesOfString("\r", withString: "").componentsSeparatedByString("\n")
+
+            for line in lines {
+                let strippedLine = line.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                if !strippedLine.hasPrefix(":") && strippedLine.characters.count > 0 {
+                    print("Error, not valid Intel Hex format.")
+                    return
+                }
+
+                
+            }
+
+
+
+        } catch {
+            print("Unable to load file: \(path)")
+            return
         }
     }
 
@@ -255,7 +286,7 @@ class CPU6502 {
     }
 
     func breakExecuted() {
-
+        print("Break executed at address \(self.registers.pc)")
     }
 
 }
