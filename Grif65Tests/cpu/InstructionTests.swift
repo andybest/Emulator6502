@@ -427,6 +427,35 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.getMem(0xABCD)).to(equal(0x00))
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
     }
+    
+    /* BEQ */
+    
+    func testBEQZeroSetBranchesRelativeForward() {
+        self.cpu.registers.setZeroFlag(true)
+        self.cpu.setMemFromHexString("F0 06", address: 0x0000)
+        self.cpu.runCycles(1)
+        
+        expect(self.cpu.getProgramCounter()).to(equal(0x0002 + 0x06))
+    }
+    
+    func testBEQZeroSetBranchesRelativeBackward() {
+        self.cpu.registers.setZeroFlag(true)
+        let rel = (0x06 ^ 0xFF + 1)
+        self.cpu.setMem(0x0050, value:0xF0)
+        self.cpu.setMem(0x0051, value:UInt8(rel))
+        self.cpu.setProgramCounter(0x0050)
+        self.cpu.runCycles(1)
+        
+        expect(self.cpu.getProgramCounter()).to(equal(UInt16(0x0052 + rel)))
+    }
+    
+    func testBEQZeroClearDoesNotBranch() {
+        self.cpu.registers.setZeroFlag(false)
+        self.cpu.setMemFromHexString("F0 06", address: 0x0000)
+        self.cpu.runCycles(1)
+        
+        expect(self.cpu.getProgramCounter()).to(equal(0x0002))
+    }
 
     /* JSR */
 

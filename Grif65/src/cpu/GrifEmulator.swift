@@ -30,7 +30,7 @@ class GrifEmulator {
     var duart: DUART
 
     init() {
-        ram = [UInt8](count: 0xFFFF, repeatedValue: 0)
+        ram = [UInt8](count: 0x10000 + 1, repeatedValue: 0)
         ioDevices = [IODevice]()
 
         duart = DUART()
