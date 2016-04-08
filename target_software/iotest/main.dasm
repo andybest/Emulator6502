@@ -11,9 +11,11 @@ init:
   cld                          ; Clear decimal mode
 
   uarta_puts helloText
+  uarta_puts testText
 
 done:
   jmp done
         
-helloText:
-  .byte "Hello, world", $0
+helloText:  .byte "Hello, world", $0A, $0
+testText:   .byte "This is a test of the Grif65 computer.", $0A, $0
+

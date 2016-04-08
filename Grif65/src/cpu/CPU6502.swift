@@ -108,11 +108,11 @@ struct InstructionResponse {
 }
 
 struct IntelHexRecord {
-    let byteCount: UInt8
-    let address: UInt16
+    let byteCount:  UInt8
+    let address:    UInt16
     let recordType: UInt8
-    let data: [UInt8]
-    let checksum: UInt8
+    let data:       [UInt8]
+    let checksum:   UInt8
 }
 
 class CPU6502 {
@@ -120,7 +120,7 @@ class CPU6502 {
     var memory           = [UInt8](count: 0xFFFF, repeatedValue: 0x00)
     var instructionTable = [InstructionEntry]()
 
-    var readMemoryCallback: ((UInt16) -> (UInt8))?
+    var readMemoryCallback:  ((UInt16) -> (UInt8))?
     var writeMemoryCallback: ((UInt16, UInt8) -> (Void))?
 
     init() {
@@ -159,7 +159,7 @@ class CPU6502 {
         return cb(address)
     }
 
-    func setMemFromHexString(str:String, address:UInt16) {
+    func setMemFromHexString(str: String, address: UInt16) {
         let data = str.uint8ArrayFromHexadecimalString()
 
         var currentAddress = address
@@ -169,26 +169,63 @@ class CPU6502 {
         }
     }
 
-    func loadHexFileToMemory(path:String) {
+    func loadHexFileToMemory(path: String) {
         do {
-            var file = try String(contentsOfFile: path, encoding:NSASCIIStringEncoding)
+            var file  = try String(contentsOfFile: path, encoding: NSASCIIStringEncoding)
             let lines = file.stringByReplacingOccurrencesOfString("\r", withString: "").componentsSeparatedByString("\n")
+
+            var records = [IntelHexRecord]()
 
             for line in lines {
                 let strippedLine = line.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-                if !strippedLine.hasPrefix(":") && strippedLine.characters.count > 0 {
+
+                if strippedLine.characters.count == 0 {
+                    continue
+                }
+
+                if !strippedLine.hasPrefix(":") {
                     print("Error, not valid Intel Hex format.")
                     return
                 }
 
-                
+                let lineHex = (line as NSString).substringFromIndex(1).uint8ArrayFromHexadecimalString()
+
+                let byteCount  = lineHex[0]
+                let address    = (UInt16(lineHex[1]) << 8) | UInt16(lineHex[2])
+                let recordType = lineHex[3]
+                let data       = Array<UInt8>(lineHex[4 ..< Int(byteCount + 4)])
+                let checksum   = lineHex.last
+
+                let record = IntelHexRecord(byteCount: byteCount,
+                        address: address,
+                        recordType: recordType,
+                        data: data,
+                        checksum: checksum!)
+
+                records.append(record)
             }
 
-
+            loadRecordsToMemory(records)
 
         } catch {
             print("Unable to load file: \(path)")
             return
+        }
+    }
+
+    func loadRecordsToMemory(records: [IntelHexRecord]) {
+        for record in records {
+            // Check if it is a data record.
+            if record.recordType != 0x00 {
+                continue
+            }
+
+            var address = record.address
+
+            for byte in record.data {
+                self.setMem(address, value: byte)
+                address = address &+ 1
+            }
         }
     }
 
