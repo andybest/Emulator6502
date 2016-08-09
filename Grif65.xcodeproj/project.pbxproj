@@ -234,12 +234,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C8BB4CD99C33A4575F29A8EA /* Build configuration list for PBXNativeTarget "Grif65Tests" */;
 			buildPhases = (
-				503E4E0D91A7A388E8707E72 /* Check Pods Manifest.lock */,
+				503E4E0D91A7A388E8707E72 /* 📦 Check Pods Manifest.lock */,
 				C8BB491841F2C2801F802356 /* Sources */,
 				C8BB416AAE4AAA49C7A1F4D3 /* Frameworks */,
 				C8BB4A0757C780FB521ECB99 /* Resources */,
-				9611CA462D0610DAD4577A1D /* Embed Pods Frameworks */,
-				BE359B15DBA193218675F0F2 /* Copy Pods Resources */,
+				9611CA462D0610DAD4577A1D /* 📦 Embed Pods Frameworks */,
+				BE359B15DBA193218675F0F2 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -258,8 +258,16 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = andybest;
+				TargetAttributes = {
+					C8BB43E1D555970836C558DE = {
+						LastSwiftMigration = 0800;
+					};
+					C8BB4858272A86ADBD6A8C51 = {
+						LastSwiftMigration = 0800;
+					};
+				};
 			};
 			buildConfigurationList = C8BB43C206726B9E411B9E90 /* Build configuration list for PBXProject "Grif65" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -300,14 +308,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		503E4E0D91A7A388E8707E72 /* Check Pods Manifest.lock */ = {
+		503E4E0D91A7A388E8707E72 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -315,14 +323,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		9611CA462D0610DAD4577A1D /* Embed Pods Frameworks */ = {
+		9611CA462D0610DAD4577A1D /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,14 +338,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BE359B15DBA193218675F0F2 /* Copy Pods Resources */ = {
+		BE359B15DBA193218675F0F2 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,12 +417,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Grif65.app/Contents/MacOS/Grif65";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Grif65Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Release;
@@ -429,6 +440,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -445,8 +457,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -486,6 +500,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -493,12 +509,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FC814B0A29EE4CF72E65AC30 /* Pods-Grif65Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Grif65.app/Contents/MacOS/Grif65";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Grif65Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Debug;
@@ -516,8 +534,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";

@@ -38,7 +38,7 @@ struct Registers {
         return "A: \(aStr), X:\(xStr), Y:\(yStr)"
     }
 
-    func boolToInt(value: Bool) -> UInt8 {
+    func boolToInt(_ value: Bool) -> UInt8 {
         if value {
             return 1
         }
@@ -49,7 +49,7 @@ struct Registers {
         return p
     }
 
-    mutating func setStatusByte(value: UInt8) {
+    mutating func setStatusByte(_ value: UInt8) {
         p = value
     }
 
@@ -57,7 +57,7 @@ struct Registers {
         return (p & 0b00000001) == 1
     }
 
-    mutating func setCarryFlag(value: Bool) {
+    mutating func setCarryFlag(_ value: Bool) {
         p = (p & 0b11111110) | boolToInt(value)
     }
 
@@ -65,7 +65,7 @@ struct Registers {
         return ((p & 0b00000010) >> 1) == 1
     }
 
-    mutating func setZeroFlag(value: Bool) {
+    mutating func setZeroFlag(_ value: Bool) {
         p = (p & 0b11111101) | boolToInt(value) << 1
     }
 
@@ -73,7 +73,7 @@ struct Registers {
         return ((p & 0b00000100) >> 2) == 1
     }
 
-    mutating func setInterruptFlag(value: Bool) {
+    mutating func setInterruptFlag(_ value: Bool) {
         p = (p & 0b11111011) | boolToInt(value) << 2
     }
 
@@ -81,7 +81,7 @@ struct Registers {
         return ((p & 0b00001000) >> 3) == 1
     }
 
-    mutating func setDecimalFlag(value: Bool) {
+    mutating func setDecimalFlag(_ value: Bool) {
         p = (p & 0b11110111) | boolToInt(value) << 3
     }
 
@@ -89,7 +89,7 @@ struct Registers {
         return ((p & 0b00010000) >> 4) == 1
     }
 
-    mutating func setBreakFlag(value: Bool) {
+    mutating func setBreakFlag(_ value: Bool) {
         p = (p & 0b11101111) | boolToInt(value) << 4
     }
 
@@ -97,7 +97,7 @@ struct Registers {
         return ((p & 0b01000000) >> 6) == 1
     }
 
-    mutating func setOverflowFlag(value: Bool) {
+    mutating func setOverflowFlag(_ value: Bool) {
         p = (p & 0b10111111) | boolToInt(value) << 6
     }
 
@@ -105,7 +105,7 @@ struct Registers {
         return ((p & 0b10000000) >> 7) == 1
     }
 
-    mutating func setSignFlag(value: Bool) {
+    mutating func setSignFlag(_ value: Bool) {
         p = (p & 0b01111111) | boolToInt(value) << 7
     }
 }

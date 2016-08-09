@@ -13,20 +13,20 @@ extension Bool {
 }
 
 enum DUARTReadRegisters: UInt8 {
-    case ModeA = 0, StatusA, ClockSelectA, ReceiveBufferA, InputPortChange, InterruptStatus, CounterModeMSB,
-         CounterModeLSB, ModeB, StatusB, ClockSelectB, ReceiveBufferB, InterruptVector, InputPort, StartCounterCommend,
-         StopCounterCommand
+    case modeA = 0, statusA, clockSelectA, receiveBufferA, inputPortChange, interruptStatus, counterModeMSB,
+         counterModeLSB, modeB, statusB, clockSelectB, receiveBufferB, interruptVector, inputPort, startCounterCommend,
+         stopCounterCommand
 }
 
 enum DUARTWriteRegisters: UInt8 {
-    case ModeA = 0, ClockSelectA, CommandA, TransmitBufferA, AuxilaryControl, InterruptMask, CounterTimerUpper,
-         CounterTimerLower, ModeB, ClockSelectB, CommandB, TransmitBufferB, InterruptVector, OutputPortConfiguration,
-         BitSetCommand, BitResetCommand
+    case modeA = 0, clockSelectA, commandA, transmitBufferA, auxilaryControl, interruptMask, counterTimerUpper,
+         counterTimerLower, modeB, clockSelectB, commandB, transmitBufferB, interruptVector, outputPortConfiguration,
+         bitSetCommand, bitResetCommand
 }
 
 enum DUARTSerialChannel {
-    case SerialChannelA
-    case SerialChannelB
+    case serialChannelA
+    case serialChannelB
 }
 
 struct DUARTStatusRegister {
@@ -61,7 +61,7 @@ struct DUARTStatusRegister {
                 receiverReady.asUint8()
     }
 
-    mutating func setByte(value: UInt8) {
+    mutating func setByte(_ value: UInt8) {
         receivedBreak = ((value & 0b10000000) >> 7) > 0
         framingError = ((value & 0b01000000) >> 6) > 0
         parityError = ((value & 0b00100000) >> 5) > 0
@@ -76,7 +76,7 @@ struct DUARTStatusRegister {
 class DUART: IODevice {
 
     var assertInterrupt:   ((Void) -> (Void))?
-    var serialChannelSend: ((value:UInt8, channel:DUARTSerialChannel) -> (Void))?
+    var serialChannelSend: ((UInt8, DUARTSerialChannel) -> (Void))?
 
     var receiveBufferA = [UInt8]()
     var receiveBufferB = [UInt8]()
@@ -93,7 +93,7 @@ class DUART: IODevice {
     }
 
     // MARK - Callbacks
-    func attachInterruptHandler(handler: (Void) -> (Void)) {
+    func attachInterruptHandler(_ handler: (Void) -> (Void)) {
         assertInterrupt = handler
     }
 
@@ -103,33 +103,33 @@ class DUART: IODevice {
 
     // MARK - Register read/write
 
-    func readMemory(address: UInt8) -> UInt8 {
-        if address == DUARTReadRegisters.ReceiveBufferA.rawValue || address == DUARTReadRegisters.ReceiveBufferB.rawValue {
-            let channel = address == DUARTReadRegisters.ReceiveBufferA.rawValue ? DUARTSerialChannel.SerialChannelA : DUARTSerialChannel.SerialChannelB
+    func readMemory(_ address: UInt8) -> UInt8 {
+        if address == DUARTReadRegisters.receiveBufferA.rawValue || address == DUARTReadRegisters.receiveBufferB.rawValue {
+            let channel = address == DUARTReadRegisters.receiveBufferA.rawValue ? DUARTSerialChannel.serialChannelA : DUARTSerialChannel.serialChannelB
 
         }
 
         return 0
     }
 
-    func writeMemory(address: UInt8, value: UInt8) {
+    func writeMemory(_ address: UInt8, value: UInt8) {
         if address == 0x3 {
-            serialChannelTransmit(value, channel:DUARTSerialChannel.SerialChannelA)
+            serialChannelTransmit(value, channel:DUARTSerialChannel.serialChannelA)
         }
     }
 
     // MARK - Serial Communications
 
-    func serialChannelReceive(value: UInt8, channel: DUARTSerialChannel) {
+    func serialChannelReceive(_ value: UInt8, channel: DUARTSerialChannel) {
         var receiveBuffer:  [UInt8]
         var statusRegister: DUARTStatusRegister
 
         switch channel {
-        case .SerialChannelA:
+        case .serialChannelA:
             receiveBuffer = receiveBufferA
             statusRegister = statusRegisterA
             break
-        case .SerialChannelB:
+        case .serialChannelB:
             receiveBuffer = receiveBufferB
             statusRegister = statusRegisterB
             break
@@ -150,9 +150,9 @@ class DUART: IODevice {
         }
     }
 
-    func serialChannelTransmit(value: UInt8, channel: DUARTSerialChannel) {
+    func serialChannelTransmit(_ value: UInt8, channel: DUARTSerialChannel) {
         if let cb = self.serialChannelSend {
-            cb(value: value, channel: channel)
+            cb(value, channel)
         }
 
     }

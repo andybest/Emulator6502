@@ -21,19 +21,19 @@ class SerialEmulatorWindowController: NSWindowController, NSTextViewDelegate, NS
     func initSerialTextView() {
         serialTextView.delegate = self
         serialTextView.font = NSFont(name: "Menlo", size: 12.0)
-        serialTextView.backgroundColor = NSColor.blackColor()
-        serialTextView.textColor = NSColor.greenColor()
-        serialTextView.insertionPointColor = NSColor.whiteColor()
+        serialTextView.backgroundColor = NSColor.black
+        serialTextView.textColor = NSColor.green
+        serialTextView.insertionPointColor = NSColor.white
     }
 
-    func processSerialData(value: UInt8) {
-        if let str = NSString(bytes: [value], length: 1, encoding: NSUTF8StringEncoding) {
+    func processSerialData(_ value: UInt8) {
+        if let str = NSString(bytes: [value], length: 1, encoding: String.Encoding.utf8.rawValue) {
             serialTextView.string! += str as String
         }
     }
 
     // MARK - NSTextViewDelegate
-    func textView(textView: NSTextView,
+    func textView(_ textView: NSTextView,
                   willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange,
                   toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
         print(oldSelectedCharRange, newSelectedCharRange)
@@ -43,7 +43,7 @@ class SerialEmulatorWindowController: NSWindowController, NSTextViewDelegate, NS
         return newSelectedCharRange
     }
 
-    func textView(textView: NSTextView, shouldChangeTextInRange affectedCharRange: NSRange, replacementString: String?) -> Bool {
+    func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
         if affectedCharRange.location != textView.string!.characters.count {
             return false
         }

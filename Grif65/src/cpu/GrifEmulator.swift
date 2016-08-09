@@ -9,15 +9,15 @@
 import Foundation
 
 protocol IODevice {
-    func writeMemory(address: UInt8, value: UInt8)
+    func writeMemory(_ address: UInt8, value: UInt8)
 
-    func readMemory(address: UInt8) -> UInt8
+    func readMemory(_ address: UInt8) -> UInt8
 
-    func attachInterruptHandler(handler: (Void) -> (Void))
+    func attachInterruptHandler(_ handler: (Void) -> (Void))
 }
 
 protocol GrifEmulatorDelegate {
-    func emulatorDidSendSerial(value: UInt8)
+    func emulatorDidSendSerial(_ value: UInt8)
 }
 
 class GrifEmulator {
@@ -30,7 +30,7 @@ class GrifEmulator {
     var duart: DUART
 
     init() {
-        ram = [UInt8](count: 0x10000 + 1, repeatedValue: 0)
+        ram = [UInt8](repeating: 0, count: 0x10000 + 1)
         ioDevices = [IODevice]()
 
         duart = DUART()
@@ -40,10 +40,10 @@ class GrifEmulator {
         cpu.readMemoryCallback = readMemory
         cpu.writeMemoryCallback = writeMemory
 
-        duart.attachSerialChannelSendCallback(serialChannelDidSend)
+        duart.attachSerialChannelSendCallback(callback: serialChannelDidSend)
     }
 
-    func readMemory(address: UInt16) -> UInt8 {
+    func readMemory(_ address: UInt16) -> UInt8 {
         if (address >= 0x200 && address < 0x300) {
             return readPeripheral(UInt8(address & 0x00FF))
         } else {
@@ -51,7 +51,7 @@ class GrifEmulator {
         }
     }
 
-    func writeMemory(address: UInt16, value: UInt8) {
+    func writeMemory(_ address: UInt16, value: UInt8) {
         if (address >= 0x200 && address < 0x300) {
             writePeripheral(UInt8(address & 0x00FF), value: value)
         } else {
@@ -59,7 +59,7 @@ class GrifEmulator {
         }
     }
 
-    func ioDeviceForAddress(address: UInt8) -> IODevice? {
+    func ioDeviceForAddress(_ address: UInt8) -> IODevice? {
         let deviceNum = Int((address & 0xF) >> 4)
 
         if ioDevices.count > deviceNum {
@@ -69,7 +69,7 @@ class GrifEmulator {
         return nil
     }
 
-    func readPeripheral(address: UInt8) -> UInt8 {
+    func readPeripheral(_ address: UInt8) -> UInt8 {
         guard let dev = ioDeviceForAddress(address) else {
             return 0
         }
@@ -77,7 +77,7 @@ class GrifEmulator {
         return dev.readMemory(address)
     }
 
-    func writePeripheral(address: UInt8, value: UInt8) {
+    func writePeripheral(_ address: UInt8, value: UInt8) {
         guard let dev = ioDeviceForAddress(address) else {
             return
         }
@@ -85,7 +85,7 @@ class GrifEmulator {
         dev.writeMemory(address, value: value)
     }
 
-    func serialChannelDidSend(value: UInt8, channel: DUARTSerialChannel) {
+    func serialChannelDidSend(_ value: UInt8, channel: DUARTSerialChannel) {
         if self.delegate != nil {
             self.delegate!.emulatorDidSendSerial(value)
         }

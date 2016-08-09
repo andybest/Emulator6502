@@ -6,67 +6,67 @@
 import Foundation
 
 enum RegisterDef {
-    case ARegister
-    case XRegister
-    case YRegister
+    case aRegister
+    case xRegister
+    case yRegister
 
-    case StatusRegister
-    case StackRegister
-    case PCRegister
+    case statusRegister
+    case stackRegister
+    case pcRegister
 }
 
 enum AddressingMode {
-    case Accumulator
-    case Implicit
-    case Immediate(UInt8)
-    case ZeroPage(UInt8)
-    case ZeroPageX(UInt8)
-    case ZeroPageY(UInt8)
-    case Relative(UInt8)
-    case Absolute(UInt16)
-    case AbsoluteX(UInt16)
-    case AbsoluteY(UInt16)
-    case Indirect(UInt16)
-    case IndirectX(UInt16)
-    case IndirectY(UInt16)
+    case accumulator
+    case implicit
+    case immediate(UInt8)
+    case zeroPage(UInt8)
+    case zeroPageX(UInt8)
+    case zeroPageY(UInt8)
+    case relative(UInt8)
+    case absolute(UInt16)
+    case absoluteX(UInt16)
+    case absoluteY(UInt16)
+    case indirect(UInt16)
+    case indirectX(UInt16)
+    case indirectY(UInt16)
 
     func assemblyString() -> String {
         switch self {
-        case Accumulator:
+        case accumulator:
             return "A"
-        case Implicit:
+        case implicit:
             return ""
-        case Immediate(let val):
+        case immediate(let val):
             let str = String(format: "%02X", val)
             return "#$\(str)"
-        case ZeroPage(let val):
+        case zeroPage(let val):
             let str = String(format: "%02X", val)
             return "$\(str)"
-        case ZeroPageX(let val):
+        case zeroPageX(let val):
             let str = String(format: "%02X", val)
             return "$\(str),X"
-        case ZeroPageY(let val):
+        case zeroPageY(let val):
             let str = String(format: "%02X", val)
             return "$\(str),Y"
-        case Relative(let val):
+        case relative(let val):
             let str = String(format: "%02X", val)
             return "|$\(str)"
-        case Absolute(let val):
+        case absolute(let val):
             let str = String(format: "%04X", val)
             return "$\(str)"
-        case AbsoluteX(let val):
+        case absoluteX(let val):
             let str = String(format: "%04X", val)
             return "$\(str),X"
-        case AbsoluteY(let val):
+        case absoluteY(let val):
             let str = String(format: "%04X", val)
             return "$\(str),Y"
-        case Indirect(let val):
+        case indirect(let val):
             let str = String(format: "%04X", val)
             return "($\(str))"
-        case IndirectX(let val):
+        case indirectX(let val):
             let str = String(format: "%04X", val)
             return "($\(str)),X"
-        case IndirectY(let val):
+        case indirectY(let val):
             let str = String(format: "%04X", val)
             return "($\(str)),Y"
 
@@ -75,19 +75,19 @@ enum AddressingMode {
 }
 
 enum AddressingModeRef {
-    case Implicit
-    case Accumulator
-    case Immediate
-    case ZeroPage
-    case ZeroPageX
-    case ZeroPageY
-    case Relative
-    case Absolute
-    case AbsoluteX
-    case AbsoluteY
-    case Indirect
-    case IndirectX
-    case IndirectY
+    case implicit
+    case accumulator
+    case immediate
+    case zeroPage
+    case zeroPageX
+    case zeroPageY
+    case relative
+    case absolute
+    case absoluteX
+    case absoluteY
+    case indirect
+    case indirectX
+    case indirectY
 }
 
 struct InstructionEntry {
@@ -117,7 +117,7 @@ struct IntelHexRecord {
 
 class CPU6502 {
     var registers: Registers
-    var memory           = [UInt8](count: 0xFFFF, repeatedValue: 0x00)
+    var memory           = [UInt8](repeating: 0x00, count: 0xFFFF)
     var instructionTable = [InstructionEntry]()
 
     var readMemoryCallback:  ((UInt16) -> (UInt8))?
@@ -141,7 +141,7 @@ class CPU6502 {
         print("\(registers.stateString())")
     }
 
-    func setMem(address: UInt16, value: UInt8) {
+    func setMem(_ address: UInt16, value: UInt8) {
         guard let cb = self.writeMemoryCallback else {
             print("Error, need to set write memory callback!")
             return
@@ -150,7 +150,7 @@ class CPU6502 {
         cb(address, value)
     }
 
-    func getMem(address: UInt16) -> UInt8 {
+    func getMem(_ address: UInt16) -> UInt8 {
         guard let cb = self.readMemoryCallback else {
             print("Error, neet to set read memory callback!")
             return 0
@@ -159,25 +159,25 @@ class CPU6502 {
         return cb(address)
     }
 
-    func setMemFromHexString(str: String, address: UInt16) {
+    func setMemFromHexString(_ str: String, address: UInt16) {
         let data = str.uint8ArrayFromHexadecimalString()
 
         var currentAddress = address
         for byte in data {
             setMem(currentAddress, value: byte)
-            currentAddress++
+            currentAddress += 1
         }
     }
 
-    func loadHexFileToMemory(path: String) {
+    func loadHexFileToMemory(_ path: String) {
         do {
-            var file  = try String(contentsOfFile: path, encoding: NSASCIIStringEncoding)
-            let lines = file.stringByReplacingOccurrencesOfString("\r", withString: "").componentsSeparatedByString("\n")
+            let file  = try String(contentsOfFile: path, encoding: String.Encoding.ascii)
+            let lines = file.replacingOccurrences(of: "\r", with: "").components(separatedBy: "\n")
 
             var records = [IntelHexRecord]()
 
             for line in lines {
-                let strippedLine = line.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                let strippedLine = line.trimmingCharacters(in: CharacterSet.whitespaces)
 
                 if strippedLine.characters.count == 0 {
                     continue
@@ -188,7 +188,7 @@ class CPU6502 {
                     return
                 }
 
-                let lineHex = (line as NSString).substringFromIndex(1).uint8ArrayFromHexadecimalString()
+                let lineHex = (line as NSString).substring(from: 1).uint8ArrayFromHexadecimalString()
 
                 let byteCount  = lineHex[0]
                 let address    = (UInt16(lineHex[1]) << 8) | UInt16(lineHex[2])
@@ -213,7 +213,7 @@ class CPU6502 {
         }
     }
 
-    func loadRecordsToMemory(records: [IntelHexRecord]) {
+    func loadRecordsToMemory(_ records: [IntelHexRecord]) {
         for record in records {
             // Check if it is a data record.
             if record.recordType != 0x00 {
@@ -229,7 +229,7 @@ class CPU6502 {
         }
     }
 
-    func getZero(address: UInt8) -> UInt8 {
+    func getZero(_ address: UInt8) -> UInt8 {
         return getMem(UInt16(address))
     }
 
@@ -237,7 +237,7 @@ class CPU6502 {
         return registers.pc
     }
 
-    func setProgramCounter(value: UInt16) {
+    func setProgramCounter(_ value: UInt16) {
         registers.pc = value
     }
 
@@ -245,12 +245,12 @@ class CPU6502 {
         return registers.s
     }
 
-    func push8(value: UInt8) {
+    func push8(_ value: UInt8) {
         setMem(UInt16(registers.s) + 0x0100, value: value)
         registers.s = registers.s &- 1
     }
 
-    func push16(value: UInt16) {
+    func push16(_ value: UInt16) {
         push8(UInt8((value >> 8) & 0xFF))
         push8(UInt8(value & 0xFF))
     }
@@ -264,7 +264,7 @@ class CPU6502 {
         return UInt16(pop8()) | (UInt16(pop8()) << 8)
     }
 
-    func runCycles(numCycles: Int) -> Int {
+    func runCycles(_ numCycles: Int) -> Int {
         var cycles = 0
         while cycles < numCycles {
             let opcode = getMem(getProgramCounter())
@@ -274,38 +274,38 @@ class CPU6502 {
         return cycles
     }
 
-    func getModeForCurrentOpcode(mode: AddressingModeRef) -> AddressingMode {
+    func getModeForCurrentOpcode(_ mode: AddressingModeRef) -> AddressingMode {
         switch (mode) {
-        case .Implicit:
-            return AddressingMode.Implicit
-        case .Accumulator:
-            return AddressingMode.Accumulator
-        case .Immediate:
-            return AddressingMode.Immediate(getMem(getProgramCounter() + 1))
-        case .ZeroPage:
-            return AddressingMode.ZeroPage(getMem(getProgramCounter() + 1))
-        case .ZeroPageX:
-            return AddressingMode.ZeroPageX(getMem(getProgramCounter() + 1))
-        case .ZeroPageY:
-            return AddressingMode.ZeroPageY(getMem(getProgramCounter() + 1))
-        case .Relative:
-            return AddressingMode.Relative(getMem(getProgramCounter() + 1))
-        case .Absolute:
-            return AddressingMode.Absolute(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
-        case .AbsoluteX:
-            return AddressingMode.AbsoluteX(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
-        case .AbsoluteY:
-            return AddressingMode.AbsoluteY(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
-        case .Indirect:
-            return AddressingMode.Indirect(UInt16(getMem(getProgramCounter() + 1)))
-        case .IndirectX:
-            return AddressingMode.IndirectX(UInt16(getMem(getProgramCounter() + 1)))
-        case .IndirectY:
-            return AddressingMode.IndirectY(UInt16(getMem(getProgramCounter() + 1)))
+        case .implicit:
+            return AddressingMode.implicit
+        case .accumulator:
+            return AddressingMode.accumulator
+        case .immediate:
+            return AddressingMode.immediate(getMem(getProgramCounter() + 1))
+        case .zeroPage:
+            return AddressingMode.zeroPage(getMem(getProgramCounter() + 1))
+        case .zeroPageX:
+            return AddressingMode.zeroPageX(getMem(getProgramCounter() + 1))
+        case .zeroPageY:
+            return AddressingMode.zeroPageY(getMem(getProgramCounter() + 1))
+        case .relative:
+            return AddressingMode.relative(getMem(getProgramCounter() + 1))
+        case .absolute:
+            return AddressingMode.absolute(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
+        case .absoluteX:
+            return AddressingMode.absoluteX(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
+        case .absoluteY:
+            return AddressingMode.absoluteY(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
+        case .indirect:
+            return AddressingMode.indirect(UInt16(getMem(getProgramCounter() + 1)))
+        case .indirectX:
+            return AddressingMode.indirectX(UInt16(getMem(getProgramCounter() + 1)))
+        case .indirectY:
+            return AddressingMode.indirectY(UInt16(getMem(getProgramCounter() + 1)))
         }
     }
 
-    func executeOpcode(opcode: UInt8) -> Int {
+    func executeOpcode(_ opcode: UInt8) -> Int {
         let instruction    = instructionTable[Int(opcode)]
         let addressingMode = getModeForCurrentOpcode(instruction.addressingMode)
         let addr           = String(format: "0x%2X", getProgramCounter())

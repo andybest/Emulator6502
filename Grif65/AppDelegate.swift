@@ -17,7 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         let isRunningTests = NSClassFromString("XCTestCase") != nil
         
         if isRunningTests {
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.emulatorController = GrifEmulatorController()
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
+    func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
 
