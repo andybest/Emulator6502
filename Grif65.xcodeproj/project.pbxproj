@@ -10,6 +10,7 @@
 		0379A274D1C2BD86E60EB656 /* Pods_Grif65Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */; };
 		A5180EBF1CAD8D0E00DD3BF5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
 		A5180EC11CAD8D2900DD3BF5 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
+		A5259C6C1D5A1F0000331D6B /* GrifConsoleTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */; };
 		A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */; };
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
 		A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.release.xcconfig"; sourceTree = "<group>"; };
+		A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifConsoleTextView.swift; sourceTree = "<group>"; };
 		A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifEmulator.swift; sourceTree = "<group>"; };
 		A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerialEmulatorWindowController.swift; path = viewControllers/SerialEmulatorWindowController.swift; sourceTree = "<group>"; };
 		A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SerialEmulatorWindow.xib; path = viewControllers/SerialEmulatorWindow.xib; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		A582BE741C99D57D00F38B04 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */,
 				C8BB4265DCFCC7BB087C7267 /* DUART.swift in Sources */,
 				C8BB46716975B62113EE8B53 /* GrifEmulatorController.swift in Sources */,
+				A5259C6C1D5A1F0000331D6B /* GrifConsoleTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

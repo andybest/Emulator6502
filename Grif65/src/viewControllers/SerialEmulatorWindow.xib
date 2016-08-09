@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11185.3" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11185.3"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="SerialEmulatorWindowController" customModule="Grif65" customModuleProvider="target">
             <connections>
-                <outlet property="serialTextView" destination="O2F-Ss-f4h" id="HZA-kJ-BhW"/>
+                <outlet property="serialTextView" destination="Loo-vL-8nP" id="JtA-kb-xMn"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -21,40 +21,15 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zqB-V1-WWi">
-                        <rect key="frame" x="-1" y="-1" width="482" height="272"/>
-                        <clipView key="contentView" id="Zqt-4r-PoC">
-                            <rect key="frame" x="1" y="1" width="465" height="270"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="O2F-Ss-f4h">
-                                    <rect key="frame" x="0.0" y="0.0" width="465" height="270"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <size key="minSize" width="465" height="270"/>
-                                    <size key="maxSize" width="474" height="10000000"/>
-                                    <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <size key="minSize" width="465" height="270"/>
-                                    <size key="maxSize" width="474" height="10000000"/>
-                                </textView>
-                            </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="dDF-ko-ds1">
-                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="e0Y-x9-XQr">
-                            <rect key="frame" x="466" y="1" width="15" height="270"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                    </scrollView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Loo-vL-8nP" customClass="GrifConsoleTextView" customModule="Grif65" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                    </customView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="zqB-V1-WWi" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="-1" id="5FT-Ug-lEZ"/>
-                    <constraint firstAttribute="bottom" secondItem="zqB-V1-WWi" secondAttribute="bottom" constant="-1" id="RX3-Lt-zw6"/>
-                    <constraint firstAttribute="trailing" secondItem="zqB-V1-WWi" secondAttribute="trailing" constant="-1" id="Sg2-3g-agi"/>
-                    <constraint firstItem="zqB-V1-WWi" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="-1" id="mHf-Bc-Gvp"/>
+                    <constraint firstItem="Loo-vL-8nP" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="2jL-aX-KL2"/>
+                    <constraint firstItem="Loo-vL-8nP" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="3ye-v0-96P"/>
+                    <constraint firstAttribute="bottom" secondItem="Loo-vL-8nP" secondAttribute="bottom" id="Ssy-gN-uVz"/>
+                    <constraint firstAttribute="trailing" secondItem="Loo-vL-8nP" secondAttribute="trailing" id="qiM-bB-Re7"/>
                 </constraints>
             </view>
             <connections>
