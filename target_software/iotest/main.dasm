@@ -1,31 +1,20 @@
+  ; vim: setlocal ft=asmM6502:
+  
   processor 6502
   org $300
   
   jmp init
 
   include "uart.dasm"
+  include "monitor.dasm"
 
 init:  
   ldx     #$FF                 ; Initialize stack pointer to $01FF
   txs
   cld                          ; Clear decimal mode
-
-  uarta_puts helloText
-  uarta_puts testText
   
-check_char:
-  uarta_bytes_available
-  bne no_char               ; No character available
-  
-  uarta_getb
-  uarta_putb
-no_char:
-  jmp check_char
-  
+  jsr start_monitor
 
 done:
   jmp done
-        
-helloText:  .byte "Hello, world", $0A, $0
-testText:   .byte "This is a test of the Grif65 computer.", $0A, $0
 

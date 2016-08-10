@@ -1,3 +1,5 @@
+  ; vim: setlocal ft=asmM6502:
+  
   processor 6502
 
 ; UART Register locations

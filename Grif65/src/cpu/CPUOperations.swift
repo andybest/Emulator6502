@@ -270,7 +270,8 @@ extension CPU6502 {
     func opCMP(_ mode: AddressingMode) -> InstructionResponse {
         let value  = valueForAddressingMode(mode)
         let value8 = UInt8(value & 0xFF)
-        let result = UInt16(registers.a) - UInt16(value)
+        let result = UInt8.subtractWithOverflow(registers.a, value)
+        //let result = UInt16(registers.a) - UInt16(value)
 
         if registers.a >= value8 {
             registers.setCarryFlag(true)
@@ -284,7 +285,7 @@ extension CPU6502 {
             registers.setZeroFlag(false)
         }
 
-        registers.setSignFlag(calculateSign(result))
+        registers.setSignFlag(calculateSign(UInt16(result.0)))
         return defaultResponse()
     }
 
