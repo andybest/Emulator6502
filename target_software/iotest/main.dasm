@@ -5,6 +5,7 @@
   
   jmp init
 
+  include "utils.dasm"
   include "uart.dasm"
   include "monitor.dasm"
 

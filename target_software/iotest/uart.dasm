@@ -19,18 +19,20 @@ DUART_STATUS_A  equ DUART_BASE + 1
 
 uarta_puts_impl subroutine
   ldy #0
-.uarta_puts_loop:
+.uarta_puts_loop
   lda ($0),y
   beq .uarta_puts_done
   sta DUART_TX_A
   iny
   jmp .uarta_puts_loop
-.uarta_puts_done:
+.uarta_puts_done
   rts
+
   
   mac uarta_putb
     sta DUART_TX_A
   endm
+
   
   mac uarta_getb
     lda DUART_RX_A
