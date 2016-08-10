@@ -1,0 +1,46 @@
+  processor 6502
+
+  mac strlen
+    lda #<[{1}]     ; Store the address of the string at $0000
+    sta $0
+    lda #>[{1}]
+    sta $1
+    jsr strlen_impl
+  endm
+
+strlen_impl subroutine  ; Stores length of string in acc
+  ldy #0
+.strlen_loop
+  lda ($0),y
+  beq .strlen_done
+  iny
+  jmp .strlen_loop
+.strlen_done
+  tya
+  rts
+  
+
+nibble_to_hex subroutine
+  cmp #$A
+  bcs .gt_9
+  adc #$30  ; 0-9, so offset to 0
+  rts
+  
+.gt_9      ; Greater than 9, so we need to offset to A - 10
+  adc #$36
+  rts
+  
+num_to_hex_string subroutine  ; Convert num in acc to hex. Stores in $00-$01
+  pha
+  and #$F0
+  lsr
+  lsr
+  lsr
+  lsr
+  jsr nibble_to_hex
+  sta $00
+  pla
+  and #$0F
+  jsr nibble_to_hex
+  sta $01
+  rts
