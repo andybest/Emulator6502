@@ -32,41 +32,41 @@ enum AddressingMode {
 
     func assemblyString() -> String {
         switch self {
-        case accumulator:
+        case .accumulator:
             return "A"
-        case implicit:
+        case .implicit:
             return ""
-        case immediate(let val):
+        case .immediate(let val):
             let str = String(format: "%02X", val)
             return "#$\(str)"
-        case zeroPage(let val):
+        case .zeroPage(let val):
             let str = String(format: "%02X", val)
             return "$\(str)"
-        case zeroPageX(let val):
+        case .zeroPageX(let val):
             let str = String(format: "%02X", val)
             return "$\(str),X"
-        case zeroPageY(let val):
+        case .zeroPageY(let val):
             let str = String(format: "%02X", val)
             return "$\(str),Y"
-        case relative(let val):
+        case .relative(let val):
             let str = String(format: "%02X", val)
             return "|$\(str)"
-        case absolute(let val):
+        case .absolute(let val):
             let str = String(format: "%04X", val)
             return "$\(str)"
-        case absoluteX(let val):
+        case .absoluteX(let val):
             let str = String(format: "%04X", val)
             return "$\(str),X"
-        case absoluteY(let val):
+        case .absoluteY(let val):
             let str = String(format: "%04X", val)
             return "$\(str),Y"
-        case indirect(let val):
+        case .indirect(let val):
             let str = String(format: "%04X", val)
             return "($\(str))"
-        case indirectX(let val):
+        case .indirectX(let val):
             let str = String(format: "%04X", val)
             return "($\(str)),X"
-        case indirectY(let val):
+        case .indirectY(let val):
             let str = String(format: "%04X", val)
             return "($\(str)),Y"
 
@@ -311,14 +311,14 @@ class CPU6502 {
         let addr           = String(format: "0x%2X", getProgramCounter())
 
         setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
-        let response = instruction.instructionFunction(addressingMode)
+        _ = instruction.instructionFunction(addressingMode)
 
         /*if !response.handlesPC {
             setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         }*/
 
-        print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
-        printCPUState()
+        //print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
+        //printCPUState()
         return instruction.numCycles
     }
 

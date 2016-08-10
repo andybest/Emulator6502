@@ -8,14 +8,20 @@
 
 import Cocoa
 
-class SerialEmulatorWindowController: NSWindowController, NSTextViewDelegate, NSTextDelegate {
+protocol SerialEmulatorDelegate {
+    func consoleDidSendSerial(_ value: UInt8)
+}
+
+class SerialEmulatorWindowController: NSWindowController, NSTextViewDelegate, NSTextDelegate, GrifConsoleDelegate {
 
     @IBOutlet var serialTextView: GrifConsoleTextView!
-
+    var delegate: SerialEmulatorDelegate?
+    
     override func windowDidLoad() {
         super.windowDidLoad()
 
         initSerialTextView()
+        serialTextView.delegate = self
     }
 
     func initSerialTextView() {
@@ -23,31 +29,13 @@ class SerialEmulatorWindowController: NSWindowController, NSTextViewDelegate, NS
     }
 
     func processSerialData(_ value: UInt8) {
-        if let str = NSString(bytes: [value], length: 1, encoding: String.Encoding.utf8.rawValue) {
-            //serialTextView.string! += str as String
+        serialTextView.processSerialData(data: value)
+    }
+    
+    // GrifConsoleDelegate
+    func consoleDidSendSerial(_ value: UInt8) {
+        if self.delegate != nil {
+            self.delegate!.consoleDidSendSerial(value)
         }
     }
-
-//    // MARK - NSTextViewDelegate
-//    func textView(_ textView: NSTextView,
-//                  willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange,
-//                  toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
-//        print(oldSelectedCharRange, newSelectedCharRange)
-//        if newSelectedCharRange.length > 0 || newSelectedCharRange.location < textView.string!.characters.count {
-//            return oldSelectedCharRange
-//        }
-//        return newSelectedCharRange
-//    }
-
-//    func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
-////        if affectedCharRange.location != textView.string!.characters.count {
-////            return false
-////        }
-////
-////        return true
-//        return false
-//    }
-    
-
-
 }

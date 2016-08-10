@@ -12,6 +12,16 @@ init:
 
   uarta_puts helloText
   uarta_puts testText
+  
+check_char:
+  uarta_bytes_available
+  bne no_char               ; No character available
+  
+  uarta_getb
+  uarta_putb
+no_char:
+  jmp check_char
+  
 
 done:
   jmp done

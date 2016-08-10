@@ -104,9 +104,22 @@ class DUART: IODevice {
     // MARK - Register read/write
 
     func readMemory(_ address: UInt8) -> UInt8 {
+        
+        // Status register
+        if address == DUARTReadRegisters.statusA.rawValue || address == DUARTReadRegisters.statusB.rawValue {
+            let channel = address == DUARTReadRegisters.statusA.rawValue ? DUARTSerialChannel.serialChannelA : DUARTSerialChannel.serialChannelB
+            switch(channel) {
+            case .serialChannelA:
+                return statusRegisterA.getByte()
+            case .serialChannelB:
+                return statusRegisterB.getByte()
+            }
+        }
+        
+        // Receive buffer
         if address == DUARTReadRegisters.receiveBufferA.rawValue || address == DUARTReadRegisters.receiveBufferB.rawValue {
             let channel = address == DUARTReadRegisters.receiveBufferA.rawValue ? DUARTSerialChannel.serialChannelA : DUARTSerialChannel.serialChannelB
-
+            return self.readByte(channel)
         }
 
         return 0
@@ -117,36 +130,71 @@ class DUART: IODevice {
             serialChannelTransmit(value, channel:DUARTSerialChannel.serialChannelA)
         }
     }
+    
+    func readByte(_ channel: DUARTSerialChannel) -> UInt8 {
+        
+        switch channel {
+        case .serialChannelA:
+            if receiveBufferA.count == 0 {
+                return 0
+            }
+            
+            if receiveBufferA.count == 1 {
+                statusRegisterA.receiverReady = false
+            }
+            
+            return receiveBufferA.removeFirst()
+            
+        case .serialChannelB:
+            if receiveBufferB.count == 0 {
+                return 0
+            }
+            
+            if receiveBufferB.count == 1 {
+                statusRegisterB.receiverReady = false
+            }
+            
+            return receiveBufferB.removeFirst()
+        }
+    }
 
     // MARK - Serial Communications
 
     func serialChannelReceive(_ value: UInt8, channel: DUARTSerialChannel) {
-        var receiveBuffer:  [UInt8]
-        var statusRegister: DUARTStatusRegister
-
         switch channel {
         case .serialChannelA:
-            receiveBuffer = receiveBufferA
-            statusRegister = statusRegisterA
-            break
+            // The 68681 has a 3 byte FIFO for each channel and can hold an extra byte in the input shift register.
+            // If the input shift register already holds a byte, the next one will overwrite it and cause the
+            // overrun-error status bit to be set for that channel.
+            
+            statusRegisterA.receiverReady = true
+            
+            if receiveBufferA.count > 3 {
+                // Set overrun flag
+                statusRegisterA.overrunError = true
+                
+                // Emulate the shift register value being overwritten
+                receiveBufferA[3] = value
+            } else {
+                receiveBufferA.append(value)
+            }
+            
         case .serialChannelB:
-            receiveBuffer = receiveBufferB
-            statusRegister = statusRegisterB
-            break
-        }
-
-        // The 68681 has a 3 byte FIFO for each channel and can hold an extra byte in the input shift register.
-        // If the input shift register already holds a byte, the next one will overwrite it and cause the
-        // overrun-error status bit to be set for that channel.
-
-        if receiveBuffer.count > 3 {
-            // Set overrun flag
-            statusRegister.overrunError = true
-
-            // Emulate the shift register value being overwritten
-            receiveBuffer[3] = value
-        } else {
-            receiveBuffer.append(value)
+            // The 68681 has a 3 byte FIFO for each channel and can hold an extra byte in the input shift register.
+            // If the input shift register already holds a byte, the next one will overwrite it and cause the
+            // overrun-error status bit to be set for that channel.
+            
+            statusRegisterB.receiverReady = true
+            
+            if receiveBufferB.count > 3 {
+                // Set overrun flag
+                statusRegisterB.overrunError = true
+                
+                // Emulate the shift register value being overwritten
+                receiveBufferB[3] = value
+            } else {
+                receiveBufferB.append(value)
+            }
         }
     }
 

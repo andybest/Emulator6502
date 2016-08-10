@@ -22,7 +22,7 @@ extension String {
         var index = trimmedString.startIndex
         
         while index < trimmedString.endIndex {
-            let byteString = trimmedString.substring(with: index..<trimmedString.index(after: index))
+            let byteString = trimmedString.substring(with: index..<trimmedString.index(index, offsetBy: 2))
             let num = UInt8(byteString.withCString {
                 strtoul($0, nil, 16)
                 })
