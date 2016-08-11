@@ -16,6 +16,14 @@ DUART_STATUS_A  equ DUART_BASE + 1
     sta $1
     jsr uarta_puts_impl
   endm
+  
+  mac uarta_puts_indir
+    lda {1}         ; Store the pointer to the string at $0000
+    sta $0
+    lda {1}+1
+    sta $1
+    jsr uarta_puts_impl
+  endm
 
 uarta_puts_impl subroutine
   ldy #0
@@ -27,22 +35,7 @@ uarta_puts_impl subroutine
   jmp .uarta_puts_loop
 .uarta_puts_done
   rts
-
-  mac uarta_puts_indir
-    lda {1}     ; Store the pointer to the string at $0000
-    sta $0
-    lda {1}+1
-    sta $1
   
-    ldy #0
-.uarta_puts_loop
-    lda ($0),y
-    beq .uarta_puts_done
-    sta DUART_TX_A
-    iny
-    jmp .uarta_puts_loop
-.uarta_puts_done
-  endm
   
   mac uarta_putb
     sta DUART_TX_A

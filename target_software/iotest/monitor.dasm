@@ -69,15 +69,6 @@ token1_ptr  DS.W 1
 token2_ptr  DS.W 1
 token3_ptr  DS.W 1
 
-  mac tokenize
-    lda #<[{1}]     ; Store the address of the string at $0000
-    sta $0
-    lda #>[{1}]
-    sta $1
-  
-    jsr tokenize_impl
-  endm
-  
   mac tokenize_slurp_spaces
 .tokenize_slurp_spaces_loop
       lda ($0),y
@@ -87,6 +78,15 @@ token3_ptr  DS.W 1
       jmp .tokenize_slurp_spaces_loop
 .tokenize_slurp_spaces_end
   endm
+
+  mac tokenize
+    lda #<[{1}]     ; Store the address of the string at $0000
+    sta $0
+    lda #>[{1}]
+    sta $1
+  
+    jsr tokenize_impl
+  endm
   
 tokenize_impl subroutine
   ldy #$0
@@ -94,20 +94,6 @@ tokenize_impl subroutine
 
   ; Ignore leading spaces
   tokenize_slurp_spaces
-  
-  ; Skip the initial token, since we have its pointer stored already
-; .initial_token_loop
-;   lda ($0),y
-;   beq .tokenize_done      ; End of the string- only one token
-;   cmp #$20
-;   beq .end_first_token
-;   iny
-;   jmp .initial_token_loop
-  
-; .end_first_token
-;   lda #$0
-;   sta ($0),y      ; Convert the space to a null terminator
-;   iny
   
 .read_loop
   cpx #$6
@@ -159,25 +145,19 @@ tokenize_impl subroutine
 ;;; Modifies A, Y, X and zp $00-06
 ;;; ---------------------------------------------------------------------------
 
+MON_CURR_ADDR   ds.w 1           ; Current address that monitor is looking at
+
 monitor_parse_command subroutine
   tokenize MONITOR_STR_BASE
   sta $7                        ; Store number of tokens
   
-  uarta_puts_indir token1_ptr
-  lda #$0A
-  uarta_putb
-  uarta_puts_indir token2_ptr
-  lda #$0A
-  uarta_putb
-  uarta_puts_indir token3_ptr
-  lda #$0A
-  uarta_putb
-  
-  strlen MONITOR_STR_BASE
+  strlen_indir token1_ptr
   
   cmp #$0                       ; No command
-  beq .parse_done
+  bne .check_length
+  rts
   
+.check_length
   cmp #$1                       ; Command is single character
   beq .single_letter_command
   jmp .print_unknown
@@ -185,8 +165,11 @@ monitor_parse_command subroutine
 .single_letter_command
   lda MONITOR_STR_BASE
   
-  cmp #$3F
+  cmp #$3F              ; ?
   beq .print_help
+  cmp #$61              ; a
+  beq .set_address
+  
   jmp .print_unknown
   
 .print_unknown
@@ -204,6 +187,51 @@ monitor_parse_command subroutine
   uarta_puts monitorHelpText
   jmp .parse_done
   
+.set_address
+  lda $7                      ; Load num tokens
+  cmp #$2                      ; Expect 2 args
+  bne .print_num_args_error
+  
+  strlen_indir token2_ptr     ; Token should be a 4 character hex address
+  cmp #$4
+  bne .print_bad_args
+  
+  ; Copy pointer to zp
+  lda token2_ptr
+  sta $0
+  lda token2_ptr + 1
+  sta $1
+  
+  ; Convert digits to address
+  ldy #$0
+  
+  ; Check digits first
+.digit_check
+  lda ($0),y
+  jmp is_hex
+  cmp #$0
+  beq .print_not_hex
+  iny
+  cpy #$4
+  beq .check_done
+  jmp .digit_check
+.check_done
+  
+  jmp .parse_done
+    
+.print_num_args_error
+  uarta_puts monitorWrongNumArgsText
+  jmp .parse_done
+
+.print_bad_args
+  uarta_puts monitorBadArgs
+  jmp .parse_done
+  
+.print_not_hex
+  uarta_puts monitorNotHex
+  jmp .parse_done
+  
+
 .parse_done
   rts
   
@@ -214,9 +242,13 @@ monitorInfoText: .byte "Grif65 monitor v0.1 by Andy Best", $0A, $0
 monitorLengthText: .byte "Length: ", $0
 monitorUnknownText: .byte "Unknown command: ", $0
 
+monitorWrongNumArgsText: .byte "Wrong number of arguments", $0A, $0
+monitorBadArgs: .byte "Arguments in invalid format", $0A, $0
+monitorNotHex: .byte "Argument not valid hex", $0A, $0
+
 monitorHelpText: 
   .byte $0A
   .byte "Commands:", $0A
   .byte "  ? - Help", $0A
-  .byte "  p - Print Memory", $0A
+  .byte "  a - Set address [a XXXX]", $0A
   .byte $0A, $0

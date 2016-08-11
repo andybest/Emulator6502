@@ -7,6 +7,14 @@
     sta $1
     jsr strlen_impl
   endm
+  
+  mac strlen_indir
+    lda {1}     ; Store the address of the string at $0000
+    sta $0
+    lda {1} + 1
+    sta $1
+    jsr strlen_impl
+  endm
 
 strlen_impl subroutine  ; Stores length of string in acc
   ldy #0
@@ -43,3 +51,31 @@ num_to_hex_string subroutine  ; Convert num in acc to hex. Stores in $00-$01
   jsr nibble_to_hex
   sta $01
   rts
+
+is_hex subroutine           ; Checks if ASCII value in acc is a hex digit
+  cmp #$30
+  bcc .not_hex
+  cmp #$3A
+  bcs .not_a_number
+  lda #$1
+  rts
+.not_a_number
+  cmp #$41
+  bcc .not_hex
+  cmp #$47
+  bcs .not_hex
+  lda #$1
+  rts
+.not_hex
+  lda #$0
+  rts
+
+hex_to_nibble subroutine   ; Convert ascii hex to nibble
+  cmp #$39        ; Is it a letter? (A-F)
+  bcs .letter
+  sbc #$30
+  rts
+.letter
+  sbc #$37
+  rts
+  
