@@ -112,10 +112,12 @@ tokenize_impl subroutine
 
 .get_token_ptr
   clc
-  adc ($1),y       ; Calculate pointer of low byte
-  sta $1,x         ; Store low byte
-  adc ($0),y       ; Calculate pointer of high byte
-  sta $0,x         ; Store high byte
+  tya
+  adc $0        ; Calculate pointer of low byte
+  sta $0,x      ; Store low byte
+  lda #$0
+  adc $1        ; Calculate pointer of high byte
+  sta $1,x      ; Store high byte
   clc
   inx
   inx
@@ -138,6 +140,7 @@ tokenize_impl subroutine
 
 monitor_parse_command subroutine
   tokenize MONITOR_STR_BASE
+  pha
   
   ldy #$0
 .t1Loop
@@ -152,7 +155,7 @@ monitor_parse_command subroutine
 
   lda #$0A
   uarta_putb
-  
+
   ldy #$0
 .t2Loop
   lda ($2),y
@@ -166,9 +169,9 @@ monitor_parse_command subroutine
 
   lda #$0A
   uarta_putb
-  
+
   ldy #$0
-.t3Loop 
+.t3Loop
   lda ($4),y
   beq .t3done
   cmp #$20
@@ -182,7 +185,6 @@ monitor_parse_command subroutine
   uarta_putb
   
   
-  pha
   uarta_puts monitorLengthText
   pla
   jsr num_to_hex_string
@@ -226,11 +228,6 @@ monitor_parse_command subroutine
   
 .parse_done
   rts
-  
-  
-  
-
-
   
   
 gotStrText: .byte "Got string: ", $0
