@@ -64,6 +64,11 @@ monitor_get_string subroutine
 ;;; Modifies A, Y, X and zp $00-06
 ;;; ---------------------------------------------------------------------------
 
+; Pointers for tokens
+token1_ptr  DS.W 1
+token2_ptr  DS.W 1
+token3_ptr  DS.W 1
+
   mac tokenize
     lda #<[{1}]     ; Store the address of the string at $0000
     sta $0
@@ -85,26 +90,31 @@ monitor_get_string subroutine
   
 tokenize_impl subroutine
   ldy #$0
-  ldx #$2
+  ldx #$0
 
   ; Ignore leading spaces
   tokenize_slurp_spaces
   
   ; Skip the initial token, since we have its pointer stored already
-.initial_token_loop
-  lda ($0),y
-  iny
-  beq .tokenize_done      ; End of the string- only one token
-  cmp #$20
-  beq .read_loop
-  jmp .initial_token_loop
+; .initial_token_loop
+;   lda ($0),y
+;   beq .tokenize_done      ; End of the string- only one token
+;   cmp #$20
+;   beq .end_first_token
+;   iny
+;   jmp .initial_token_loop
+  
+; .end_first_token
+;   lda #$0
+;   sta ($0),y      ; Convert the space to a null terminator
+;   iny
   
 .read_loop
   cpx #$6
   beq .tokenize_done
-  lda ($0),y            ; Load address of input string from zp + y
-  beq .tokenize_done    ; End of the string
-  cmp #$20              ; Is it a space?
+  lda ($0),y              ; Load address of input string from zp + y
+  beq .tokenize_done      ; End of the string
+  cmp #$20                ; Is it a space?
   bne .get_token_ptr
 .read_loop_got_token
   tokenize_slurp_spaces
@@ -113,88 +123,56 @@ tokenize_impl subroutine
 .get_token_ptr
   clc
   tya
-  adc $0        ; Calculate pointer of low byte
-  sta $0,x      ; Store low byte
+  adc $0                  ; Calculate pointer of low byte
+  sta token1_ptr,x        ; Store low byte
   lda #$0
-  adc $1        ; Calculate pointer of high byte
-  sta $1,x      ; Store high byte
+  adc $1                  ; Calculate pointer of high byte
+  sta token1_ptr + 1,x    ; Store high byte
   clc
   inx
   inx
   
-.get_token_loop     ; Skip to the end of the token
-    lda ($0),y
-    beq .token_ptr_done ; Null terminator
-    cmp #$20            ; Space
-    beq .token_ptr_done
-    iny
-    jmp .get_token_loop
+.get_token_loop           ; Skip to the end of the token
+  lda ($0),y
+  beq .token_ptr_done     ; Null terminator
+  cmp #$20                ; Space
+  beq .token_ptr_done
+  iny
+  jmp .get_token_loop
 .token_ptr_done
-    jmp .read_loop_got_token
+  lda #$0
+  sta ($0),y
+  iny
+  jmp .read_loop_got_token
 
 .tokenize_done
-  txa             ; Transfer pointer offset to acc
-  lsr             ; Divide by 2 to get number of tokens
+  txa                     ; Transfer pointer offset to acc
+  lsr                     ; Divide by 2 to get number of tokens
   rts
 
 
+;;; ---------------------------------------------------------------------------
+;;; Parse command entered into monitor
+;;;
+;;; Tokenizes the input string and executes the command
+;;; 
+;;; Modifies A, Y, X and zp $00-06
+;;; ---------------------------------------------------------------------------
+
 monitor_parse_command subroutine
   tokenize MONITOR_STR_BASE
-  pha
+  sta $7                        ; Store number of tokens
   
-  ldy #$0
-.t1Loop
-  lda ($0),y
-  beq .t1done
-  cmp #$20
-  beq .t1done
-  uarta_putb
-  iny
-  jmp .t1Loop
-.t1done
-
+  uarta_puts_indir token1_ptr
   lda #$0A
   uarta_putb
-
-  ldy #$0
-.t2Loop
-  lda ($2),y
-  beq .t2done
-  cmp #$20
-  beq .t2done
-  uarta_putb
-  iny
-  jmp .t2Loop
-.t2done
-
+  uarta_puts_indir token2_ptr
   lda #$0A
   uarta_putb
-
-  ldy #$0
-.t3Loop
-  lda ($4),y
-  beq .t3done
-  cmp #$20
-  beq .t3done
-  uarta_putb
-  iny
-  jmp .t3Loop
-.t3done
-
+  uarta_puts_indir token3_ptr
   lda #$0A
   uarta_putb
   
-  
-  uarta_puts monitorLengthText
-  pla
-  jsr num_to_hex_string
-  lda $0
-  uarta_putb
-  lda $1
-  uarta_putb  
-  lda #$0A
-  uarta_putb
-
   strlen MONITOR_STR_BASE
   
   cmp #$0                       ; No command

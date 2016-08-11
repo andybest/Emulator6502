@@ -18,7 +18,6 @@ strlen_impl subroutine  ; Stores length of string in acc
 .strlen_done
   tya
   rts
-  
 
 nibble_to_hex subroutine
   cmp #$A

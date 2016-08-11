@@ -42,6 +42,11 @@ extension CPU6502 {
         let indirectAddress: UInt16 = address
         return getMem((UInt16(getMem(indirectAddress)) | (UInt16(getMem(indirectAddress + 1)) << 8)) + UInt16(registers.y))
     }
+    
+    func getIndirectYAddress(_ address: UInt16) -> UInt16 {
+        let indirectAddress: UInt16 = address
+         return (UInt16(getMem(indirectAddress)) | (UInt16(getMem(indirectAddress + 1)) << 8)) + UInt16(registers.y)
+    }
 
     func valueForAddressingMode(_ mode: AddressingMode) -> UInt8 {
         switch mode {
@@ -89,7 +94,7 @@ extension CPU6502 {
         case .indirectX(let val):
             return UInt16(getIndirectX(val))
         case .indirectY(let val):
-            return UInt16(getIndirectY(val))
+            return getIndirectYAddress(val)
         case .relative(let val):
             return UInt16(val)
         default: // This should raise an exception
