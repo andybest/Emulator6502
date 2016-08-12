@@ -26,7 +26,7 @@ class CPUTests: XCTestCase {
     func testCPUResetState() {
         self.cpu.reset()
 
-        expect(self.cpu.getStackPointer()).to(equal(0xFD))
+        expect(self.cpu.getStackPointer()).to(equal(0xFF))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.x).to(equal(0x00))

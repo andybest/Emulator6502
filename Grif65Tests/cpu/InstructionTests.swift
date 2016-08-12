@@ -42,7 +42,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffAbsoluteCarryClearInAccumulatorZeros() {
         self.cpu.setMem(0xC000, value:0x00)
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -54,7 +54,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0x00)
         self.cpu.registers.setCarryFlag(true)
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -66,7 +66,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0xFE)
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0xFF))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -78,7 +78,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0xFF)
         self.cpu.registers.a = 0x02
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.registers.getCarryFlag()).to(beTrue())
@@ -90,7 +90,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0x01)
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x02))
         expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
@@ -100,7 +100,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0xFF)
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
@@ -110,7 +110,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0x01)
         self.cpu.registers.a = 0x7F
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
@@ -120,7 +120,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0xFF)
         self.cpu.registers.a = 0x80
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x7F))
         expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
@@ -130,7 +130,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0xC000, value:0x40)
         self.cpu.registers.a = 0x40
 
-        self.cpu.opADC(AddressingMode.absolute(0xC000))
+        _ = self.cpu.opADC(AddressingMode.absolute(0xC000))
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getSignFlag()).to(beTrue())
@@ -143,7 +143,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffZPCarryClearInAccumulatorZeros() {
         self.cpu.setMem(0x00B0, value:0x00)
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -155,7 +155,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0x00)
         self.cpu.registers.setCarryFlag(true)
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -167,7 +167,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0xFE)
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0xFF))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -179,7 +179,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0xFF)
         self.cpu.registers.a = 0x02
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.registers.getCarryFlag()).to(beTrue())
@@ -191,7 +191,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0x01)
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x02))
         expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
@@ -201,7 +201,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0xFF)
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
@@ -211,7 +211,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0x01)
         self.cpu.registers.a = 0x7F
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
@@ -221,7 +221,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0xFF)
         self.cpu.registers.a = 0x80
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x7F))
         expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
@@ -231,7 +231,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x00B0, value:0x40)
         self.cpu.registers.a = 0x40
 
-        self.cpu.opADC(AddressingMode.zeroPage(0xB0))
+        _ = self.cpu.opADC(AddressingMode.zeroPage(0xB0))
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getSignFlag()).to(beTrue())
@@ -242,7 +242,7 @@ class InstructionTests: XCTestCase {
     /* ADC Immediate */
 
     func testADCWithBCDOffImmediateCarryClearInAccumulatorZeros() {
-        self.cpu.opADC(AddressingMode.immediate(0x00))
+        _ = self.cpu.opADC(AddressingMode.immediate(0x00))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -253,7 +253,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateCarrySetInAccumulatorZeros() {
         self.cpu.registers.setCarryFlag(true)
 
-        self.cpu.opADC(AddressingMode.immediate(0x00))
+        _ = self.cpu.opADC(AddressingMode.immediate(0x00))
 
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -264,7 +264,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateCarryClearInNoCarryClearOut() {
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.immediate(0xFE))
+        _ = self.cpu.opADC(AddressingMode.immediate(0xFE))
 
         expect(self.cpu.registers.a).to(equal(0xFF))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -275,7 +275,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateCarryClearInCarrySetOut() {
         self.cpu.registers.a = 0x02
 
-        self.cpu.opADC(AddressingMode.immediate(0xFF))
+        _ = self.cpu.opADC(AddressingMode.immediate(0xFF))
 
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.registers.getCarryFlag()).to(beTrue())
@@ -286,7 +286,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateOverflowClearNoCarry01Plus01() {
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.immediate(0x01))
+        _ = self.cpu.opADC(AddressingMode.immediate(0x01))
 
         expect(self.cpu.registers.a).to(equal(0x02))
         expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
@@ -295,7 +295,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateOverflowClearNoCarry01PlusFF() {
         self.cpu.registers.a = 0x01
 
-        self.cpu.opADC(AddressingMode.immediate(0xFF))
+        _ = self.cpu.opADC(AddressingMode.immediate(0xFF))
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
@@ -304,7 +304,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateOverflowSetNoCarry7FPlus01() {
         self.cpu.registers.a = 0x7F
 
-        self.cpu.opADC(AddressingMode.immediate(0x01))
+        _ = self.cpu.opADC(AddressingMode.immediate(0x01))
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
@@ -313,7 +313,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateOverflowSetNoCarry80PlusFF() {
         self.cpu.registers.a = 0x80
 
-        self.cpu.opADC(AddressingMode.immediate(0xFF))
+        _ = self.cpu.opADC(AddressingMode.immediate(0xFF))
 
         expect(self.cpu.registers.a).to(equal(0x7F))
         expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
@@ -322,7 +322,7 @@ class InstructionTests: XCTestCase {
     func testADCWithBCDOffImmediateOverflowSetOn80Plus80() {
         self.cpu.registers.a = 0x40
 
-        self.cpu.opADC(AddressingMode.immediate(0x40))
+        _ = self.cpu.opADC(AddressingMode.immediate(0x40))
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getSignFlag()).to(beTrue())
@@ -335,7 +335,7 @@ class InstructionTests: XCTestCase {
     func testASLAccumulatorSetsZFlag() {
         self.cpu.registers.a = 0x00
 
-        self.cpu.opASL(AddressingMode.accumulator)
+        _ = self.cpu.opASL(AddressingMode.accumulator)
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
@@ -345,7 +345,7 @@ class InstructionTests: XCTestCase {
     func testASLAccumulatorSetsNFlag() {
         self.cpu.registers.a = 0x40
 
-        self.cpu.opASL(AddressingMode.accumulator)
+        _ = self.cpu.opASL(AddressingMode.accumulator)
 
         expect(self.cpu.registers.a).to(equal(0x80))
         expect(self.cpu.registers.getZeroFlag()).to(beFalse())
@@ -355,7 +355,7 @@ class InstructionTests: XCTestCase {
     func testASLAccumulatorShiftsOutZero() {
         self.cpu.registers.a = 0x7F
 
-        self.cpu.opASL(AddressingMode.accumulator)
+        _ = self.cpu.opASL(AddressingMode.accumulator)
 
         expect(self.cpu.registers.a).to(equal(0xFE))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -364,7 +364,7 @@ class InstructionTests: XCTestCase {
     func testASLAccumulatorShiftsOutOne() {
         self.cpu.registers.a = 0xFF
 
-        self.cpu.opASL(AddressingMode.accumulator)
+        _ = self.cpu.opASL(AddressingMode.accumulator)
 
         expect(self.cpu.registers.a).to(equal(0xFE))
         expect(self.cpu.registers.getCarryFlag()).to(beTrue())
@@ -373,7 +373,7 @@ class InstructionTests: XCTestCase {
     func testASLAccumulator80SetsZFlag() {
         self.cpu.registers.a = 0x80
 
-        self.cpu.opASL(AddressingMode.accumulator)
+        _ = self.cpu.opASL(AddressingMode.accumulator)
 
         expect(self.cpu.registers.a).to(equal(0x00))
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
@@ -384,7 +384,7 @@ class InstructionTests: XCTestCase {
     func testASLAbsoluteSetsZFlag() {
         self.cpu.setMem(0xABCD, value: 0x00)
 
-        self.cpu.opASL(AddressingMode.absolute(0xABCD))
+        _ = self.cpu.opASL(AddressingMode.absolute(0xABCD))
 
         expect(self.cpu.getMem(0xABCD)).to(equal(0x00))
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
@@ -394,7 +394,7 @@ class InstructionTests: XCTestCase {
     func testASLAbsoluteSetsNFlag() {
         self.cpu.setMem(0xABCD, value: 0x40)
 
-        self.cpu.opASL(AddressingMode.absolute(0xABCD))
+        _ = self.cpu.opASL(AddressingMode.absolute(0xABCD))
 
         expect(self.cpu.getMem(0xABCD)).to(equal(0x80))
         expect(self.cpu.registers.getZeroFlag()).to(beFalse())
@@ -404,7 +404,7 @@ class InstructionTests: XCTestCase {
     func testASLAbsoluteShiftsOutZero() {
         self.cpu.setMem(0xABCD, value: 0x7F)
 
-        self.cpu.opASL(AddressingMode.absolute(0xABCD))
+        _ = self.cpu.opASL(AddressingMode.absolute(0xABCD))
         
         expect(self.cpu.getMem(0xABCD)).to(equal(0xFE))
         expect(self.cpu.registers.getCarryFlag()).to(beFalse())
@@ -413,7 +413,7 @@ class InstructionTests: XCTestCase {
     func testASLAbsoluteShiftsOutOne() {
         self.cpu.setMem(0xABCD, value: 0xFF)
 
-        self.cpu.opASL(AddressingMode.absolute(0xABCD))
+        _ = self.cpu.opASL(AddressingMode.absolute(0xABCD))
 
         expect(self.cpu.getMem(0xABCD)).to(equal(0xFE))
         expect(self.cpu.registers.getCarryFlag()).to(beTrue())
@@ -422,7 +422,7 @@ class InstructionTests: XCTestCase {
     func testASLAbsolute80SetsZFlag() {
         self.cpu.setMem(0xABCD, value: 0x80)
 
-        self.cpu.opASL(AddressingMode.absolute(0xABCD))
+        _ = self.cpu.opASL(AddressingMode.absolute(0xABCD))
 
         expect(self.cpu.getMem(0xABCD)).to(equal(0x00))
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
@@ -433,7 +433,7 @@ class InstructionTests: XCTestCase {
     func testBEQZeroSetBranchesRelativeForward() {
         self.cpu.registers.setZeroFlag(true)
         self.cpu.setMemFromHexString("F0 06", address: 0x0000)
-        self.cpu.runCycles(1)
+        _ = self.cpu.runCycles(1)
         
         expect(self.cpu.getProgramCounter()).to(equal(0x0002 + 0x06))
     }
@@ -444,7 +444,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setMem(0x0050, value:0xF0)
         self.cpu.setMem(0x0051, value:UInt8(rel))
         self.cpu.setProgramCounter(0x0050)
-        self.cpu.runCycles(1)
+        _ = self.cpu.runCycles(1)
         
         expect(self.cpu.getProgramCounter()).to(equal(UInt16(0x0052 + rel)))
     }
@@ -452,9 +452,21 @@ class InstructionTests: XCTestCase {
     func testBEQZeroClearDoesNotBranch() {
         self.cpu.registers.setZeroFlag(false)
         self.cpu.setMemFromHexString("F0 06", address: 0x0000)
-        self.cpu.runCycles(1)
+        _ = self.cpu.runCycles(1)
         
         expect(self.cpu.getProgramCounter()).to(equal(0x0002))
+    }
+    
+    /* BIT */
+    
+    func testBITAbsoluteCopiesBit7OfMemoryToNFlagWhen0() {
+        self.cpu.registers.setSignFlag(true)
+        self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
+        self.cpu.setMem(0xFEED, value: 0xFF)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.getSignFlag()).to(beTrue())
     }
 
     /* JSR */
@@ -462,7 +474,7 @@ class InstructionTests: XCTestCase {
     func testJSR() {
         self.cpu.setMemFromHexString("20 D2 FF", address:0xC000)
         self.cpu.setProgramCounter(0xC000)
-        self.cpu.runCycles(1)
+        _ = self.cpu.runCycles(1)
 
         expect(self.cpu.registers.pc).to(equal(0xFFD2))
         expect(self.cpu.getStackPointer()).to(equal(0xFD))
@@ -478,7 +490,7 @@ class InstructionTests: XCTestCase {
         self.cpu.setProgramCounter(0x0)
         self.cpu.registers.s = 0xFD
         
-        self.cpu.runCycles(1)
+        _ = self.cpu.runCycles(1)
         
         expect(self.cpu.getProgramCounter()).to(equal(0xC004))
         expect(self.cpu.registers.s).to(equal(0xFF))

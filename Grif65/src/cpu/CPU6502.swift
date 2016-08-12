@@ -308,7 +308,7 @@ class CPU6502 {
     func executeOpcode(_ opcode: UInt8) -> Int {
         let instruction    = instructionTable[Int(opcode)]
         let addressingMode = getModeForCurrentOpcode(instruction.addressingMode)
-        let addr           = String(format: "0x%2X", getProgramCounter())
+        //let addr           = String(format: "0x%2X", getProgramCounter())
 
         setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         _ = instruction.instructionFunction(addressingMode)

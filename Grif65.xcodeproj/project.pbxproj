@@ -418,7 +418,6 @@
 			baseConfigurationReference = 3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Grif65.app/Contents/MacOS/Grif65";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Grif65Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
@@ -426,7 +425,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Release;
 		};
@@ -510,14 +508,12 @@
 			baseConfigurationReference = FC814B0A29EE4CF72E65AC30 /* Pods-Grif65Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Grif65.app/Contents/MacOS/Grif65";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Grif65Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.andybest.Grif65Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Debug;
 		};
