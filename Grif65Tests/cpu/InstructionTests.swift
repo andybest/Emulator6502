@@ -460,13 +460,69 @@ class InstructionTests: XCTestCase {
     /* BIT */
     
     func testBITAbsoluteCopiesBit7OfMemoryToNFlagWhen0() {
-        self.cpu.registers.setSignFlag(true)
+        self.cpu.registers.setSignFlag(false)
         self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
         self.cpu.setMem(0xFEED, value: 0xFF)
         self.cpu.registers.a = 0xFF
         _ = self.cpu.runCycles(1)
         
         expect(self.cpu.registers.getSignFlag()).to(beTrue())
+    }
+    
+    func testBITAbsoluteCopiesBit7OfMemoryToNFlagWhen1() {
+        self.cpu.registers.setSignFlag(true)
+        self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
+        self.cpu.setMem(0xFEED, value: 0x00)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.getSignFlag()).to(beFalse())
+    }
+    
+    func testBITAbsoluteCopiesBit6OfMemoryToVFlagWhen0() {
+        self.cpu.registers.setOverflowFlag(false)
+        self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
+        self.cpu.setMem(0xFEED, value: 0xFF)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
+    }
+    
+    func testBITAbsoluteCopiesBit6OfMemoryToVFlagWhen1() {
+        self.cpu.registers.setOverflowFlag(true)
+        self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
+        self.cpu.setMem(0xFEED, value: 0x00)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
+    }
+    
+    func testBITAbsoluteStoresResultOfAndWhenZeroInZPreservesAWhen1()
+    {
+        self.cpu.registers.setZeroFlag(false)
+        self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
+        self.cpu.setMem(0xFEED, value: 0x00)
+        self.cpu.registers.a = 0x01
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+        expect(self.cpu.registers.a).to(equal(0x01))
+        expect(self.cpu.getMem(0xFEED)).to(equal(0x00))
+    }
+    
+    func testBITAbsoluteStoresResultOfAndWhenNonZeroInZPreservesAWhen0()
+    {
+        self.cpu.registers.setZeroFlag(true)
+        self.cpu.setMemFromHexString("2C ED FE", address: 0x0000)
+        self.cpu.setMem(0xFEED, value: 0x01)
+        self.cpu.registers.a = 0x01
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.getZeroFlag()).to(beFalse())
+        expect(self.cpu.registers.a).to(equal(0x01))
+        expect(self.cpu.getMem(0xFEED)).to(equal(0x01))
     }
 
     /* JSR */
