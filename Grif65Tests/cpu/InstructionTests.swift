@@ -428,6 +428,8 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.registers.getZeroFlag()).to(beTrue())
     }
     
+    /* AND Absolute */
+    
     /* BEQ */
     
     func testBEQZeroSetBranchesRelativeForward() {

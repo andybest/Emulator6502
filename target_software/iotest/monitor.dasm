@@ -213,10 +213,7 @@ monitor_parse_command subroutine
   beq .print_not_hex
   iny
   cpy #$4
-  beq .check_done
-  jmp .digit_check
-.check_done
-  
+  bne .digit_check
   jmp .parse_done
     
 .print_num_args_error
