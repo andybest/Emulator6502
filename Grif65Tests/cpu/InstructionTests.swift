@@ -457,7 +457,7 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.getProgramCounter()).to(equal(0x0002))
     }
     
-    /* BIT */
+    /* BIT Absolute */
     
     func testBITAbsoluteCopiesBit7OfMemoryToNFlagWhen0() {
         self.cpu.registers.setSignFlag(false)
@@ -523,6 +523,98 @@ class InstructionTests: XCTestCase {
         expect(self.cpu.registers.getZeroFlag()).to(beFalse())
         expect(self.cpu.registers.a).to(equal(0x01))
         expect(self.cpu.getMem(0xFEED)).to(equal(0x01))
+    }
+    
+    /* BIT Zero Page */
+    
+    func testBITZeroPageCopiesBit7OfMemoryToNFlagWhen0()
+    {
+        self.cpu.registers.setSignFlag(false)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0xFF)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getSignFlag()).to(beTrue())
+    }
+    
+    func testBITZeroPageCopiesBit7OfMemoryToNFlagWhen1()
+    {
+        self.cpu.registers.setSignFlag(true)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0x00)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getSignFlag()).to(beFalse())
+    }
+    
+    func testBITZeroPageCopiesBit6OfMemoryToVFlagWhen0()
+    {
+        self.cpu.registers.setOverflowFlag(false)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0xFF)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getOverflowFlag()).to(beTrue())
+    }
+    
+    func testBITZeroPageCopiesBit6OfMemoryToVFlagWhen1()
+    {
+        self.cpu.registers.setOverflowFlag(true)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0x00)
+        self.cpu.registers.a = 0xFF
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getOverflowFlag()).to(beFalse())
+    }
+    
+    func testBITZeroPageStoresResultOfAndInZPreservesAWhen1()
+    {
+        self.cpu.registers.setZeroFlag(false)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0x00)
+        self.cpu.registers.a = 0x01
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+        expect(self.cpu.registers.a).to(equal(0x01))
+        expect(self.cpu.getMem(0x0010)).to(equal(0x00))
+    }
+
+    func testBITZeroPageStoresResultOfAndWhenNonZeroInZPreservesA()
+    {
+        self.cpu.registers.setZeroFlag(true)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0x01)
+        self.cpu.registers.a = 0x01
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getZeroFlag()).to(beFalse())
+        expect(self.cpu.registers.a).to(equal(0x01))
+        expect(self.cpu.getMem(0x0010)).to(equal(0x01))
+    }
+    
+    func testBITZeroPageStoresResultOfAndWhenZeroInZPreservesA()
+    {
+        self.cpu.registers.setZeroFlag(false)
+        self.cpu.setMemFromHexString("24 10", address: 0x0000)
+        self.cpu.setMem(0x0010, value: 0x00)
+        self.cpu.registers.a = 0x01
+        _ = self.cpu.runCycles(1)
+        
+        expect(self.cpu.registers.pc).to(equal(0x0002))
+        expect(self.cpu.registers.getZeroFlag()).to(beTrue())
+        expect(self.cpu.registers.a).to(equal(0x01))
+        expect(self.cpu.getMem(0x0010)).to(equal(0x00))
     }
 
     /* JSR */
