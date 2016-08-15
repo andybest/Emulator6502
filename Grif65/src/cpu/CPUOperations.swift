@@ -189,9 +189,9 @@ extension CPU6502 {
     func opBIT(_ mode: AddressingMode) -> InstructionResponse {
         let value  = valueForAddressingMode(mode)
         let result = UInt16(registers.a) & UInt16(value)
-
+        
+        registers.setOverflowFlag(result & 64 > 0)
         registers.setZeroFlag(calculateZero(result))
-        registers.setOverflowFlag(calculateOverflow(result, acc: registers.a, value: value))
         registers.setSignFlag(calculateSign(result))
         return defaultResponse()
     }
