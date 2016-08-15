@@ -440,13 +440,13 @@ class InstructionTests: XCTestCase {
     
     func testBEQZeroSetBranchesRelativeBackward() {
         self.cpu.registers.setZeroFlag(true)
-        let rel = (0x06 ^ 0xFF + 1)
+        let rel = 0x06 ^ 0xFF + 1
         self.cpu.setMem(0x0050, value:0xF0)
         self.cpu.setMem(0x0051, value:UInt8(rel))
         self.cpu.setProgramCounter(0x0050)
         _ = self.cpu.runCycles(1)
         
-        expect(self.cpu.getProgramCounter()).to(equal(UInt16(0x0052 + rel)))
+        expect(self.cpu.getProgramCounter()).to(equal(UInt16.subtractWithOverflow(0x0052, 122).0))
     }
     
     func testBEQZeroClearDoesNotBranch() {

@@ -117,6 +117,14 @@ extension CPU6502 {
     func defaultResponse() -> InstructionResponse {
         return InstructionResponse(handlesPC: false)
     }
+    
+    func branchRelative(relVal: UInt16) {
+        if relVal & (1 << 7) > 0 {
+            self.setProgramCounter(UInt16.subtractWithOverflow(registers.pc, (relVal ^ (1 << 7))).0)
+        } else {
+            self.setProgramCounter(UInt16.addWithOverflow(registers.pc, relVal).0)
+        }
+    }
 
     func opADC(_ mode: AddressingMode) -> InstructionResponse {
         let value          = valueForAddressingMode(mode)
@@ -162,7 +170,8 @@ extension CPU6502 {
     func opBCC(_ mode: AddressingMode) -> InstructionResponse {
         if !registers.getCarryFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -171,7 +180,8 @@ extension CPU6502 {
     func opBCS(_ mode: AddressingMode) -> InstructionResponse {
         if registers.getCarryFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -180,7 +190,8 @@ extension CPU6502 {
     func opBEQ(_ mode: AddressingMode) -> InstructionResponse {
         if registers.getZeroFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -199,7 +210,8 @@ extension CPU6502 {
     func opBMI(_ mode: AddressingMode) -> InstructionResponse {
         if registers.getSignFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -208,7 +220,8 @@ extension CPU6502 {
     func opBNE(_ mode: AddressingMode) -> InstructionResponse {
         if !registers.getZeroFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -217,7 +230,8 @@ extension CPU6502 {
     func opBPL(_ mode: AddressingMode) -> InstructionResponse {
         if !registers.getSignFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -237,7 +251,8 @@ extension CPU6502 {
     func opBVC(_ mode: AddressingMode) -> InstructionResponse {
         if !registers.getOverflowFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
@@ -246,7 +261,8 @@ extension CPU6502 {
     func opBVS(_ mode: AddressingMode) -> InstructionResponse {
         if registers.getOverflowFlag() {
             let relativeAddress = addressForAddressingMode(mode)
-            setProgramCounter(getProgramCounter() + relativeAddress)
+            //setProgramCounter(getProgramCounter() + relativeAddress)
+            self.branchRelative(relVal: relativeAddress)
             return InstructionResponse(handlesPC: true)
         }
         return defaultResponse()
