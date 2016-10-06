@@ -12,10 +12,6 @@ class GrifEmulatorController : GrifEmulatorDelegate, SerialEmulatorDelegate {
     var timer: Timer?
 
     init() {
-        self.serialWindowController = SerialEmulatorWindowController(windowNibName: "SerialEmulatorWindow")
-        self.serialWindowController!.showWindow(self)
-        self.serialWindowController!.delegate = self
-
         emulator.delegate = self
         
         self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)

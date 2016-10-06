@@ -50,6 +50,10 @@ class GrifConsoleTextView: NSView {
         self.setNeedsDisplay(self.bounds)
     }
     
+    @IBAction func paste(sender: AnyObject?) {
+        print("Paste")
+    }
+    
     // MARK - Geometry
     
     override func setFrameSize(_ newSize: NSSize) {

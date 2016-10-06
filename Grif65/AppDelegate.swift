@@ -23,8 +23,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if isRunningTests {
             return
         }
-        
-        self.emulatorController = GrifEmulatorController()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

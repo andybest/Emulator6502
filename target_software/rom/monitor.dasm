@@ -65,9 +65,9 @@ monitor_get_string subroutine
 ;;; ---------------------------------------------------------------------------
 
 ; Pointers for tokens
-token1_ptr  DS.W 1
-token2_ptr  DS.W 1
-token3_ptr  DS.W 1
+token1_ptr  equ $0010
+token2_ptr  equ $0012
+token3_ptr  equ $0014
 
   mac tokenize_slurp_spaces
 .tokenize_slurp_spaces_loop
@@ -145,7 +145,7 @@ tokenize_impl subroutine
 ;;; Modifies A, Y, X and zp $00-06
 ;;; ---------------------------------------------------------------------------
 
-MON_CURR_ADDR   ds.w 1           ; Current address that monitor is looking at
+MON_CURR_ADDR   equ $0016       ; Current address that monitor is looking at
 
 monitor_parse_command subroutine
   tokenize MONITOR_STR_BASE

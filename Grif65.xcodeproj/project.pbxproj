@@ -10,6 +10,8 @@
 		0379A274D1C2BD86E60EB656 /* Pods_Grif65Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */; };
 		A5259C6C1D5A1F0000331D6B /* GrifConsoleTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */; };
 		A5347EE51D61D9F400B6BCBD /* DebugWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5347EE41D61D9F400B6BCBD /* DebugWindow.xib */; };
+		A54242C11DA6E433006F425F /* romimage.bin in Resources */ = {isa = PBXBuildFile; fileRef = A54242C01DA6E433006F425F /* romimage.bin */; };
+		A54242E11DA6EB84006F425F /* GrifDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54242E01DA6EB84006F425F /* GrifDocument.swift */; };
 		A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */; };
 		A57EB3B71DA6A8A0004E88A8 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B11DA6A8A0004E88A8 /* CPU6502.swift */; };
 		A57EB3B81DA6A8A0004E88A8 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B21DA6A8A0004E88A8 /* CPUOperations.swift */; };
@@ -17,7 +19,6 @@
 		A57EB3BA1DA6A8A0004E88A8 /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B41DA6A8A0004E88A8 /* InstructionTable.swift */; };
 		A57EB3BB1DA6A8A0004E88A8 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B51DA6A8A0004E88A8 /* Registers.swift */; };
 		A57EB3BC1DA6A8A0004E88A8 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B61DA6A8A0004E88A8 /* String+Hex.swift */; };
-		A57EB3ED1DA6B617004E88A8 /* romimage.bin in Resources */ = {isa = PBXBuildFile; fileRef = A57EB3EC1DA6B617004E88A8 /* romimage.bin */; };
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
 		A582BE7A1C99D62D00F38B04 /* SerialEmulatorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */; };
 		A582BE7B1C99D62D00F38B04 /* SerialEmulatorWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */; };
@@ -44,6 +45,8 @@
 		3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.release.xcconfig"; sourceTree = "<group>"; };
 		A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifConsoleTextView.swift; sourceTree = "<group>"; };
 		A5347EE41D61D9F400B6BCBD /* DebugWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DebugWindow.xib; path = viewControllers/DebugWindow.xib; sourceTree = "<group>"; };
+		A54242C01DA6E433006F425F /* romimage.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = romimage.bin; path = target_software/rom/build/romimage.bin; sourceTree = SOURCE_ROOT; };
+		A54242E01DA6EB84006F425F /* GrifDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifDocument.swift; sourceTree = "<group>"; };
 		A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GrifEmulator.swift; path = cpu/GrifEmulator.swift; sourceTree = "<group>"; };
 		A57EB3B11DA6A8A0004E88A8 /* CPU6502.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CPU6502.swift; path = ../../CPU6502.swift; sourceTree = "<group>"; };
 		A57EB3B21DA6A8A0004E88A8 /* CPUOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CPUOperations.swift; path = ../../CPUOperations.swift; sourceTree = "<group>"; };
@@ -51,7 +54,6 @@
 		A57EB3B41DA6A8A0004E88A8 /* InstructionTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InstructionTable.swift; path = ../../InstructionTable.swift; sourceTree = "<group>"; };
 		A57EB3B51DA6A8A0004E88A8 /* Registers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Registers.swift; path = ../../Registers.swift; sourceTree = "<group>"; };
 		A57EB3B61DA6A8A0004E88A8 /* String+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Hex.swift"; path = "../../String+Hex.swift"; sourceTree = "<group>"; };
-		A57EB3EC1DA6B617004E88A8 /* romimage.bin */ = {isa = PBXFileReference; explicitFileType = compiled; path = romimage.bin; sourceTree = "<group>"; };
 		A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerialEmulatorWindowController.swift; path = viewControllers/SerialEmulatorWindowController.swift; sourceTree = "<group>"; };
 		A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SerialEmulatorWindow.xib; path = viewControllers/SerialEmulatorWindow.xib; sourceTree = "<group>"; };
 		C8BB4215C30E402989ACE7E6 /* Grif65Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Grif65Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,7 @@
 			children = (
 				A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */,
 				C8BB4E9C81B44CBDFDC500B0 /* cpu */,
+				A54242E01DA6EB84006F425F /* GrifDocument.swift */,
 			);
 			name = emulator;
 			sourceTree = "<group>";
@@ -110,7 +113,7 @@
 		A57EB3EB1DA6B5BF004E88A8 /* Binaries */ = {
 			isa = PBXGroup;
 			children = (
-				A57EB3EC1DA6B617004E88A8 /* romimage.bin */,
+				A54242C01DA6E433006F425F /* romimage.bin */,
 			);
 			name = Binaries;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				C8BB4A0757C780FB521ECB99 /* Resources */,
 				9611CA462D0610DAD4577A1D /* [CP] Embed Pods Frameworks */,
 				BE359B15DBA193218675F0F2 /* [CP] Copy Pods Resources */,
+				7C0F8539B74EA707B247FE83 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -304,7 +308,7 @@
 				C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */,
 				C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */,
 				A5347EE51D61D9F400B6BCBD /* DebugWindow.xib in Resources */,
-				A57EB3ED1DA6B617004E88A8 /* romimage.bin in Resources */,
+				A54242C11DA6E433006F425F /* romimage.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,6 +335,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7C0F8539B74EA707B247FE83 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9611CA462D0610DAD4577A1D /* [CP] Embed Pods Frameworks */ = {
@@ -378,6 +397,7 @@
 				C8BB4265DCFCC7BB087C7267 /* DUART.swift in Sources */,
 				A57EB3BA1DA6A8A0004E88A8 /* InstructionTable.swift in Sources */,
 				C8BB46716975B62113EE8B53 /* GrifEmulatorController.swift in Sources */,
+				A54242E11DA6EB84006F425F /* GrifDocument.swift in Sources */,
 				A57EB3BC1DA6A8A0004E88A8 /* String+Hex.swift in Sources */,
 				A57EB3B81DA6A8A0004E88A8 /* CPUOperations.swift in Sources */,
 				A5259C6C1D5A1F0000331D6B /* GrifConsoleTextView.swift in Sources */,
