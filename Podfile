@@ -2,8 +2,8 @@ platform :osx, '10.10'
 
 target 'Grif65Tests' do
   use_frameworks!
-  pod 'Quick', :git => 'https://github.com/norio-nomura/Quick.git', :branch => 'nn-swift-3-compatibility'
-  pod 'Nimble', :git => 'https://github.com/mokagio/Nimble.git', :branch => 'mokagio/xcode-8-beta-4'
+  pod 'Quick'
+  pod 'Nimble'
 end
 
 post_install do |installer|

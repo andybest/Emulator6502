@@ -1,0 +1,25 @@
+  ; vim: setlocal ft=asmM6502:
+  
+  processor 6502
+  
+
+  
+  org $C000
+irqHandler:
+nmiHandler:
+  jmp *
+  
+resetHandler:
+  jsr start_monitor
+  jmp *                 ; Shouldn't reach here.
+
+  include "utils.dasm"
+  include "uart.dasm"
+  include "monitor.dasm"
+  
+
+  ; Interrupts
+  org $FFFA
+  .WORD nmiHandler
+  .WORD resetHandler
+  .WORD irqHandler

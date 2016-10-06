@@ -14,7 +14,6 @@ protocol GrifConsoleDelegate {
 
 
 class GrifConsoleTextView: NSView {
-    
     var delegate: GrifConsoleDelegate?
     
     override var acceptsFirstResponder: Bool { return true }
@@ -195,23 +194,28 @@ class GrifConsoleTextView: NSView {
     
     override func keyDown(with event: NSEvent) {
         interpretKeyEvents([event])
+        
+        let modFlag = event.modifierFlags
+        let keyString = event.characters
+        
+        Swift.print((keyString, modFlag))
     }
     
-    override func insertText(_ insertString: AnyObject) {
+    override func insertText(_ insertString: Any) {
         self.sendString(insertString as! String)
     }
     
-    override func moveUp(_ sender: AnyObject?) {
+    override func moveUp(_ sender: Any?) {
     }
     
-    override func moveLeft(_ sender: AnyObject?) {
+    override func moveLeft(_ sender: Any?) {
     }
     
-    override func deleteBackward(_ sender: AnyObject?) {
+    override func deleteBackward(_ sender: Any?) {
         self.sendBackspace()
     }
     
-    override func insertNewline(_ sender: AnyObject?) {
+    override func insertNewline(_ sender: Any?) {
         self.sendNewLine()
     }
     
@@ -271,7 +275,7 @@ class GrifConsoleTextView: NSView {
         self.recalculateLineBuffer()
     }
     
-    func processSerialData(data: UInt8) {
+    func processSerialData(_ data: UInt8) {
         // Check for control characters
         switch data {
         case 0x8: // Backspace

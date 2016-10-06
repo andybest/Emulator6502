@@ -93,11 +93,11 @@ class DUART: IODevice {
     }
 
     // MARK - Callbacks
-    func attachInterruptHandler(_ handler: (Void) -> (Void)) {
+    func attachInterruptHandler(_ handler: @escaping (Void) -> (Void)) {
         assertInterrupt = handler
     }
 
-    func attachSerialChannelSendCallback(callback: (value:UInt8, channel:DUARTSerialChannel) -> (Void)) {
+    func attachSerialChannelSendCallback(_ callback: @escaping (_ value:UInt8, _ channel:DUARTSerialChannel) -> (Void)) {
         serialChannelSend = callback
     }
 

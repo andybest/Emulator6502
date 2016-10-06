@@ -1,0 +1,55 @@
+  ; vim: setlocal ft=asmM6502:
+  
+  processor 6502
+
+; UART Register locations
+DUART_BASE:     equ $0200
+DUART_TX_A:     equ DUART_BASE + 3
+DUART_RX_A:     equ DUART_BASE + 3
+
+DUART_STATUS_A  equ DUART_BASE + 1
+
+  mac uarta_puts
+    lda #<[{1}]     ; Store the address of the string at $0000
+    sta $0
+    lda #>[{1}]
+    sta $1
+    jsr uarta_puts_impl
+  endm
+  
+  mac uarta_puts_indir
+    lda {1}         ; Store the pointer to the string at $0000
+    sta $0
+    lda {1}+1
+    sta $1
+    jsr uarta_puts_impl
+  endm
+
+uarta_puts_impl subroutine
+  ldy #0
+.uarta_puts_loop
+  lda ($0),y
+  beq .uarta_puts_done
+  sta DUART_TX_A
+  iny
+  jmp .uarta_puts_loop
+.uarta_puts_done
+  rts
+  
+  
+  mac uarta_putb
+    sta DUART_TX_A
+  endm
+
+  
+  mac uarta_getb
+    lda DUART_RX_A
+  endm
+  
+  
+  mac uarta_bytes_available
+    lda #$01                ; Perform a bit test on the RX_RDY bit in status reg
+    bit DUART_STATUS_A
+  endm
+
+  

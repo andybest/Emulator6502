@@ -29,7 +29,7 @@ class SerialEmulatorWindowController: NSWindowController, NSTextViewDelegate, NS
     }
 
     func processSerialData(_ value: UInt8) {
-        serialTextView.processSerialData(data: value)
+        serialTextView.processSerialData(value)
     }
     
     // GrifConsoleDelegate

@@ -8,30 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		0379A274D1C2BD86E60EB656 /* Pods_Grif65Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */; };
-		A5180EBF1CAD8D0E00DD3BF5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
-		A5180EC11CAD8D2900DD3BF5 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
 		A5259C6C1D5A1F0000331D6B /* GrifConsoleTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */; };
+		A5347EE51D61D9F400B6BCBD /* DebugWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5347EE41D61D9F400B6BCBD /* DebugWindow.xib */; };
 		A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */; };
+		A57EB3B71DA6A8A0004E88A8 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B11DA6A8A0004E88A8 /* CPU6502.swift */; };
+		A57EB3B81DA6A8A0004E88A8 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B21DA6A8A0004E88A8 /* CPUOperations.swift */; };
+		A57EB3B91DA6A8A0004E88A8 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B31DA6A8A0004E88A8 /* Disassembler.swift */; };
+		A57EB3BA1DA6A8A0004E88A8 /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B41DA6A8A0004E88A8 /* InstructionTable.swift */; };
+		A57EB3BB1DA6A8A0004E88A8 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B51DA6A8A0004E88A8 /* Registers.swift */; };
+		A57EB3BC1DA6A8A0004E88A8 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57EB3B61DA6A8A0004E88A8 /* String+Hex.swift */; };
+		A57EB3ED1DA6B617004E88A8 /* romimage.bin in Resources */ = {isa = PBXBuildFile; fileRef = A57EB3EC1DA6B617004E88A8 /* romimage.bin */; };
 		A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */; };
-		A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
-		A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */; };
 		A582BE7A1C99D62D00F38B04 /* SerialEmulatorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */; };
 		A582BE7B1C99D62D00F38B04 /* SerialEmulatorWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */; };
 		C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8BB414F13E7780C954CA8E9 /* MainMenu.xib */; };
 		C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4F81E8481674BE15E39F /* InstructionTests.swift */; };
 		C8BB4265DCFCC7BB087C7267 /* DUART.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB454D4F7F77F0E28666B1 /* DUART.swift */; };
-		C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
-		C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
 		C8BB46716975B62113EE8B53 /* GrifEmulatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4BB78260CDA17F4EAF97 /* GrifEmulatorController.swift */; };
 		C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB47FEDF203C6E76135EE7 /* AppDelegate.swift */; };
 		C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8BB492B5E42C0132E103BFD /* Assets.xcassets */; };
 		C8BB489FD572CF2BFC8DAB77 /* CPUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4C6AFDCBAAB675B0BAED /* CPUTests.swift */; };
-		C8BB48B915F9C1C7D0ABCE8C /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */; };
-		C8BB490AA2DEC285A7E54599 /* InstructionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */; };
-		C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB44029AB9188F9D282913 /* String+Hex.swift */; };
-		C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */; };
-		C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */; };
-		C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BB4132C69E4E285D71DE43 /* Disassembler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,14 +43,18 @@
 /* Begin PBXFileReference section */
 		3658D33298979F44507B12EC /* Pods-Grif65Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.release.xcconfig"; sourceTree = "<group>"; };
 		A5259C6B1D5A1F0000331D6B /* GrifConsoleTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifConsoleTextView.swift; sourceTree = "<group>"; };
-		A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifEmulator.swift; sourceTree = "<group>"; };
+		A5347EE41D61D9F400B6BCBD /* DebugWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DebugWindow.xib; path = viewControllers/DebugWindow.xib; sourceTree = "<group>"; };
+		A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GrifEmulator.swift; path = cpu/GrifEmulator.swift; sourceTree = "<group>"; };
+		A57EB3B11DA6A8A0004E88A8 /* CPU6502.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CPU6502.swift; path = ../../CPU6502.swift; sourceTree = "<group>"; };
+		A57EB3B21DA6A8A0004E88A8 /* CPUOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CPUOperations.swift; path = ../../CPUOperations.swift; sourceTree = "<group>"; };
+		A57EB3B31DA6A8A0004E88A8 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Disassembler.swift; path = ../../Disassembler.swift; sourceTree = "<group>"; };
+		A57EB3B41DA6A8A0004E88A8 /* InstructionTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InstructionTable.swift; path = ../../InstructionTable.swift; sourceTree = "<group>"; };
+		A57EB3B51DA6A8A0004E88A8 /* Registers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Registers.swift; path = ../../Registers.swift; sourceTree = "<group>"; };
+		A57EB3B61DA6A8A0004E88A8 /* String+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Hex.swift"; path = "../../String+Hex.swift"; sourceTree = "<group>"; };
+		A57EB3EC1DA6B617004E88A8 /* romimage.bin */ = {isa = PBXFileReference; explicitFileType = compiled; path = romimage.bin; sourceTree = "<group>"; };
 		A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerialEmulatorWindowController.swift; path = viewControllers/SerialEmulatorWindowController.swift; sourceTree = "<group>"; };
 		A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SerialEmulatorWindow.xib; path = viewControllers/SerialEmulatorWindow.xib; sourceTree = "<group>"; };
-		C8BB4132C69E4E285D71DE43 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disassembler.swift; sourceTree = "<group>"; };
-		C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUOperations.swift; sourceTree = "<group>"; };
 		C8BB4215C30E402989ACE7E6 /* Grif65Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Grif65Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionTable.swift; sourceTree = "<group>"; };
-		C8BB44029AB9188F9D282913 /* String+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Hex.swift"; sourceTree = "<group>"; };
 		C8BB454D4F7F77F0E28666B1 /* DUART.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DUART.swift; sourceTree = "<group>"; };
 		C8BB45745860432610D017FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		C8BB45A39C874A151A6EBB5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -63,10 +63,8 @@
 		C8BB492B5E42C0132E103BFD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C8BB4BB78260CDA17F4EAF97 /* GrifEmulatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrifEmulatorController.swift; sourceTree = "<group>"; };
 		C8BB4BC5215931FDE2F80EA4 /* Grif65.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Grif65.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPU6502.swift; sourceTree = "<group>"; };
 		C8BB4BFBCEA6C05D0146B8CC /* RegistersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistersTests.swift; sourceTree = "<group>"; };
 		C8BB4C6AFDCBAAB675B0BAED /* CPUTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUTests.swift; sourceTree = "<group>"; };
-		C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registers.swift; sourceTree = "<group>"; };
 		C8BB4F81E8481674BE15E39F /* InstructionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionTests.swift; sourceTree = "<group>"; };
 		EA5779136616B3EFE91E72D8 /* Pods_Grif65Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Grif65Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC814B0A29EE4CF72E65AC30 /* Pods-Grif65Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grif65Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -100,6 +98,23 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		A57EB3EA1DA6AF01004E88A8 /* emulator */ = {
+			isa = PBXGroup;
+			children = (
+				A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */,
+				C8BB4E9C81B44CBDFDC500B0 /* cpu */,
+			);
+			name = emulator;
+			sourceTree = "<group>";
+		};
+		A57EB3EB1DA6B5BF004E88A8 /* Binaries */ = {
+			isa = PBXGroup;
+			children = (
+				A57EB3EC1DA6B617004E88A8 /* romimage.bin */,
+			);
+			name = Binaries;
+			sourceTree = "<group>";
+		};
 		A582BE741C99D57D00F38B04 /* views */ = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +128,7 @@
 			children = (
 				A582BE781C99D62D00F38B04 /* SerialEmulatorWindowController.swift */,
 				A582BE791C99D62D00F38B04 /* SerialEmulatorWindow.xib */,
+				A5347EE41D61D9F400B6BCBD /* DebugWindow.xib */,
 			);
 			name = viewControllers;
 			sourceTree = "<group>";
@@ -129,6 +145,7 @@
 		C8BB477665010AB8CA365DA8 /* Grif65 */ = {
 			isa = PBXGroup;
 			children = (
+				A57EB3EB1DA6B5BF004E88A8 /* Binaries */,
 				C8BB45745860432610D017FC /* Info.plist */,
 				C8BB492B5E42C0132E103BFD /* Assets.xcassets */,
 				C8BB47FEDF203C6E76135EE7 /* AppDelegate.swift */,
@@ -152,10 +169,9 @@
 		C8BB489BEC65630287A8BB39 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A57EB3EA1DA6AF01004E88A8 /* emulator */,
 				A582BE751C99D58600F38B04 /* viewControllers */,
 				A582BE741C99D57D00F38B04 /* views */,
-				C8BB4E9C81B44CBDFDC500B0 /* cpu */,
-				C8BB4D54FF3F01C70E67400C /* Utils */,
 				C8BB4BB78260CDA17F4EAF97 /* GrifEmulatorController.swift */,
 			);
 			path = src;
@@ -180,23 +196,15 @@
 			path = Grif65Tests;
 			sourceTree = "<group>";
 		};
-		C8BB4D54FF3F01C70E67400C /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				C8BB44029AB9188F9D282913 /* String+Hex.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
 		C8BB4E9C81B44CBDFDC500B0 /* cpu */ = {
 			isa = PBXGroup;
 			children = (
-				C8BB4BD1CBE5F780BB013D80 /* CPU6502.swift */,
-				C8BB4E6E1662F2B89DAB6B31 /* Registers.swift */,
-				C8BB41BCB86E4AB9C4563830 /* CPUOperations.swift */,
-				C8BB437DC3FBD6AC924A1A68 /* InstructionTable.swift */,
-				C8BB4132C69E4E285D71DE43 /* Disassembler.swift */,
-				A55939C81C9A255C0077CFF5 /* GrifEmulator.swift */,
+				A57EB3B11DA6A8A0004E88A8 /* CPU6502.swift */,
+				A57EB3B21DA6A8A0004E88A8 /* CPUOperations.swift */,
+				A57EB3B31DA6A8A0004E88A8 /* Disassembler.swift */,
+				A57EB3B41DA6A8A0004E88A8 /* InstructionTable.swift */,
+				A57EB3B51DA6A8A0004E88A8 /* Registers.swift */,
+				A57EB3B61DA6A8A0004E88A8 /* String+Hex.swift */,
 				C8BB454D4F7F77F0E28666B1 /* DUART.swift */,
 			);
 			path = cpu;
@@ -234,12 +242,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C8BB4CD99C33A4575F29A8EA /* Build configuration list for PBXNativeTarget "Grif65Tests" */;
 			buildPhases = (
-				503E4E0D91A7A388E8707E72 /* 📦 Check Pods Manifest.lock */,
+				503E4E0D91A7A388E8707E72 /* [CP] Check Pods Manifest.lock */,
 				C8BB491841F2C2801F802356 /* Sources */,
 				C8BB416AAE4AAA49C7A1F4D3 /* Frameworks */,
 				C8BB4A0757C780FB521ECB99 /* Resources */,
-				9611CA462D0610DAD4577A1D /* 📦 Embed Pods Frameworks */,
-				BE359B15DBA193218675F0F2 /* 📦 Copy Pods Resources */,
+				9611CA462D0610DAD4577A1D /* [CP] Embed Pods Frameworks */,
+				BE359B15DBA193218675F0F2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -295,6 +303,8 @@
 				A582BE7B1C99D62D00F38B04 /* SerialEmulatorWindow.xib in Resources */,
 				C8BB47FF51723B2C775AE7AB /* Assets.xcassets in Resources */,
 				C8BB41F082F99D8F2B939FF1 /* MainMenu.xib in Resources */,
+				A5347EE51D61D9F400B6BCBD /* DebugWindow.xib in Resources */,
+				A57EB3ED1DA6B617004E88A8 /* romimage.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,14 +318,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		503E4E0D91A7A388E8707E72 /* 📦 Check Pods Manifest.lock */ = {
+		503E4E0D91A7A388E8707E72 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -323,14 +333,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		9611CA462D0610DAD4577A1D /* 📦 Embed Pods Frameworks */ = {
+		9611CA462D0610DAD4577A1D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -338,14 +348,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Grif65Tests/Pods-Grif65Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BE359B15DBA193218675F0F2 /* 📦 Copy Pods Resources */ = {
+		BE359B15DBA193218675F0F2 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -362,16 +372,16 @@
 			files = (
 				C8BB46B751B018275AD14635 /* AppDelegate.swift in Sources */,
 				A55939C91C9A255C0077CFF5 /* GrifEmulator.swift in Sources */,
-				C8BB4D40592D8D205E60ED87 /* Registers.swift in Sources */,
-				C8BB4C6DEB59A315D2C73601 /* CPUOperations.swift in Sources */,
-				A582BE731C909A2800F38B04 /* CPU6502.swift in Sources */,
 				A582BE7A1C99D62D00F38B04 /* SerialEmulatorWindowController.swift in Sources */,
-				C8BB48B915F9C1C7D0ABCE8C /* InstructionTable.swift in Sources */,
-				C8BB4EAC3547DF8F20ED5EA5 /* Disassembler.swift in Sources */,
-				C8BB4A0B0AE65449561A0E71 /* String+Hex.swift in Sources */,
+				A57EB3B71DA6A8A0004E88A8 /* CPU6502.swift in Sources */,
+				A57EB3BB1DA6A8A0004E88A8 /* Registers.swift in Sources */,
 				C8BB4265DCFCC7BB087C7267 /* DUART.swift in Sources */,
+				A57EB3BA1DA6A8A0004E88A8 /* InstructionTable.swift in Sources */,
 				C8BB46716975B62113EE8B53 /* GrifEmulatorController.swift in Sources */,
+				A57EB3BC1DA6A8A0004E88A8 /* String+Hex.swift in Sources */,
+				A57EB3B81DA6A8A0004E88A8 /* CPUOperations.swift in Sources */,
 				A5259C6C1D5A1F0000331D6B /* GrifConsoleTextView.swift in Sources */,
+				A57EB3B91DA6A8A0004E88A8 /* Disassembler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -379,15 +389,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A582BE721C9053CD00F38B04 /* CPU6502.swift in Sources */,
 				A582BE711C90531000F38B04 /* RegistersTests.swift in Sources */,
-				A5180EC11CAD8D2900DD3BF5 /* String+Hex.swift in Sources */,
-				C8BB448406BB24B5667E1F45 /* Registers.swift in Sources */,
-				C8BB42AD88CA411EF368A19F /* CPUOperations.swift in Sources */,
 				C8BB422C8CD7EAE63F18BA87 /* InstructionTests.swift in Sources */,
 				C8BB489FD572CF2BFC8DAB77 /* CPUTests.swift in Sources */,
-				C8BB490AA2DEC285A7E54599 /* InstructionTable.swift in Sources */,
-				A5180EBF1CAD8D0E00DD3BF5 /* Disassembler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

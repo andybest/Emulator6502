@@ -1,0 +1,3 @@
+[submodule "6502-swift"]
+	path = 6502-swift
+	url = git@github.com:andybest/6502-swift.git

@@ -1,0 +1,495 @@
+------- FILE main.dasm LEVEL 1 PASS 2
+      1  10000 ????						; vim: setlocal ft=asmM6502:
+      2  10000 ????
+      3  10000 ????				       processor	6502
+      4  10000 ????
+      5  10000 ????
+      6  10000 ????
+      7  c000					      org	$C000
+      8  c000				   irqHandler
+      9  c000				   nmiHandler
+     10  c000		       4c 00 c0 	      jmp	*
+     11  c003
+     12  c003				   resetHandler
+     13  c003		       20 65 c0 	      jsr	start_monitor
+     14  c006		       4c 06 c0 	      jmp	*	; Shouldn't reach here.
+     15  c009
+------- FILE utils.dasm LEVEL 2 PASS 2
+      0  c009					      include	"utils.dasm"
+      1  c009					      processor	6502
+      2  c009
+      3  c009					      mac	strlen
+      4  c009					      lda	#<[{1}]	; Store the address of the string at $0000
+      5  c009					      sta	$0
+      6  c009					      lda	#>[{1}]
+      7  c009					      sta	$1
+      8  c009					      jsr	strlen_impl
+      9  c009					      endm
+     10  c009
+     11  c009					      mac	strlen_indir
+     12  c009					      lda	{1}	; Store the address of the string at $0000
+     13  c009					      sta	$0
+     14  c009					      lda	{1} + 1
+     15  c009					      sta	$1
+     16  c009					      jsr	strlen_impl
+     17  c009					      endm
+     18  c009
+     19  c009				   strlen_impl subroutine		; Stores length of string in acc
+     20  c009		       a0 00		      ldy	#0
+     21  c00b				   .strlen_loop
+     22  c00b		       b1 00		      lda	($0),y
+     23  c00d		       f0 04		      beq	.strlen_done
+     24  c00f		       c8		      iny
+     25  c010		       4c 0b c0 	      jmp	.strlen_loop
+     26  c013				   .strlen_done
+     27  c013		       98		      tya
+     28  c014		       60		      rts
+     29  c015
+     30  c015				   nibble_to_hex subroutine
+     31  c015		       c9 0a		      cmp	#$A
+     32  c017		       b0 03		      bcs	.gt_9
+     33  c019		       69 30		      adc	#$30	; 0-9, so offset to 0
+     34  c01b		       60		      rts
+     35  c01c
+     36  c01c				   .gt_9		; Greater than 9, so we need to offset to A - 10
+     37  c01c		       69 36		      adc	#$36
+     38  c01e		       60		      rts
+     39  c01f
+     40  c01f				   num_to_hex_string subroutine		; Convert num in acc to hex. Stores in $00-$01
+     41  c01f		       48		      pha
+     42  c020		       29 f0		      and	#$F0
+     43  c022		       4a		      lsr
+     44  c023		       4a		      lsr
+     45  c024		       4a		      lsr
+     46  c025		       4a		      lsr
+     47  c026		       20 15 c0 	      jsr	nibble_to_hex
+     48  c029		       85 00		      sta	$00
+     49  c02b		       68		      pla
+     50  c02c		       29 0f		      and	#$0F
+     51  c02e		       20 15 c0 	      jsr	nibble_to_hex
+     52  c031		       85 01		      sta	$01
+     53  c033		       60		      rts
+     54  c034
+     55  c034				   is_hex     subroutine		; Checks if ASCII value in acc is a hex digit
+     56  c034		       c9 30		      cmp	#$30
+     57  c036		       90 12		      bcc	.not_hex
+     58  c038		       c9 3a		      cmp	#$3A
+     59  c03a		       b0 03		      bcs	.not_a_number
+     60  c03c		       a9 01		      lda	#$1
+     61  c03e		       60		      rts
+     62  c03f				   .not_a_number
+     63  c03f		       c9 41		      cmp	#$41
+     64  c041		       90 07		      bcc	.not_hex
+     65  c043		       c9 47		      cmp	#$47
+     66  c045		       b0 03		      bcs	.not_hex
+     67  c047		       a9 01		      lda	#$1
+     68  c049		       60		      rts
+     69  c04a				   .not_hex
+     70  c04a		       a9 00		      lda	#$0
+     71  c04c		       60		      rts
+     72  c04d
+     73  c04d				   hex_to_nibble subroutine		; Convert ascii hex to nibble
+     74  c04d		       c9 39		      cmp	#$39	; Is it a letter? (A-F)
+     75  c04f		       b0 03		      bcs	.letter
+     76  c051		       e9 30		      sbc	#$30
+     77  c053		       60		      rts
+     78  c054				   .letter
+     79  c054		       e9 37		      sbc	#$37
+     80  c056		       60		      rts
+     81  c057
+------- FILE main.dasm
+------- FILE uart.dasm LEVEL 2 PASS 2
+      0  c057					      include	"uart.dasm"
+      1  c057							; vim: setlocal ft=asmM6502:
+      2  c057
+      3  c057					      processor	6502
+      4  c057
+      5  c057							; UART Register locations
+      6  c057		       02 00	   DUART_BASE equ	$0200
+      7  c057		       02 03	   DUART_TX_A equ	DUART_BASE + 3
+      8  c057		       02 03	   DUART_RX_A equ	DUART_BASE + 3
+      9  c057
+     10  c057		       02 01	   DUART_STATUS_A equ	DUART_BASE + 1
+     11  c057
+     12  c057					      mac	uarta_puts
+     13  c057					      lda	#<[{1}]	; Store the address of the string at $0000
+     14  c057					      sta	$0
+     15  c057					      lda	#>[{1}]
+     16  c057					      sta	$1
+     17  c057					      jsr	uarta_puts_impl
+     18  c057					      endm
+     19  c057
+     20  c057					      mac	uarta_puts_indir
+     21  c057					      lda	{1}	; Store the pointer to the string at $0000
+     22  c057					      sta	$0
+     23  c057					      lda	{1}+1
+     24  c057					      sta	$1
+     25  c057					      jsr	uarta_puts_impl
+     26  c057					      endm
+     27  c057
+     28  c057				   uarta_puts_impl subroutine
+     29  c057		       a0 00		      ldy	#0
+     30  c059				   .uarta_puts_loop
+     31  c059		       b1 00		      lda	($0),y
+     32  c05b		       f0 07		      beq	.uarta_puts_done
+     33  c05d		       8d 03 02 	      sta	DUART_TX_A
+     34  c060		       c8		      iny
+     35  c061		       4c 59 c0 	      jmp	.uarta_puts_loop
+     36  c064				   .uarta_puts_done
+     37  c064		       60		      rts
+     38  c065
+     39  c065
+     40  c065					      mac	uarta_putb
+     41  c065					      sta	DUART_TX_A
+     42  c065					      endm
+     43  c065
+     44  c065
+     45  c065					      mac	uarta_getb
+     46  c065					      lda	DUART_RX_A
+     47  c065					      endm
+     48  c065
+     49  c065
+     50  c065					      mac	uarta_bytes_available
+     51  c065					      lda	#$01	; Perform a bit test on the RX_RDY bit in status reg
+     52  c065					      bit	DUART_STATUS_A
+     53  c065					      endm
+     54  c065
+     55  c065
+------- FILE main.dasm
+------- FILE monitor.dasm LEVEL 2 PASS 2
+      0  c065					      include	"monitor.dasm"
+      1  c065
+      2  c065					      processor	6502
+      3  c065
+      4  c065		       00 f0	   MONITOR_STR_BASE equ	$F0
+      5  c065
+      6  c065
+      7  c065				   start_monitor subroutine
+      0  c065					      uarta_puts	monitorInfoText
+      1  c065		       a9 e3		      lda	#<[monitorInfoText]
+      2  c067		       85 00		      sta	$0
+      3  c069		       a9 c1		      lda	#>[monitorInfoText]
+      4  c06b		       85 01		      sta	$1
+      5  c06d		       20 57 c0 	      jsr	uarta_puts_impl
+      9  c070
+     10  c070				   .monitor_loop
+     11  c070		       a9 24		      lda	#$24	; Write the prompt ('$ ')
+      0  c072					      uarta_putb
+      1  c072		       8d 03 02 	      sta	DUART_TX_A
+     13  c075		       a9 20		      lda	#$20
+      0  c077					      uarta_putb
+      1  c077		       8d 03 02 	      sta	DUART_TX_A
+     15  c07a
+     16  c07a		       20 84 c0 	      jsr	monitor_get_string	; Print the string with surrounding quotes
+     17  c07d		       20 10 c1 	      jsr	monitor_parse_command
+     18  c080		       4c 70 c0 	      jmp	.monitor_loop
+     19  c083		       60		      rts
+     20  c084
+     21  c084				   monitor_get_string subroutine
+     22  c084		       a0 00		      ldy	#$0
+     23  c086
+     24  c086				   .check_char
+      0  c086					      uarta_bytes_available
+      1  c086		       a9 01		      lda	#$01
+      2  c088		       2c 01 02 	      bit	DUART_STATUS_A
+     26  c08b		       f0 15		      beq	.no_char	; No character available
+     27  c08d
+      0  c08d					      uarta_getb		; Get byte from UART
+      1  c08d		       ad 03 02 	      lda	DUART_RX_A
+     29  c090
+     30  c090		       c9 0a		      cmp	#$0A	; Check if it's a newline
+     31  c092		       f0 1c		      beq	.newline
+     32  c094		       c9 08		      cmp	#$08	; Check if it's a backspace
+     33  c096		       f0 0d		      beq	.backspace
+     34  c098
+     35  c098				   .store_char
+     36  c098		       99 f0 00 	      sta	MONITOR_STR_BASE,y
+     37  c09b		       c8		      iny
+      0  c09c					      uarta_putb
+      1  c09c		       8d 03 02 	      sta	DUART_TX_A
+     39  c09f		       4c 86 c0 	      jmp	.check_char
+     40  c0a2
+     41  c0a2				   .no_char
+     42  c0a2		       4c 86 c0 	      jmp	.check_char
+     43  c0a5
+     44  c0a5				   .backspace
+     45  c0a5		       c0 00		      cpy	#$0
+     46  c0a7		       f0 04		      beq	.backspace_done
+     47  c0a9		       88		      dey		; Remove character if y > 0
+      0  c0aa					      uarta_putb
+      1  c0aa		       8d 03 02 	      sta	DUART_TX_A
+     49  c0ad				   .backspace_done
+     50  c0ad		       4c 86 c0 	      jmp	.check_char
+     51  c0b0
+     52  c0b0				   .newline
+      0  c0b0					      uarta_putb
+      1  c0b0		       8d 03 02 	      sta	DUART_TX_A
+     54  c0b3		       a9 00		      lda	#$0
+     55  c0b5		       99 f0 00 	      sta	MONITOR_STR_BASE,y	; Add null terminator
+     56  c0b8		       60		      rts
+     57  c0b9
+     58  c0b9
+     59  c0b9							;;; ---------------------------------------------------------------------------
+     60  c0b9							;;; Tokenize string into a command and operands.
+     61  c0b9							;;;
+     62  c0b9							;;; Returns the number of tokens in acc and token pointers in zp $00-$06
+     63  c0b9							;;;
+     64  c0b9							;;; Modifies A, Y, X and zp $00-06
+     65  c0b9							;;; ---------------------------------------------------------------------------
+     66  c0b9
+     67  c0b9							; Pointers for tokens
+     68  c0b9		       00 00	   token1_ptr DS.W	1
+     69  c0bb		       00 00	   token2_ptr DS.W	1
+     70  c0bd		       00 00	   token3_ptr DS.W	1
+     71  c0bf
+     72  c0bf					      mac	tokenize_slurp_spaces
+     73  c0bf				   .tokenize_slurp_spaces_loop
+     74  c0bf					      lda	($0),y
+     75  c0bf					      cmp	#$20
+     76  c0bf					      bne	.tokenize_slurp_spaces_end
+     77  c0bf					      iny
+     78  c0bf					      jmp	.tokenize_slurp_spaces_loop
+     79  c0bf				   .tokenize_slurp_spaces_end
+     80  c0bf					      endm
+     81  c0bf
+     82  c0bf					      mac	tokenize
+     83  c0bf					      lda	#<[{1}]	; Store the address of the string at $0000
+     84  c0bf					      sta	$0
+     85  c0bf					      lda	#>[{1}]
+     86  c0bf					      sta	$1
+     87  c0bf
+     88  c0bf					      jsr	tokenize_impl
+     89  c0bf					      endm
+     90  c0bf
+     91  c0bf				   tokenize_impl subroutine
+     92  c0bf		       a0 00		      ldy	#$0
+     93  c0c1		       a2 00		      ldx	#$0
+     94  c0c3
+     95  c0c3							; Ignore leading spaces
+      0  c0c3					      tokenize_slurp_spaces
+      1  c0c3				   .tokenize_slurp_spaces_loop
+      2  c0c3		       b1 00		      lda	($0),y
+      3  c0c5		       c9 20		      cmp	#$20
+      4  c0c7		       d0 04		      bne	.tokenize_slurp_spaces_end
+      5  c0c9		       c8		      iny
+      6  c0ca		       4c c3 c0 	      jmp	.tokenize_slurp_spaces_loop
+      7  c0cd				   .tokenize_slurp_spaces_end
+     97  c0cd
+     98  c0cd				   .read_loop
+     99  c0cd		       e0 06		      cpx	#$6
+    100  c0cf		       f0 3a		      beq	.tokenize_done
+    101  c0d1		       b1 00		      lda	($0),y	; Load address of input string from zp + y
+    102  c0d3		       f0 36		      beq	.tokenize_done	; End of the string
+    103  c0d5		       c9 20		      cmp	#$20	; Is it a space?
+    104  c0d7		       d0 0d		      bne	.get_token_ptr
+    105  c0d9				   .read_loop_got_token
+      0  c0d9					      tokenize_slurp_spaces
+      1  c0d9				   .tokenize_slurp_spaces_loop
+      2  c0d9		       b1 00		      lda	($0),y
+      3  c0db		       c9 20		      cmp	#$20
+      4  c0dd		       d0 04		      bne	.tokenize_slurp_spaces_end
+      5  c0df		       c8		      iny
+      6  c0e0		       4c d9 c0 	      jmp	.tokenize_slurp_spaces_loop
+      7  c0e3				   .tokenize_slurp_spaces_end
+    107  c0e3		       4c cd c0 	      jmp	.read_loop
+    108  c0e6
+    109  c0e6				   .get_token_ptr
+    110  c0e6		       18		      clc
+    111  c0e7		       98		      tya
+    112  c0e8		       65 00		      adc	$0	; Calculate pointer of low byte
+    113  c0ea		       9d b9 c0 	      sta	token1_ptr,x	; Store low byte
+    114  c0ed		       a9 00		      lda	#$0
+    115  c0ef		       65 01		      adc	$1	; Calculate pointer of high byte
+    116  c0f1		       9d ba c0 	      sta	token1_ptr + 1,x	; Store high byte
+    117  c0f4		       18		      clc
+    118  c0f5		       e8		      inx
+    119  c0f6		       e8		      inx
+    120  c0f7
+    121  c0f7				   .get_token_loop		; Skip to the end of the token
+    122  c0f7		       b1 00		      lda	($0),y
+    123  c0f9		       f0 08		      beq	.token_ptr_done	; Null terminator
+    124  c0fb		       c9 20		      cmp	#$20	; Space
+    125  c0fd		       f0 04		      beq	.token_ptr_done
+    126  c0ff		       c8		      iny
+    127  c100		       4c f7 c0 	      jmp	.get_token_loop
+    128  c103				   .token_ptr_done
+    129  c103		       a9 00		      lda	#$0
+    130  c105		       91 00		      sta	($0),y
+    131  c107		       c8		      iny
+    132  c108		       4c d9 c0 	      jmp	.read_loop_got_token
+    133  c10b
+    134  c10b				   .tokenize_done
+    135  c10b		       8a		      txa		; Transfer pointer offset to acc
+    136  c10c		       4a		      lsr		; Divide by 2 to get number of tokens
+    137  c10d		       60		      rts
+    138  c10e
+    139  c10e
+    140  c10e							;;; ---------------------------------------------------------------------------
+    141  c10e							;;; Parse command entered into monitor
+    142  c10e							;;;
+    143  c10e							;;; Tokenizes the input string and executes the command
+    144  c10e							;;;
+    145  c10e							;;; Modifies A, Y, X and zp $00-06
+    146  c10e							;;; ---------------------------------------------------------------------------
+    147  c10e
+    148  c10e		       00 00	   MON_CURR_ADDR ds.w	1	; Current address that monitor is looking at
+    149  c110
+    150  c110				   monitor_parse_command subroutine
+      0  c110					      tokenize	MONITOR_STR_BASE
+      1  c110		       a9 f0		      lda	#<[MONITOR_STR_BASE]
+      2  c112		       85 00		      sta	$0
+      3  c114		       a9 00		      lda	#>[MONITOR_STR_BASE]
+      4  c116		       85 01		      sta	$1
+      5  c118
+      6  c118		       20 bf c0 	      jsr	tokenize_impl
+    152  c11b		       85 07		      sta	$7	; Store number of tokens
+    153  c11d
+      0  c11d					      strlen_indir	token1_ptr
+      1  c11d		       ad b9 c0 	      lda	token1_ptr
+      2  c120		       85 00		      sta	$0
+      3  c122		       ad ba c0 	      lda	token1_ptr + 1
+      4  c125		       85 01		      sta	$1
+      5  c127		       20 09 c0 	      jsr	strlen_impl
+    155  c12a
+    156  c12a		       c9 00		      cmp	#$0	; No command
+    157  c12c		       d0 01		      bne	.check_length
+    158  c12e		       60		      rts
+    159  c12f
+    160  c12f				   .check_length
+    161  c12f		       c9 01		      cmp	#$1	; Command is single character
+    162  c131		       f0 03		      beq	.single_letter_command
+    163  c133		       4c 43 c1 	      jmp	.print_unknown
+    164  c136
+    165  c136				   .single_letter_command
+    166  c136		       a5 f0		      lda	MONITOR_STR_BASE
+    167  c138
+    168  c138		       c9 3f		      cmp	#$3F	; ?
+    169  c13a		       f0 2d		      beq	.print_help
+    170  c13c		       c9 61		      cmp	#$61	; a
+    171  c13e		       f0 37		      beq	.set_address
+    172  c140
+    173  c140		       4c 43 c1 	      jmp	.print_unknown
+    174  c143
+    175  c143				   .print_unknown
+      0  c143					      uarta_puts	monitorUnknownText
+      1  c143		       a9 0e		      lda	#<[monitorUnknownText]
+      2  c145		       85 00		      sta	$0
+      3  c147		       a9 c2		      lda	#>[monitorUnknownText]
+      4  c149		       85 01		      sta	$1
+      5  c14b		       20 57 c0 	      jsr	uarta_puts_impl
+    177  c14e		       a9 27		      lda	#$27
+      0  c150					      uarta_putb
+      1  c150		       8d 03 02 	      sta	DUART_TX_A
+      0  c153					      uarta_puts	MONITOR_STR_BASE
+      1  c153		       a9 f0		      lda	#<[MONITOR_STR_BASE]
+      2  c155		       85 00		      sta	$0
+      3  c157		       a9 00		      lda	#>[MONITOR_STR_BASE]
+      4  c159		       85 01		      sta	$1
+      5  c15b		       20 57 c0 	      jsr	uarta_puts_impl
+    180  c15e		       a9 27		      lda	#$27
+      0  c160					      uarta_putb
+      1  c160		       8d 03 02 	      sta	DUART_TX_A
+    182  c163		       a9 0a		      lda	#$0A
+      0  c165					      uarta_putb
+      1  c165		       8d 03 02 	      sta	DUART_TX_A
+    184  c168		       60		      rts
+    185  c169
+    186  c169				   .print_help
+      0  c169					      uarta_puts	monitorHelpText
+      1  c169		       a9 70		      lda	#<[monitorHelpText]
+      2  c16b		       85 00		      sta	$0
+      3  c16d		       a9 c2		      lda	#>[monitorHelpText]
+      4  c16f		       85 01		      sta	$1
+      5  c171		       20 57 c0 	      jsr	uarta_puts_impl
+    188  c174		       4c d5 c1 	      jmp	.parse_done
+    189  c177
+    190  c177				   .set_address
+    191  c177		       a5 07		      lda	$7	; Load num tokens
+    192  c179		       c9 02		      cmp	#$2	; Expect 2 args
+    193  c17b		       d0 2e		      bne	.print_num_args_error
+    194  c17d
+      0  c17d					      strlen_indir	token2_ptr	; Token should be a 4 character hex address
+      1  c17d		       ad bb c0 	      lda	token2_ptr
+      2  c180		       85 00		      sta	$0
+      3  c182		       ad bc c0 	      lda	token2_ptr + 1
+      4  c185		       85 01		      sta	$1
+      5  c187		       20 09 c0 	      jsr	strlen_impl
+    196  c18a		       c9 04		      cmp	#$4
+    197  c18c		       d0 2b		      bne	.print_bad_args
+    198  c18e
+    199  c18e							; Copy pointer to zp
+    200  c18e		       ad bb c0 	      lda	token2_ptr
+    201  c191		       85 00		      sta	$0
+    202  c193		       ad bc c0 	      lda	token2_ptr + 1
+    203  c196		       85 01		      sta	$1
+    204  c198
+    205  c198							; Convert digits to address
+    206  c198		       a0 00		      ldy	#$0
+    207  c19a
+    208  c19a							; Check digits first
+    209  c19a				   .digit_check
+    210  c19a		       b1 00		      lda	($0),y
+    211  c19c		       4c 34 c0 	      jmp	is_hex
+    212  c19f		       c9 00		      cmp	#$0
+    213  c1a1		       f0 24		      beq	.print_not_hex
+    214  c1a3		       c8		      iny
+    215  c1a4		       c0 04		      cpy	#$4
+    216  c1a6		       d0 f2		      bne	.digit_check
+    217  c1a8		       4c d5 c1 	      jmp	.parse_done
+    218  c1ab
+    219  c1ab				   .print_num_args_error
+      0  c1ab					      uarta_puts	monitorWrongNumArgsText
+      1  c1ab		       a9 20		      lda	#<[monitorWrongNumArgsText]
+      2  c1ad		       85 00		      sta	$0
+      3  c1af		       a9 c2		      lda	#>[monitorWrongNumArgsText]
+      4  c1b1		       85 01		      sta	$1
+      5  c1b3		       20 57 c0 	      jsr	uarta_puts_impl
+    221  c1b6		       4c d5 c1 	      jmp	.parse_done
+    222  c1b9
+    223  c1b9				   .print_bad_args
+      0  c1b9					      uarta_puts	monitorBadArgs
+      1  c1b9		       a9 3b		      lda	#<[monitorBadArgs]
+      2  c1bb		       85 00		      sta	$0
+      3  c1bd		       a9 c2		      lda	#>[monitorBadArgs]
+      4  c1bf		       85 01		      sta	$1
+      5  c1c1		       20 57 c0 	      jsr	uarta_puts_impl
+    225  c1c4		       4c d5 c1 	      jmp	.parse_done
+    226  c1c7
+    227  c1c7				   .print_not_hex
+      0  c1c7					      uarta_puts	monitorNotHex
+      1  c1c7		       a9 58		      lda	#<[monitorNotHex]
+      2  c1c9		       85 00		      sta	$0
+      3  c1cb		       a9 c2		      lda	#>[monitorNotHex]
+      4  c1cd		       85 01		      sta	$1
+      5  c1cf		       20 57 c0 	      jsr	uarta_puts_impl
+    229  c1d2		       4c d5 c1 	      jmp	.parse_done
+    230  c1d5
+    231  c1d5
+    232  c1d5				   .parse_done
+    233  c1d5		       60		      rts
+    234  c1d6
+    235  c1d6
+    236  c1d6		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
+    237  c1e3
+    238  c1e3		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
+    239  c205		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
+    240  c20e		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
+    241  c220
+    242  c220		       57 72 6f 6e*monitorWrongNumArgsText .byte.b	"Wrong number of arguments", $0A, $0
+    243  c23b		       41 72 67 75*monitorBadArgs .byte.b	"Arguments in invalid format", $0A, $0
+    244  c258		       41 72 67 75*monitorNotHex .byte.b	"Argument not valid hex", $0A, $0
+    245  c270
+    246  c270				   monitorHelpText
+    247  c270		       0a		      .byte.b	$0A
+    248  c271		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
+    249  c27b		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
+    250  c286		       20 20 61 20*	      .byte.b	"  a - Set address [a XXXX]", $0A
+    251  c2a1		       0a 00		      .byte.b	$0A, $0
+------- FILE main.dasm
+     19  c2a3
+     20  c2a3
+     21  c2a3							; Interrupts
+     22  fffa					      org	$FFFA
+     23  fffa		       00 c0		      .WORD.w	nmiHandler
+     24  fffc		       03 c0		      .WORD.w	resetHandler
+     25  fffe		       00 c0		      .WORD.w	irqHandler

@@ -1,7 +1,24 @@
+// MIT License
 //
-// Created by Andy Best on 14/03/2016.
-// Copyright (c) 2016 andybest. All rights reserved.
+// Copyright (c) 2016 Andy Best
 //
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 import Foundation
 
@@ -17,7 +34,7 @@ extension CPU6502 {
         add6502Opcodes()
     }
 
-    func addInstruction(_ opcode: UInt8, ins: (AddressingMode) -> (InstructionResponse), insName: String,
+    func addInstruction(_ opcode: UInt8, ins: @escaping (AddressingMode) -> (InstructionResponse), insName: String,
                         addrMode: AddressingModeRef, numBytes: Int, numCycles: Int, specialCycles: Bool) {
         instructionTable[Int(opcode)] = InstructionEntry(instructionName: insName, instructionFunction: ins,
                 addressingMode: addrMode, numBytes: numBytes, numCycles: numCycles, specialCycles: specialCycles)
@@ -29,7 +46,8 @@ extension CPU6502 {
         addInstruction(0x05, ins: opORA, insName:"ORA", addrMode: AM.zeroPage, numBytes: 2, numCycles: 3, specialCycles: false)
         addInstruction(0x06, ins: opASL, insName:"ASL", addrMode: AM.zeroPage, numBytes: 2, numCycles: 5, specialCycles: false)
         addInstruction(0x08, ins: opPHP, insName:"PHP", addrMode: AM.implicit, numBytes: 1, numCycles: 3, specialCycles: false)
-        addInstruction(0x09, ins: opORA, insName:"ORA", addrMode: AM.accumulator, numBytes: 1, numCycles: 2, specialCycles: false)
+        addInstruction(0x09, ins: opORA, insName:"ORA", addrMode: AM.immediate, numBytes: 2, numCycles: 2, specialCycles: false)
+        addInstruction(0x0A, ins: opASL, insName:"ASL", addrMode: AM.accumulator, numBytes: 1, numCycles: 6, specialCycles: false)
         addInstruction(0x0D, ins: opORA, insName:"ORA", addrMode: AM.absolute, numBytes: 3, numCycles: 4, specialCycles: false)
         addInstruction(0x0E, ins: opASL, insName:"ASL", addrMode: AM.absolute, numBytes: 3, numCycles: 6, specialCycles: false)
         addInstruction(0x10, ins: opBPL, insName:"BPL", addrMode: AM.relative, numBytes: 2, numCycles: 2, specialCycles: true)

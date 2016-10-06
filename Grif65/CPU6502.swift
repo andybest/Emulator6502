@@ -30,7 +30,7 @@ enum AddressingMode {
     case indirectX(UInt16)
     case indirectY(UInt16)
 
-    func assemblyString() -> String {
+    func assemblyString(cpu: CPU6502) -> String {
         switch self {
         case .accumulator:
             return "A"
@@ -41,34 +41,44 @@ enum AddressingMode {
             return "#$\(str)"
         case .zeroPage(let val):
             let str = String(format: "%02X", val)
-            return "$\(str)"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "$\(str) - \(val)"
         case .zeroPageX(let val):
             let str = String(format: "%02X", val)
-            return "$\(str),X"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "$\(str),X - \(val)"
         case .zeroPageY(let val):
             let str = String(format: "%02X", val)
-            return "$\(str),Y"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "$\(str),Y - \(val)"
         case .relative(let val):
             let str = String(format: "%02X", val)
-            return "|$\(str)"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "|$\(str) - \(val)"
         case .absolute(let val):
             let str = String(format: "%04X", val)
-            return "$\(str)"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "$\(str) - \(val)"
         case .absoluteX(let val):
             let str = String(format: "%04X", val)
-            return "$\(str),X"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "$\(str),X - \(val)"
         case .absoluteY(let val):
             let str = String(format: "%04X", val)
-            return "$\(str),Y"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "$\(str),Y - \(val)"
         case .indirect(let val):
             let str = String(format: "%04X", val)
-            return "($\(str))"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "($\(str)) - \(val)"
         case .indirectX(let val):
             let str = String(format: "%04X", val)
-            return "($\(str)),X"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "($\(str)),X - \(val)"
         case .indirectY(let val):
             let str = String(format: "%04X", val)
-            return "($\(str)),Y"
+            let val = String(format: "%02X", cpu.valueForAddressingMode(self))
+            return "($\(str)),Y - \(val)"
 
         }
     }
@@ -126,7 +136,7 @@ class CPU6502 {
     init() {
         self.registers = Registers()
         buildInstructionTable()
-        self.reset()
+        //self.reset()
     }
 
     func reset() {
@@ -135,6 +145,8 @@ class CPU6502 {
         self.registers.setInterruptFlag(true)
         self.registers.setDecimalFlag(true)
         self.registers.setBreakFlag(true)
+        
+        self.registers.pc = getIndirectAddress(0xFFFC)
     }
 
     func printCPUState() {
@@ -165,7 +177,7 @@ class CPU6502 {
         var currentAddress = address
         for byte in data {
             setMem(currentAddress, value: byte)
-            currentAddress += 1
+            currentAddress = UInt16.addWithOverflow(currentAddress, 1).0
         }
     }
 
@@ -189,7 +201,11 @@ class CPU6502 {
                 }
 
                 let lineHex = (line as NSString).substring(from: 1).uint8ArrayFromHexadecimalString()
-
+                
+                if lineHex.count < 4 {
+                    continue
+                }
+                
                 let byteCount  = lineHex[0]
                 let address    = (UInt16(lineHex[1]) << 8) | UInt16(lineHex[2])
                 let recordType = lineHex[3]
@@ -274,7 +290,7 @@ class CPU6502 {
         return cycles
     }
 
-    func getModeForCurrentOpcode(_ mode: AddressingModeRef) -> AddressingMode {
+    func getModeForCurrentOpcode(_ mode: AddressingModeRef, numBytes: Int) -> AddressingMode {
         switch (mode) {
         case .implicit:
             return AddressingMode.implicit
@@ -297,18 +313,26 @@ class CPU6502 {
         case .absoluteY:
             return AddressingMode.absoluteY(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
         case .indirect:
-            return AddressingMode.indirect(UInt16(getMem(getProgramCounter() + 1)))
+            return AddressingMode.indirect(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
         case .indirectX:
-            return AddressingMode.indirectX(UInt16(getMem(getProgramCounter() + 1)))
+            if(numBytes == 2)
+            {
+                return AddressingMode.indirectX(UInt16(getMem(getProgramCounter() + 1)))
+            }
+            return AddressingMode.indirectX(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
         case .indirectY:
-            return AddressingMode.indirectY(UInt16(getMem(getProgramCounter() + 1)))
+            if(numBytes == 2)
+            {
+                return AddressingMode.indirectY(UInt16(getMem(getProgramCounter() + 1)))
+            }
+            return AddressingMode.indirectY(UInt16(getMem(getProgramCounter() + 1)) | (UInt16(getMem(getProgramCounter() + 2)) << UInt16(8)))
         }
     }
 
     func executeOpcode(_ opcode: UInt8) -> Int {
         let instruction    = instructionTable[Int(opcode)]
-        let addressingMode = getModeForCurrentOpcode(instruction.addressingMode)
-        //let addr           = String(format: "0x%2X", getProgramCounter())
+        let addressingMode = getModeForCurrentOpcode(instruction.addressingMode, numBytes: instruction.numBytes)
+        let addr           = String(format: "0x%2X", getProgramCounter())
 
         setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         _ = instruction.instructionFunction(addressingMode)
@@ -317,13 +341,13 @@ class CPU6502 {
             setProgramCounter(getProgramCounter() + UInt16(instruction.numBytes))
         }*/
 
-        //print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString())")
-        //printCPUState()
+//        print("Executing instruction at \(addr): \(instruction.instructionName) \(addressingMode.assemblyString(cpu: self))")
+//        printCPUState()
         return instruction.numCycles
     }
 
     func breakExecuted() {
-        print("Break executed at address \(self.registers.pc)")
+        //print("Break executed at address \(self.registers.pc)")
     }
 
 }
