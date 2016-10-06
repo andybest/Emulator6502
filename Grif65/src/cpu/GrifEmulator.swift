@@ -56,7 +56,7 @@ class GrifEmulator {
 
         duart.attachSerialChannelSendCallback(serialChannelDidSend)
         loadRom()
-        
+
         cpu.reset()
     }
     

@@ -1,7 +1,8 @@
 
   processor 6502
 
-MONITOR_STR_BASE: equ $F0
+M_STR_BASE: equ $F0
+M_STR_LEN:  equ $10
 
 
 start_monitor subroutine
@@ -33,7 +34,7 @@ monitor_get_string subroutine
   beq .backspace
 
 .store_char
-  sta MONITOR_STR_BASE,y
+  sta M_STR_BASE,y
   iny
   uarta_putb
   jmp .check_char
@@ -52,186 +53,47 @@ monitor_get_string subroutine
 .newline
   uarta_putb
   lda #$0
-  sta MONITOR_STR_BASE,y      ; Add null terminator
+  sta M_STR_BASE,y      ; Add null terminator
   rts
 
 
-;;; ---------------------------------------------------------------------------
-;;; Tokenize string into a command and operands.
-;;;
-;;; Returns the number of tokens in acc and token pointers in zp $00-$06
-;;; 
-;;; Modifies A, Y, X and zp $00-06
-;;; ---------------------------------------------------------------------------
-
-; Pointers for tokens
-token1_ptr  equ $0010
-token2_ptr  equ $0012
-token3_ptr  equ $0014
-
-  mac tokenize_slurp_spaces
-.tokenize_slurp_spaces_loop
-      lda ($0),y
-      cmp #$20
-      bne .tokenize_slurp_spaces_end
-      iny
-      jmp .tokenize_slurp_spaces_loop
-.tokenize_slurp_spaces_end
-  endm
-
-  mac tokenize
-    lda #<[{1}]     ; Store the address of the string at $0000
-    sta $0
-    lda #>[{1}]
-    sta $1
-  
-    jsr tokenize_impl
-  endm
-  
-tokenize_impl subroutine
-  ldy #$0
-  ldx #$0
-
-  ; Ignore leading spaces
-  tokenize_slurp_spaces
-  
-.read_loop
-  cpx #$6
-  beq .tokenize_done
-  lda ($0),y              ; Load address of input string from zp + y
-  beq .tokenize_done      ; End of the string
-  cmp #$20                ; Is it a space?
-  bne .get_token_ptr
-.read_loop_got_token
-  tokenize_slurp_spaces
-  jmp .read_loop
-
-.get_token_ptr
-  clc
-  tya
-  adc $0                  ; Calculate pointer of low byte
-  sta token1_ptr,x        ; Store low byte
-  lda #$0
-  adc $1                  ; Calculate pointer of high byte
-  sta token1_ptr + 1,x    ; Store high byte
-  clc
-  inx
-  inx
-  
-.get_token_loop           ; Skip to the end of the token
-  lda ($0),y
-  beq .token_ptr_done     ; Null terminator
-  cmp #$20                ; Space
-  beq .token_ptr_done
-  iny
-  jmp .get_token_loop
-.token_ptr_done
-  lda #$0
-  sta ($0),y
-  iny
-  jmp .read_loop_got_token
-
-.tokenize_done
-  txa                     ; Transfer pointer offset to acc
-  lsr                     ; Divide by 2 to get number of tokens
-  rts
-
-
-;;; ---------------------------------------------------------------------------
-;;; Parse command entered into monitor
-;;;
-;;; Tokenizes the input string and executes the command
-;;; 
-;;; Modifies A, Y, X and zp $00-06
-;;; ---------------------------------------------------------------------------
-
-MON_CURR_ADDR   equ $0016       ; Current address that monitor is looking at
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; monitor_parse_command
+;
+; Parses the command present at MONITOR_STR_BASE
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 monitor_parse_command subroutine
-  tokenize MONITOR_STR_BASE
-  sta $7                        ; Store number of tokens
-  
-  strlen_indir token1_ptr
-  
-  cmp #$0                       ; No command
-  bne .check_length
-  rts
-  
-.check_length
-  cmp #$1                       ; Command is single character
-  beq .single_letter_command
-  jmp .print_unknown
-  
-.single_letter_command
-  lda MONITOR_STR_BASE
-  
-  cmp #$3F              ; ?
-  beq .print_help
-  cmp #$61              ; a
-  beq .set_address
-  
-  jmp .print_unknown
-  
-.print_unknown
-  uarta_puts monitorUnknownText
-  lda #$27
-  uarta_putb
-  uarta_puts MONITOR_STR_BASE
-  lda #$27
-  uarta_putb
-  lda #$0A
-  uarta_putb
-  rts
-  
-.print_help
-  uarta_puts monitorHelpText
-  jmp .parse_done
-  
-.set_address
-  lda $7                      ; Load num tokens
-  cmp #$2                      ; Expect 2 args
-  bne .print_num_args_error
-  
-  strlen_indir token2_ptr     ; Token should be a 4 character hex address
-  cmp #$4
-  bne .print_bad_args
-  
-  ; Copy pointer to zp
-  lda token2_ptr
-  sta $0
-  lda token2_ptr + 1
-  sta $1
-  
-  ; Convert digits to address
-  ldy #$0
-  
-  ; Check digits first
-.digit_check
-  lda ($0),y
-  jmp is_hex
-  cmp #$0
-  beq .print_not_hex
-  iny
-  cpy #$4
-  bne .digit_check
-  jmp .parse_done
-    
-.print_num_args_error
-  uarta_puts monitorWrongNumArgsText
-  jmp .parse_done
+  strlen M_STR_BASE
+  sta M_STR_LEN
 
-.print_bad_args
-  uarta_puts monitorBadArgs
-  jmp .parse_done
-  
-.print_not_hex
-  uarta_puts monitorNotHex
-  jmp .parse_done
-  
+  lda M_STR_BASE
 
-.parse_done
+  ; Check if Intel hex (starts with :)
+  cmp #':
+  bne .not_iHex
+  jsr monitor_parse_ihex
   rts
-  
+
+.not_iHex
+  uarta_puts monitorNotHexText
+  rts
+
+monitor_parse_ihex subroutine
+  ; Parse Intel HEX format string
+
+  ; Check that command is long enough to include record and checksum
+  lda M_STR_LEN
+  cmp #$0B      ; Check that it's at least 11 bytes long
+  bcs .check_record
+  uarta_puts monitorIntelHexInvalid
+  rts
+.check_record
+
+  uarta_puts monitorIntelHexText
+  rts
   
 gotStrText: .byte "Got string: ", $0
 
@@ -239,6 +101,10 @@ monitorInfoText: .byte "Grif65 monitor v0.1 by Andy Best", $0A, $0
 monitorLengthText: .byte "Length: ", $0
 monitorUnknownText: .byte "Unknown command: ", $0
 
+monitorIntelHexInvalid: .byte "Invalid Intel Hex Record", $0A, $0
+
+monitorNotHexText: .byte "Not hex", $0A, $0
+monitorIntelHexText: .byte "Intel Hex!", $0A, $0
 monitorWrongNumArgsText: .byte "Wrong number of arguments", $0A, $0
 monitorBadArgs: .byte "Arguments in invalid format", $0A, $0
 monitorNotHex: .byte "Argument not valid hex", $0A, $0

@@ -161,334 +161,157 @@
       1  c065
       2  c065					      processor	6502
       3  c065
-      4  c065		       00 f0	   MONITOR_STR_BASE equ	$F0
-      5  c065
+      4  c065		       00 f0	   M_STR_BASE equ	$F0
+      5  c065		       00 10	   M_STR_LEN  equ	$10
       6  c065
-      7  c065				   start_monitor subroutine
+      7  c065
+      8  c065				   start_monitor subroutine
       0  c065					      uarta_puts	monitorInfoText
-      1  c065		       a9 d3		      lda	#<[monitorInfoText]
+      1  c065		       a9 07		      lda	#<[monitorInfoText]
       2  c067		       85 00		      sta	$0
       3  c069		       a9 c1		      lda	#>[monitorInfoText]
       4  c06b		       85 01		      sta	$1
       5  c06d		       20 57 c0 	      jsr	uarta_puts_impl
-      9  c070
-     10  c070				   .monitor_loop
-     11  c070		       a9 24		      lda	#$24	; Write the prompt ('$ ')
+     10  c070
+     11  c070				   .monitor_loop
+     12  c070		       a9 24		      lda	#$24	; Write the prompt ('$ ')
       0  c072					      uarta_putb
       1  c072		       8d 03 02 	      sta	DUART_TX_A
-     13  c075		       a9 20		      lda	#$20
+     14  c075		       a9 20		      lda	#$20
       0  c077					      uarta_putb
       1  c077		       8d 03 02 	      sta	DUART_TX_A
-     15  c07a
-     16  c07a		       20 84 c0 	      jsr	monitor_get_string	; Print the string with surrounding quotes
-     17  c07d		       20 06 c1 	      jsr	monitor_parse_command
-     18  c080		       4c 70 c0 	      jmp	.monitor_loop
-     19  c083		       60		      rts
-     20  c084
-     21  c084				   monitor_get_string subroutine
-     22  c084		       a0 00		      ldy	#$0
-     23  c086
-     24  c086				   .check_char
+     16  c07a
+     17  c07a		       20 84 c0 	      jsr	monitor_get_string	; Print the string with surrounding quotes
+     18  c07d		       20 b9 c0 	      jsr	monitor_parse_command
+     19  c080		       4c 70 c0 	      jmp	.monitor_loop
+     20  c083		       60		      rts
+     21  c084
+     22  c084				   monitor_get_string subroutine
+     23  c084		       a0 00		      ldy	#$0
+     24  c086
+     25  c086				   .check_char
       0  c086					      uarta_bytes_available
       1  c086		       a9 01		      lda	#$01
       2  c088		       2c 01 02 	      bit	DUART_STATUS_A
-     26  c08b		       f0 15		      beq	.no_char	; No character available
-     27  c08d
+     27  c08b		       f0 15		      beq	.no_char	; No character available
+     28  c08d
       0  c08d					      uarta_getb		; Get byte from UART
       1  c08d		       ad 03 02 	      lda	DUART_RX_A
-     29  c090
-     30  c090		       c9 0a		      cmp	#$0A	; Check if it's a newline
-     31  c092		       f0 1c		      beq	.newline
-     32  c094		       c9 08		      cmp	#$08	; Check if it's a backspace
-     33  c096		       f0 0d		      beq	.backspace
-     34  c098
-     35  c098				   .store_char
-     36  c098		       99 f0 00 	      sta	MONITOR_STR_BASE,y
-     37  c09b		       c8		      iny
+     30  c090
+     31  c090		       c9 0a		      cmp	#$0A	; Check if it's a newline
+     32  c092		       f0 1c		      beq	.newline
+     33  c094		       c9 08		      cmp	#$08	; Check if it's a backspace
+     34  c096		       f0 0d		      beq	.backspace
+     35  c098
+     36  c098				   .store_char
+     37  c098		       99 f0 00 	      sta	M_STR_BASE,y
+     38  c09b		       c8		      iny
       0  c09c					      uarta_putb
       1  c09c		       8d 03 02 	      sta	DUART_TX_A
-     39  c09f		       4c 86 c0 	      jmp	.check_char
-     40  c0a2
-     41  c0a2				   .no_char
-     42  c0a2		       4c 86 c0 	      jmp	.check_char
-     43  c0a5
-     44  c0a5				   .backspace
-     45  c0a5		       c0 00		      cpy	#$0
-     46  c0a7		       f0 04		      beq	.backspace_done
-     47  c0a9		       88		      dey		; Remove character if y > 0
+     40  c09f		       4c 86 c0 	      jmp	.check_char
+     41  c0a2
+     42  c0a2				   .no_char
+     43  c0a2		       4c 86 c0 	      jmp	.check_char
+     44  c0a5
+     45  c0a5				   .backspace
+     46  c0a5		       c0 00		      cpy	#$0
+     47  c0a7		       f0 04		      beq	.backspace_done
+     48  c0a9		       88		      dey		; Remove character if y > 0
       0  c0aa					      uarta_putb
       1  c0aa		       8d 03 02 	      sta	DUART_TX_A
-     49  c0ad				   .backspace_done
-     50  c0ad		       4c 86 c0 	      jmp	.check_char
-     51  c0b0
-     52  c0b0				   .newline
+     50  c0ad				   .backspace_done
+     51  c0ad		       4c 86 c0 	      jmp	.check_char
+     52  c0b0
+     53  c0b0				   .newline
       0  c0b0					      uarta_putb
       1  c0b0		       8d 03 02 	      sta	DUART_TX_A
-     54  c0b3		       a9 00		      lda	#$0
-     55  c0b5		       99 f0 00 	      sta	MONITOR_STR_BASE,y	; Add null terminator
-     56  c0b8		       60		      rts
-     57  c0b9
+     55  c0b3		       a9 00		      lda	#$0
+     56  c0b5		       99 f0 00 	      sta	M_STR_BASE,y	; Add null terminator
+     57  c0b8		       60		      rts
      58  c0b9
-     59  c0b9							;;; ---------------------------------------------------------------------------
-     60  c0b9							;;; Tokenize string into a command and operands.
-     61  c0b9							;;;
-     62  c0b9							;;; Returns the number of tokens in acc and token pointers in zp $00-$06
-     63  c0b9							;;;
-     64  c0b9							;;; Modifies A, Y, X and zp $00-06
-     65  c0b9							;;; ---------------------------------------------------------------------------
-     66  c0b9
-     67  c0b9							; Pointers for tokens
-     68  c0b9		       00 10	   token1_ptr equ	$0010
-     69  c0b9		       00 12	   token2_ptr equ	$0012
-     70  c0b9		       00 14	   token3_ptr equ	$0014
-     71  c0b9
-     72  c0b9					      mac	tokenize_slurp_spaces
-     73  c0b9				   .tokenize_slurp_spaces_loop
-     74  c0b9					      lda	($0),y
-     75  c0b9					      cmp	#$20
-     76  c0b9					      bne	.tokenize_slurp_spaces_end
-     77  c0b9					      iny
-     78  c0b9					      jmp	.tokenize_slurp_spaces_loop
-     79  c0b9				   .tokenize_slurp_spaces_end
-     80  c0b9					      endm
-     81  c0b9
-     82  c0b9					      mac	tokenize
-     83  c0b9					      lda	#<[{1}]	; Store the address of the string at $0000
-     84  c0b9					      sta	$0
-     85  c0b9					      lda	#>[{1}]
-     86  c0b9					      sta	$1
-     87  c0b9
-     88  c0b9					      jsr	tokenize_impl
-     89  c0b9					      endm
-     90  c0b9
-     91  c0b9				   tokenize_impl subroutine
-     92  c0b9		       a0 00		      ldy	#$0
-     93  c0bb		       a2 00		      ldx	#$0
-     94  c0bd
-     95  c0bd							; Ignore leading spaces
-      0  c0bd					      tokenize_slurp_spaces
-      1  c0bd				   .tokenize_slurp_spaces_loop
-      2  c0bd		       b1 00		      lda	($0),y
-      3  c0bf		       c9 20		      cmp	#$20
-      4  c0c1		       d0 04		      bne	.tokenize_slurp_spaces_end
-      5  c0c3		       c8		      iny
-      6  c0c4		       4c bd c0 	      jmp	.tokenize_slurp_spaces_loop
-      7  c0c7				   .tokenize_slurp_spaces_end
-     97  c0c7
-     98  c0c7				   .read_loop
-     99  c0c7		       e0 06		      cpx	#$6
-    100  c0c9		       f0 38		      beq	.tokenize_done
-    101  c0cb		       b1 00		      lda	($0),y	; Load address of input string from zp + y
-    102  c0cd		       f0 34		      beq	.tokenize_done	; End of the string
-    103  c0cf		       c9 20		      cmp	#$20	; Is it a space?
-    104  c0d1		       d0 0d		      bne	.get_token_ptr
-    105  c0d3				   .read_loop_got_token
-      0  c0d3					      tokenize_slurp_spaces
-      1  c0d3				   .tokenize_slurp_spaces_loop
-      2  c0d3		       b1 00		      lda	($0),y
-      3  c0d5		       c9 20		      cmp	#$20
-      4  c0d7		       d0 04		      bne	.tokenize_slurp_spaces_end
-      5  c0d9		       c8		      iny
-      6  c0da		       4c d3 c0 	      jmp	.tokenize_slurp_spaces_loop
-      7  c0dd				   .tokenize_slurp_spaces_end
-    107  c0dd		       4c c7 c0 	      jmp	.read_loop
-    108  c0e0
-    109  c0e0				   .get_token_ptr
-    110  c0e0		       18		      clc
-    111  c0e1		       98		      tya
-    112  c0e2		       65 00		      adc	$0	; Calculate pointer of low byte
-    113  c0e4		       95 10		      sta	token1_ptr,x	; Store low byte
-    114  c0e6		       a9 00		      lda	#$0
-    115  c0e8		       65 01		      adc	$1	; Calculate pointer of high byte
-    116  c0ea		       95 11		      sta	token1_ptr + 1,x	; Store high byte
-    117  c0ec		       18		      clc
-    118  c0ed		       e8		      inx
-    119  c0ee		       e8		      inx
-    120  c0ef
-    121  c0ef				   .get_token_loop		; Skip to the end of the token
-    122  c0ef		       b1 00		      lda	($0),y
-    123  c0f1		       f0 08		      beq	.token_ptr_done	; Null terminator
-    124  c0f3		       c9 20		      cmp	#$20	; Space
-    125  c0f5		       f0 04		      beq	.token_ptr_done
-    126  c0f7		       c8		      iny
-    127  c0f8		       4c ef c0 	      jmp	.get_token_loop
-    128  c0fb				   .token_ptr_done
-    129  c0fb		       a9 00		      lda	#$0
-    130  c0fd		       91 00		      sta	($0),y
-    131  c0ff		       c8		      iny
-    132  c100		       4c d3 c0 	      jmp	.read_loop_got_token
-    133  c103
-    134  c103				   .tokenize_done
-    135  c103		       8a		      txa		; Transfer pointer offset to acc
-    136  c104		       4a		      lsr		; Divide by 2 to get number of tokens
-    137  c105		       60		      rts
-    138  c106
-    139  c106
-    140  c106							;;; ---------------------------------------------------------------------------
-    141  c106							;;; Parse command entered into monitor
-    142  c106							;;;
-    143  c106							;;; Tokenizes the input string and executes the command
-    144  c106							;;;
-    145  c106							;;; Modifies A, Y, X and zp $00-06
-    146  c106							;;; ---------------------------------------------------------------------------
-    147  c106
-    148  c106		       00 16	   MON_CURR_ADDR equ	$0016	; Current address that monitor is looking at
-    149  c106
-    150  c106				   monitor_parse_command subroutine
-      0  c106					      tokenize	MONITOR_STR_BASE
-      1  c106		       a9 f0		      lda	#<[MONITOR_STR_BASE]
-      2  c108		       85 00		      sta	$0
-      3  c10a		       a9 00		      lda	#>[MONITOR_STR_BASE]
-      4  c10c		       85 01		      sta	$1
-      5  c10e
-      6  c10e		       20 b9 c0 	      jsr	tokenize_impl
-    152  c111		       85 07		      sta	$7	; Store number of tokens
-    153  c113
-      0  c113					      strlen_indir	token1_ptr
-      1  c113		       a5 10		      lda	token1_ptr
-      2  c115		       85 00		      sta	$0
-      3  c117		       a5 11		      lda	token1_ptr + 1
-      4  c119		       85 01		      sta	$1
-      5  c11b		       20 09 c0 	      jsr	strlen_impl
-    155  c11e
-    156  c11e		       c9 00		      cmp	#$0	; No command
-    157  c120		       d0 01		      bne	.check_length
-    158  c122		       60		      rts
-    159  c123
-    160  c123				   .check_length
-    161  c123		       c9 01		      cmp	#$1	; Command is single character
-    162  c125		       f0 03		      beq	.single_letter_command
-    163  c127		       4c 37 c1 	      jmp	.print_unknown
-    164  c12a
-    165  c12a				   .single_letter_command
-    166  c12a		       a5 f0		      lda	MONITOR_STR_BASE
-    167  c12c
-    168  c12c		       c9 3f		      cmp	#$3F	; ?
-    169  c12e		       f0 2d		      beq	.print_help
-    170  c130		       c9 61		      cmp	#$61	; a
-    171  c132		       f0 37		      beq	.set_address
-    172  c134
-    173  c134		       4c 37 c1 	      jmp	.print_unknown
-    174  c137
-    175  c137				   .print_unknown
-      0  c137					      uarta_puts	monitorUnknownText
-      1  c137		       a9 fe		      lda	#<[monitorUnknownText]
-      2  c139		       85 00		      sta	$0
-      3  c13b		       a9 c1		      lda	#>[monitorUnknownText]
-      4  c13d		       85 01		      sta	$1
-      5  c13f		       20 57 c0 	      jsr	uarta_puts_impl
-    177  c142		       a9 27		      lda	#$27
-      0  c144					      uarta_putb
-      1  c144		       8d 03 02 	      sta	DUART_TX_A
-      0  c147					      uarta_puts	MONITOR_STR_BASE
-      1  c147		       a9 f0		      lda	#<[MONITOR_STR_BASE]
-      2  c149		       85 00		      sta	$0
-      3  c14b		       a9 00		      lda	#>[MONITOR_STR_BASE]
-      4  c14d		       85 01		      sta	$1
-      5  c14f		       20 57 c0 	      jsr	uarta_puts_impl
-    180  c152		       a9 27		      lda	#$27
-      0  c154					      uarta_putb
-      1  c154		       8d 03 02 	      sta	DUART_TX_A
-    182  c157		       a9 0a		      lda	#$0A
-      0  c159					      uarta_putb
-      1  c159		       8d 03 02 	      sta	DUART_TX_A
-    184  c15c		       60		      rts
-    185  c15d
-    186  c15d				   .print_help
-      0  c15d					      uarta_puts	monitorHelpText
-      1  c15d		       a9 60		      lda	#<[monitorHelpText]
-      2  c15f		       85 00		      sta	$0
-      3  c161		       a9 c2		      lda	#>[monitorHelpText]
-      4  c163		       85 01		      sta	$1
-      5  c165		       20 57 c0 	      jsr	uarta_puts_impl
-    188  c168		       4c c5 c1 	      jmp	.parse_done
-    189  c16b
-    190  c16b				   .set_address
-    191  c16b		       a5 07		      lda	$7	; Load num tokens
-    192  c16d		       c9 02		      cmp	#$2	; Expect 2 args
-    193  c16f		       d0 2a		      bne	.print_num_args_error
-    194  c171
-      0  c171					      strlen_indir	token2_ptr	; Token should be a 4 character hex address
-      1  c171		       a5 12		      lda	token2_ptr
-      2  c173		       85 00		      sta	$0
-      3  c175		       a5 13		      lda	token2_ptr + 1
-      4  c177		       85 01		      sta	$1
-      5  c179		       20 09 c0 	      jsr	strlen_impl
-    196  c17c		       c9 04		      cmp	#$4
-    197  c17e		       d0 29		      bne	.print_bad_args
-    198  c180
-    199  c180							; Copy pointer to zp
-    200  c180		       a5 12		      lda	token2_ptr
-    201  c182		       85 00		      sta	$0
-    202  c184		       a5 13		      lda	token2_ptr + 1
-    203  c186		       85 01		      sta	$1
-    204  c188
-    205  c188							; Convert digits to address
-    206  c188		       a0 00		      ldy	#$0
-    207  c18a
-    208  c18a							; Check digits first
-    209  c18a				   .digit_check
-    210  c18a		       b1 00		      lda	($0),y
-    211  c18c		       4c 34 c0 	      jmp	is_hex
-    212  c18f		       c9 00		      cmp	#$0
-    213  c191		       f0 24		      beq	.print_not_hex
-    214  c193		       c8		      iny
-    215  c194		       c0 04		      cpy	#$4
-    216  c196		       d0 f2		      bne	.digit_check
-    217  c198		       4c c5 c1 	      jmp	.parse_done
-    218  c19b
-    219  c19b				   .print_num_args_error
-      0  c19b					      uarta_puts	monitorWrongNumArgsText
-      1  c19b		       a9 10		      lda	#<[monitorWrongNumArgsText]
-      2  c19d		       85 00		      sta	$0
-      3  c19f		       a9 c2		      lda	#>[monitorWrongNumArgsText]
-      4  c1a1		       85 01		      sta	$1
-      5  c1a3		       20 57 c0 	      jsr	uarta_puts_impl
-    221  c1a6		       4c c5 c1 	      jmp	.parse_done
-    222  c1a9
-    223  c1a9				   .print_bad_args
-      0  c1a9					      uarta_puts	monitorBadArgs
-      1  c1a9		       a9 2b		      lda	#<[monitorBadArgs]
-      2  c1ab		       85 00		      sta	$0
-      3  c1ad		       a9 c2		      lda	#>[monitorBadArgs]
-      4  c1af		       85 01		      sta	$1
-      5  c1b1		       20 57 c0 	      jsr	uarta_puts_impl
-    225  c1b4		       4c c5 c1 	      jmp	.parse_done
-    226  c1b7
-    227  c1b7				   .print_not_hex
-      0  c1b7					      uarta_puts	monitorNotHex
-      1  c1b7		       a9 48		      lda	#<[monitorNotHex]
-      2  c1b9		       85 00		      sta	$0
-      3  c1bb		       a9 c2		      lda	#>[monitorNotHex]
-      4  c1bd		       85 01		      sta	$1
-      5  c1bf		       20 57 c0 	      jsr	uarta_puts_impl
-    229  c1c2		       4c c5 c1 	      jmp	.parse_done
-    230  c1c5
-    231  c1c5
-    232  c1c5				   .parse_done
-    233  c1c5		       60		      rts
-    234  c1c6
-    235  c1c6
-    236  c1c6		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
-    237  c1d3
-    238  c1d3		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
-    239  c1f5		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
-    240  c1fe		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
-    241  c210
-    242  c210		       57 72 6f 6e*monitorWrongNumArgsText .byte.b	"Wrong number of arguments", $0A, $0
-    243  c22b		       41 72 67 75*monitorBadArgs .byte.b	"Arguments in invalid format", $0A, $0
-    244  c248		       41 72 67 75*monitorNotHex .byte.b	"Argument not valid hex", $0A, $0
-    245  c260
-    246  c260				   monitorHelpText
-    247  c260		       0a		      .byte.b	$0A
-    248  c261		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
-    249  c26b		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
-    250  c276		       20 20 61 20*	      .byte.b	"  a - Set address [a XXXX]", $0A
-    251  c291		       0a 00		      .byte.b	$0A, $0
+     59  c0b9
+     60  c0b9							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     61  c0b9							;
+     62  c0b9							; monitor_parse_command
+     63  c0b9							;
+     64  c0b9							; Parses the command present at MONITOR_STR_BASE
+     65  c0b9							;
+     66  c0b9							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     67  c0b9
+     68  c0b9				   monitor_parse_command subroutine
+      0  c0b9					      strlen	M_STR_BASE
+      1  c0b9		       a9 f0		      lda	#<[M_STR_BASE]
+      2  c0bb		       85 00		      sta	$0
+      3  c0bd		       a9 00		      lda	#>[M_STR_BASE]
+      4  c0bf		       85 01		      sta	$1
+      5  c0c1		       20 09 c0 	      jsr	strlen_impl
+     70  c0c4		       85 10		      sta	M_STR_LEN
+     71  c0c6
+     72  c0c6		       a5 f0		      lda	M_STR_BASE
+     73  c0c8
+     74  c0c8							; Check if Intel hex (starts with :)
+     75  c0c8		       c9 3a		      cmp	#':
+     76  c0ca		       d0 04		      bne	.not_iHex
+     77  c0cc		       20 dc c0 	      jsr	monitor_parse_ihex
+     78  c0cf		       60		      rts
+     79  c0d0
+     80  c0d0				   .not_iHex
+      0  c0d0					      uarta_puts	monitorNotHexText
+      1  c0d0		       a9 5e		      lda	#<[monitorNotHexText]
+      2  c0d2		       85 00		      sta	$0
+      3  c0d4		       a9 c1		      lda	#>[monitorNotHexText]
+      4  c0d6		       85 01		      sta	$1
+      5  c0d8		       20 57 c0 	      jsr	uarta_puts_impl
+     82  c0db		       60		      rts
+     83  c0dc
+     84  c0dc				   monitor_parse_ihex subroutine
+     85  c0dc							; Parse Intel HEX format string
+     86  c0dc
+     87  c0dc							; Check that command is long enough to include record and checksum
+     88  c0dc		       a5 10		      lda	M_STR_LEN
+     89  c0de		       c9 0b		      cmp	#$0B	; Check that it's at least 11 bytes long
+     90  c0e0		       b0 0c		      bcs	.check_record
+      0  c0e2					      uarta_puts	monitorIntelHexInvalid
+      1  c0e2		       a9 44		      lda	#<[monitorIntelHexInvalid]
+      2  c0e4		       85 00		      sta	$0
+      3  c0e6		       a9 c1		      lda	#>[monitorIntelHexInvalid]
+      4  c0e8		       85 01		      sta	$1
+      5  c0ea		       20 57 c0 	      jsr	uarta_puts_impl
+     92  c0ed		       60		      rts
+     93  c0ee				   .check_record
+     94  c0ee
+      0  c0ee					      uarta_puts	monitorIntelHexText
+      1  c0ee		       a9 67		      lda	#<[monitorIntelHexText]
+      2  c0f0		       85 00		      sta	$0
+      3  c0f2		       a9 c1		      lda	#>[monitorIntelHexText]
+      4  c0f4		       85 01		      sta	$1
+      5  c0f6		       20 57 c0 	      jsr	uarta_puts_impl
+     96  c0f9		       60		      rts
+     97  c0fa
+     98  c0fa		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
+     99  c107
+    100  c107		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
+    101  c129		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
+    102  c132		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
+    103  c144
+    104  c144		       49 6e 76 61*monitorIntelHexInvalid .byte.b	"Invalid Intel Hex Record", $0A, $0
+    105  c15e
+    106  c15e		       4e 6f 74 20*monitorNotHexText .byte.b	"Not hex", $0A, $0
+    107  c167		       49 6e 74 65*monitorIntelHexText .byte.b	"Intel Hex!", $0A, $0
+    108  c173		       57 72 6f 6e*monitorWrongNumArgsText .byte.b	"Wrong number of arguments", $0A, $0
+    109  c18e		       41 72 67 75*monitorBadArgs .byte.b	"Arguments in invalid format", $0A, $0
+    110  c1ab		       41 72 67 75*monitorNotHex .byte.b	"Argument not valid hex", $0A, $0
+    111  c1c3
+    112  c1c3				   monitorHelpText
+    113  c1c3		       0a		      .byte.b	$0A
+    114  c1c4		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
+    115  c1ce		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
+    116  c1d9		       20 20 61 20*	      .byte.b	"  a - Set address [a XXXX]", $0A
+    117  c1f4		       0a 00		      .byte.b	$0A, $0
 ------- FILE main.dasm
-     19  c293
-     20  c293
-     21  c293							; Interrupts
+     19  c1f6
+     20  c1f6
+     21  c1f6							; Interrupts
      22  fffa					      org	$FFFA
      23  fffa		       00 c0		      .WORD.w	nmiHandler
      24  fffc		       03 c0		      .WORD.w	resetHandler
