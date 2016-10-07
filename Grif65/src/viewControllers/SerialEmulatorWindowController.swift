@@ -38,4 +38,20 @@ class SerialEmulatorWindowController: NSWindowController, GrifConsoleDelegate {
             self.delegate!.consoleDidSendSerial(value)
         }
     }
+    
+    @IBAction func paste(_ sender: AnyObject?) {
+        let pBoard = NSPasteboard.general()
+        let types = [ NSPasteboardTypeString ]
+        
+        if pBoard.canReadItem(withDataConformingToTypes: types) {
+            if let data = pBoard.data(forType: NSPasteboardTypeString) {
+                if let dataStr = String(data: data, encoding: String.Encoding.ascii) {
+                    for c in dataStr.utf8 {
+                        consoleDidSendSerial(c)
+                    }
+                }
+            }
+        }
+        
+    }
 }

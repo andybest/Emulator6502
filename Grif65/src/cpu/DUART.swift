@@ -169,15 +169,15 @@ class DUART: IODevice {
             
             statusRegisterA.receiverReady = true
             
-            if receiveBufferA.count > 3 {
+            /*if receiveBufferA.count > 3 {
                 // Set overrun flag
                 statusRegisterA.overrunError = true
                 
                 // Emulate the shift register value being overwritten
                 receiveBufferA[3] = value
-            } else {
+            } else {*/
                 receiveBufferA.append(value)
-            }
+            //}
             
         case .serialChannelB:
             // The 68681 has a 3 byte FIFO for each channel and can hold an extra byte in the input shift register.
@@ -186,15 +186,15 @@ class DUART: IODevice {
             
             statusRegisterB.receiverReady = true
             
-            if receiveBufferB.count > 3 {
+            /*if receiveBufferB.count > 3 {
                 // Set overrun flag
                 statusRegisterB.overrunError = true
                 
                 // Emulate the shift register value being overwritten
                 receiveBufferB[3] = value
-            } else {
+            } else {*/
                 receiveBufferB.append(value)
-            }
+            //}
         }
     }
 

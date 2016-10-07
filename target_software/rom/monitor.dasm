@@ -110,6 +110,12 @@ monitor_parse_command subroutine
   rts
 
 .not_x_addr
+  cmp #'r
+  bne .not_run
+  jsr monitor_run
+  rts
+
+.not_run
   uarta_puts monitorUnknownText
   uarta_puts M_STR_BASE
   lda #$0A
@@ -360,6 +366,16 @@ monitor_print_address_contents subroutine
   uarta_putb
   rts
 
+monitor_run subroutine
+  lda #>[.run_done]
+  pha
+  lda #<[.run_done]
+  pha
+  jmp (M_CURRENT_ADDR)
+  
+.run_done
+  nop
+  rts
 
 
 monitor_invalid_syntax:
