@@ -5,6 +5,8 @@ M_STR_BASE: equ $80
 M_STR_LEN:  equ $10
 M_HEX_RECORD_LEN: equ $11
 M_HEX_RECORD_ADDR: equ $12
+M_TEMP_ADDR: equ $14
+M_CURRENT_ADDR: equ $16
 
 start_monitor subroutine
   uarta_puts monitorInfoText
@@ -75,6 +77,12 @@ monitor_parse_command subroutine
   strlen M_STR_BASE
   sta M_STR_LEN
 
+  ; If there are no characters, just return
+  cmp #$0
+  bne .parse_command
+  rts
+
+.parse_command
   lda M_STR_BASE
 
   ; Check if Intel hex (starts with :)
@@ -84,6 +92,28 @@ monitor_parse_command subroutine
   rts
 
 .not_iHex
+  cmp #'?
+  bne .not_help
+  uarta_puts monitorHelpText
+  rts
+
+.not_help
+  cmp #'a
+  bne .not_address
+  jsr monitor_current_address
+  rts
+
+.not_address
+  cmp #'x
+  bne .not_x_addr
+  jsr monitor_examine_addr_range
+  rts
+
+.not_x_addr
+  uarta_puts monitorUnknownText
+  uarta_puts M_STR_BASE
+  lda #$0A
+  uarta_putb
   rts
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -183,12 +213,172 @@ invalid_intel_hex:
 invalid_type_intel_hex:
   uarta_puts monitorIntelHexInvalidType
   rts
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; monitor_change_address
+; Changes the current address
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+monitor_current_address subroutine
+  ; Check command length
+  lda M_STR_LEN
+  cmp #$5
+  beq .length_valid
+  jmp monitor_invalid_syntax
   
+.length_valid
+  hex_byte_string_to_num M_STR_BASE + 1, monitor_invalid_syntax
+  sta M_TEMP_ADDR + 1
+  hex_byte_string_to_num M_STR_BASE + 3, monitor_invalid_syntax
+  sta M_CURRENT_ADDR
+  lda M_TEMP_ADDR + 1
+  sta M_CURRENT_ADDR + 1
+  
+  jsr monitor_print_address_contents
+  rts
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; monitor_examine_addr_range
+; Examines a range of addresses
+; xXXXX.XX
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+monitor_examine_addr_range subroutine
+  ; Check command length
+  lda M_STR_LEN
+  cmp #$8
+  beq .length_valid
+  jmp monitor_invalid_syntax
+
+.length_valid
+  ; Get start address
+  hex_byte_string_to_num M_STR_BASE + 1, monitor_invalid_syntax
+  sta M_TEMP_ADDR + 1
+  hex_byte_string_to_num M_STR_BASE + 3, monitor_invalid_syntax
+  sta M_TEMP_ADDR
+
+  ; Get length
+  hex_byte_string_to_num M_STR_BASE + 6, monitor_invalid_syntax
+  sta $6
+
+  ldx #$0
+  ldy #$0
+
+.print_line
+  ; Print start address
+  lda M_TEMP_ADDR + 1
+  jsr num_to_hex_string
+  lda $0
+  uarta_putb
+  lda $1
+  uarta_putb
+  lda M_TEMP_ADDR
+  jsr num_to_hex_string
+  lda $0
+  uarta_putb
+  lda $1
+  uarta_putb
+
+  lda #':
+  uarta_putb
+  lda #$20
+  uarta_putb
+
+.print_char
+  lda (M_TEMP_ADDR),y
+  jsr num_to_hex_string
+  lda $0
+  uarta_putb
+  lda $1
+  uarta_putb
+  lda #$20
+  uarta_putb
+  iny
+  inx
+  cpx $6                ; Have all bytes been printed?
+  beq .print_done
+  cpy #$10              ; Have all bytes on this line been printed?
+  bne .print_char
+  ldy #$0
+
+  ; Increment stored address
+  clc
+  lda M_TEMP_ADDR
+  adc #$10
+  sta M_TEMP_ADDR
+  lda M_TEMP_ADDR + 1
+  adc #$0
+  sta M_TEMP_ADDR + 1
+
+  lda #$0A
+  uarta_putb
+  jmp .print_line
+
+.print_done
+  lda #$0A
+  uarta_putb
+  uarta_putb
+  rts
+
+monitor_print_address_contents subroutine
+  ; Print address
+  lda M_CURRENT_ADDR + 1
+  jsr num_to_hex_string
+  lda $0
+  uarta_putb
+  lda $1
+  uarta_putb
+
+  lda M_CURRENT_ADDR + 0
+  jsr num_to_hex_string
+  lda $0
+  uarta_putb
+  lda $1
+  uarta_putb
+
+  lda #':
+  uarta_putb
+  lda #$20
+  uarta_putb
+
+  ; Print data
+  ldy #$0
+  lda (M_CURRENT_ADDR),y
+  jsr num_to_hex_string
+  lda $0
+  uarta_putb
+  lda $1
+  uarta_putb
+
+  lda #$0A
+  uarta_putb
+  uarta_putb
+  rts
+
+
+
+monitor_invalid_syntax:
+  uarta_puts monitorInvalidSyntaxText
+  rts
+ 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Strings
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 gotStrText: .byte "Got string: ", $0
 
 monitorInfoText: .byte "Grif65 monitor v0.1 by Andy Best", $0A, $0
 monitorLengthText: .byte "Length: ", $0
 monitorUnknownText: .byte "Unknown command: ", $0
+monitorInvalidSyntaxText: .byte "Invalid syntax", $0A, $0
 
 monitorIntelHexInvalid: .byte "Invalid Intel Hex Record", $0A, $0
 monitorIntelHexInvalidType: .byte "Invalid record type. Valid types are 00 (data) and 01 (EOF)", $0A, $0
@@ -197,5 +387,8 @@ monitorHelpText:
   .byte $0A
   .byte "Commands:", $0A
   .byte "  ? - Help", $0A
-  .byte "  a - Set address [a XXXX]", $0A
+  .byte "  a - Set address [aXXXX]", $0A
+  .byte "  x - Examine address [xXXXX.CC] (XXXX- addr, CC- num bytes)", $0A 
+  .byte $0A, "  Intel HEX Syntax:", $0A
+  .byte "    :[record size][address][record type][bytes][checksum]", $0A
   .byte $0A, $0

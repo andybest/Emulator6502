@@ -82,6 +82,8 @@ num_to_hex_string subroutine  ; Convert num in acc to hex. Stores in $00-$01
   and #$0F
   jsr nibble_to_hex
   sta $01
+  lda #$0
+  sta $02
   rts
 
 is_hex subroutine           ; Checks if ASCII value in acc is a hex digit

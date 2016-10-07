@@ -11,7 +11,7 @@
      10  c000		       4c 00 c0 	      jmp	*
      11  c003
      12  c003				   resetHandler
-     13  c003		       20 65 c0 	      jsr	start_monitor
+     13  c003		       20 69 c0 	      jsr	start_monitor
      14  c006		       4c 06 c0 	      jmp	*	; Shouldn't reach here.
      15  c009
 ------- FILE utils.dasm LEVEL 2 PASS 2
@@ -100,446 +100,826 @@
      82  c02c		       29 0f		      and	#$0F
      83  c02e		       20 15 c0 	      jsr	nibble_to_hex
      84  c031		       85 01		      sta	$01
-     85  c033		       60		      rts
-     86  c034
-     87  c034				   is_hex     subroutine		; Checks if ASCII value in acc is a hex digit
-     88  c034		       c9 30		      cmp	#$30
-     89  c036		       90 12		      bcc	.not_hex
-     90  c038		       c9 3a		      cmp	#$3A
-     91  c03a		       b0 03		      bcs	.not_a_number
-     92  c03c		       a9 00		      lda	#$0
-     93  c03e		       60		      rts
-     94  c03f				   .not_a_number
-     95  c03f		       c9 41		      cmp	#$41
-     96  c041		       90 07		      bcc	.not_hex
-     97  c043		       c9 47		      cmp	#$47
-     98  c045		       b0 03		      bcs	.not_hex
-     99  c047		       a9 00		      lda	#$0
-    100  c049		       60		      rts
-    101  c04a				   .not_hex
-    102  c04a		       a9 01		      lda	#$1
-    103  c04c		       60		      rts
-    104  c04d
-    105  c04d				   hex_to_nibble subroutine		; Convert ascii hex to nibble
-    106  c04d		       c9 41		      cmp	#$41	; Is it a letter? (A-F)
-    107  c04f		       b0 03		      bcs	.letter
-    108  c051		       e9 2f		      sbc	#$2F
-    109  c053		       60		      rts
-    110  c054				   .letter
-    111  c054		       e9 37		      sbc	#$37
-    112  c056		       60		      rts
-    113  c057
+     85  c033		       a9 00		      lda	#$0
+     86  c035		       85 02		      sta	$02
+     87  c037		       60		      rts
+     88  c038
+     89  c038				   is_hex     subroutine		; Checks if ASCII value in acc is a hex digit
+     90  c038		       c9 30		      cmp	#$30
+     91  c03a		       90 12		      bcc	.not_hex
+     92  c03c		       c9 3a		      cmp	#$3A
+     93  c03e		       b0 03		      bcs	.not_a_number
+     94  c040		       a9 00		      lda	#$0
+     95  c042		       60		      rts
+     96  c043				   .not_a_number
+     97  c043		       c9 41		      cmp	#$41
+     98  c045		       90 07		      bcc	.not_hex
+     99  c047		       c9 47		      cmp	#$47
+    100  c049		       b0 03		      bcs	.not_hex
+    101  c04b		       a9 00		      lda	#$0
+    102  c04d		       60		      rts
+    103  c04e				   .not_hex
+    104  c04e		       a9 01		      lda	#$1
+    105  c050		       60		      rts
+    106  c051
+    107  c051				   hex_to_nibble subroutine		; Convert ascii hex to nibble
+    108  c051		       c9 41		      cmp	#$41	; Is it a letter? (A-F)
+    109  c053		       b0 03		      bcs	.letter
+    110  c055		       e9 2f		      sbc	#$2F
+    111  c057		       60		      rts
+    112  c058				   .letter
+    113  c058		       e9 37		      sbc	#$37
+    114  c05a		       60		      rts
+    115  c05b
 ------- FILE main.dasm
 ------- FILE uart.dasm LEVEL 2 PASS 2
-      0  c057					      include	"uart.dasm"
-      1  c057							; vim: setlocal ft=asmM6502:
-      2  c057
-      3  c057					      processor	6502
-      4  c057
-      5  c057							; UART Register locations
-      6  c057		       02 00	   DUART_BASE equ	$0200
-      7  c057		       02 03	   DUART_TX_A equ	DUART_BASE + 3
-      8  c057		       02 03	   DUART_RX_A equ	DUART_BASE + 3
-      9  c057
-     10  c057		       02 01	   DUART_STATUS_A equ	DUART_BASE + 1
-     11  c057
-     12  c057					      mac	uarta_puts
-     13  c057					      lda	#<[{1}]	; Store the address of the string at $0000
-     14  c057					      sta	$0
-     15  c057					      lda	#>[{1}]
-     16  c057					      sta	$1
-     17  c057					      jsr	uarta_puts_impl
-     18  c057					      endm
-     19  c057
-     20  c057					      mac	uarta_puts_indir
-     21  c057					      lda	{1}	; Store the pointer to the string at $0000
-     22  c057					      sta	$0
-     23  c057					      lda	{1}+1
-     24  c057					      sta	$1
-     25  c057					      jsr	uarta_puts_impl
-     26  c057					      endm
-     27  c057
-     28  c057				   uarta_puts_impl subroutine
-     29  c057		       a0 00		      ldy	#0
-     30  c059				   .uarta_puts_loop
-     31  c059		       b1 00		      lda	($0),y
-     32  c05b		       f0 07		      beq	.uarta_puts_done
-     33  c05d		       8d 03 02 	      sta	DUART_TX_A
-     34  c060		       c8		      iny
-     35  c061		       4c 59 c0 	      jmp	.uarta_puts_loop
-     36  c064				   .uarta_puts_done
-     37  c064		       60		      rts
-     38  c065
-     39  c065
-     40  c065					      mac	uarta_putb
-     41  c065					      sta	DUART_TX_A
-     42  c065					      endm
-     43  c065
-     44  c065
-     45  c065					      mac	uarta_getb
-     46  c065					      lda	DUART_RX_A
-     47  c065					      endm
-     48  c065
-     49  c065
-     50  c065					      mac	uarta_bytes_available
-     51  c065					      lda	#$01	; Perform a bit test on the RX_RDY bit in status reg
-     52  c065					      bit	DUART_STATUS_A
-     53  c065					      endm
-     54  c065
-     55  c065
+      0  c05b					      include	"uart.dasm"
+      1  c05b							; vim: setlocal ft=asmM6502:
+      2  c05b
+      3  c05b					      processor	6502
+      4  c05b
+      5  c05b							; UART Register locations
+      6  c05b		       02 00	   DUART_BASE equ	$0200
+      7  c05b		       02 03	   DUART_TX_A equ	DUART_BASE + 3
+      8  c05b		       02 03	   DUART_RX_A equ	DUART_BASE + 3
+      9  c05b
+     10  c05b		       02 01	   DUART_STATUS_A equ	DUART_BASE + 1
+     11  c05b
+     12  c05b					      mac	uarta_puts
+     13  c05b					      lda	#<[{1}]	; Store the address of the string at $0000
+     14  c05b					      sta	$0
+     15  c05b					      lda	#>[{1}]
+     16  c05b					      sta	$1
+     17  c05b					      jsr	uarta_puts_impl
+     18  c05b					      endm
+     19  c05b
+     20  c05b					      mac	uarta_puts_indir
+     21  c05b					      lda	{1}	; Store the pointer to the string at $0000
+     22  c05b					      sta	$0
+     23  c05b					      lda	{1}+1
+     24  c05b					      sta	$1
+     25  c05b					      jsr	uarta_puts_impl
+     26  c05b					      endm
+     27  c05b
+     28  c05b				   uarta_puts_impl subroutine
+     29  c05b		       a0 00		      ldy	#0
+     30  c05d				   .uarta_puts_loop
+     31  c05d		       b1 00		      lda	($0),y
+     32  c05f		       f0 07		      beq	.uarta_puts_done
+     33  c061		       8d 03 02 	      sta	DUART_TX_A
+     34  c064		       c8		      iny
+     35  c065		       4c 5d c0 	      jmp	.uarta_puts_loop
+     36  c068				   .uarta_puts_done
+     37  c068		       60		      rts
+     38  c069
+     39  c069
+     40  c069					      mac	uarta_putb
+     41  c069					      sta	DUART_TX_A
+     42  c069					      endm
+     43  c069
+     44  c069
+     45  c069					      mac	uarta_getb
+     46  c069					      lda	DUART_RX_A
+     47  c069					      endm
+     48  c069
+     49  c069
+     50  c069					      mac	uarta_bytes_available
+     51  c069					      lda	#$01	; Perform a bit test on the RX_RDY bit in status reg
+     52  c069					      bit	DUART_STATUS_A
+     53  c069					      endm
+     54  c069
+     55  c069
 ------- FILE main.dasm
 ------- FILE monitor.dasm LEVEL 2 PASS 2
-      0  c065					      include	"monitor.dasm"
-      1  c065
-      2  c065					      processor	6502
-      3  c065
-      4  c065		       00 80	   M_STR_BASE equ	$80
-      5  c065		       00 10	   M_STR_LEN  equ	$10
-      6  c065		       00 11	   M_HEX_RECORD_LEN equ	$11
-      7  c065		       00 12	   M_HEX_RECORD_ADDR equ	$12
-      8  c065
-      9  c065				   start_monitor subroutine
-      0  c065					      uarta_puts	monitorInfoText
-      1  c065		       a9 f5		      lda	#<[monitorInfoText]
-      2  c067		       85 00		      sta	$0
-      3  c069		       a9 c1		      lda	#>[monitorInfoText]
-      4  c06b		       85 01		      sta	$1
-      5  c06d		       20 57 c0 	      jsr	uarta_puts_impl
-     11  c070
-     12  c070				   .monitor_loop
-     13  c070		       a9 24		      lda	#$24	; Write the prompt ('$ ')
-      0  c072					      uarta_putb
-      1  c072		       8d 03 02 	      sta	DUART_TX_A
-     15  c075		       a9 20		      lda	#$20
-      0  c077					      uarta_putb
-      1  c077		       8d 03 02 	      sta	DUART_TX_A
-     17  c07a
-     18  c07a		       20 84 c0 	      jsr	monitor_get_string	; Print the string with surrounding quotes
-     19  c07d		       20 bf c0 	      jsr	monitor_parse_command
-     20  c080		       4c 70 c0 	      jmp	.monitor_loop
-     21  c083		       60		      rts
-     22  c084
-     23  c084				   monitor_get_string subroutine
-     24  c084		       a0 00		      ldy	#$0
-     25  c086
-     26  c086				   .check_char
-      0  c086					      uarta_bytes_available
-      1  c086		       a9 01		      lda	#$01
-      2  c088		       2c 01 02 	      bit	DUART_STATUS_A
-     28  c08b		       f0 1b		      beq	.no_char	; No character available
-     29  c08d
-      0  c08d					      uarta_getb		; Get byte from UART
-      1  c08d		       ad 03 02 	      lda	DUART_RX_A
-     31  c090
-     32  c090		       c9 0a		      cmp	#$0A	; Check if it's a newline
-     33  c092		       f0 22		      beq	.newline
-     34  c094		       c9 08		      cmp	#$08	; Check if it's a backspace
-     35  c096		       f0 13		      beq	.backspace
-     36  c098
-     37  c098		       aa		      tax
-     38  c099		       c0 7f		      cpy	#$7F	; Make sure buffer doesn't overrun
-     39  c09b		       f0 e9		      beq	.check_char
-     40  c09d		       8a		      txa
-     41  c09e
-     42  c09e				   .store_char
-     43  c09e		       99 80 00 	      sta	M_STR_BASE,y
-     44  c0a1		       c8		      iny
-      0  c0a2					      uarta_putb
-      1  c0a2		       8d 03 02 	      sta	DUART_TX_A
-     46  c0a5		       4c 86 c0 	      jmp	.check_char
-     47  c0a8
-     48  c0a8				   .no_char
-     49  c0a8		       4c 86 c0 	      jmp	.check_char
-     50  c0ab
-     51  c0ab				   .backspace
-     52  c0ab		       c0 00		      cpy	#$0
-     53  c0ad		       f0 04		      beq	.backspace_done
-     54  c0af		       88		      dey		; Remove character if y > 0
-      0  c0b0					      uarta_putb
-      1  c0b0		       8d 03 02 	      sta	DUART_TX_A
-     56  c0b3				   .backspace_done
-     57  c0b3		       4c 86 c0 	      jmp	.check_char
-     58  c0b6
-     59  c0b6				   .newline
-      0  c0b6					      uarta_putb
-      1  c0b6		       8d 03 02 	      sta	DUART_TX_A
-     61  c0b9		       a9 00		      lda	#$0
-     62  c0bb		       99 80 00 	      sta	M_STR_BASE,y	; Add null terminator
-     63  c0be		       60		      rts
-     64  c0bf
-     65  c0bf
-     66  c0bf							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     67  c0bf							;
-     68  c0bf							; monitor_parse_command
-     69  c0bf							;
-     70  c0bf							; Parses the command present at MONITOR_STR_BASE
-     71  c0bf							;
-     72  c0bf							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     73  c0bf
-     74  c0bf				   monitor_parse_command subroutine
-      0  c0bf					      strlen	M_STR_BASE
-      1  c0bf		       a9 80		      lda	#<[M_STR_BASE]
-      2  c0c1		       85 00		      sta	$0
-      3  c0c3		       a9 00		      lda	#>[M_STR_BASE]
-      4  c0c5		       85 01		      sta	$1
-      5  c0c7		       20 09 c0 	      jsr	strlen_impl
-     76  c0ca		       85 10		      sta	M_STR_LEN
-     77  c0cc
-     78  c0cc		       a5 80		      lda	M_STR_BASE
-     79  c0ce
-     80  c0ce							; Check if Intel hex (starts with :)
-     81  c0ce		       c9 3a		      cmp	#':
-     82  c0d0		       d0 04		      bne	.not_iHex
-     83  c0d2		       20 d7 c0 	      jsr	monitor_parse_ihex
-     84  c0d5		       60		      rts
-     85  c0d6
-     86  c0d6				   .not_iHex
-     87  c0d6		       60		      rts
-     88  c0d7
-     89  c0d7							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     90  c0d7							;
-     91  c0d7							; monitor_parse_ihex
-     92  c0d7							;
-     93  c0d7							; Parses Intel HEX records
-     94  c0d7							;
-     95  c0d7							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     96  c0d7
-     97  c0d7				   monitor_parse_ihex subroutine
-     98  c0d7							; Parse Intel HEX format string
-     99  c0d7
-    100  c0d7							; Check that command is long enough to include record and checksum
-    101  c0d7		       a5 10		      lda	M_STR_LEN
-    102  c0d9		       c9 0b		      cmp	#$0B	; Check that it's at least 11 bytes long
-    103  c0db		       b0 03		      bcs	.check_record_length
-    104  c0dd		       4c d0 c1 	      jmp	invalid_intel_hex
-    105  c0e0
-    106  c0e0				   .check_record_length
-    107  c0e0							; Get the number of data bytes in the record (01-02) and check that the input is
-    108  c0e0							; long enough
-    109  c0e0
-      0  c0e0					      hex_byte_string_to_num	M_STR_BASE + 1, invalid_intel_hex
-      1  c0e0
-      2  c0e0		       a5 81		      lda	M_STR_BASE + 1
-      3  c0e2		       20 34 c0 	      jsr	is_hex
-      4  c0e5		       d0 1e		      bne	.not_hex_string
-      5  c0e7		       a5 81		      lda	M_STR_BASE + 1
-      6  c0e9		       20 4d c0 	      jsr	hex_to_nibble
-      7  c0ec		       18		      clc
-      8  c0ed		       2a		      rol
-      9  c0ee		       2a		      rol
-     10  c0ef		       2a		      rol
-     11  c0f0		       2a		      rol
-     12  c0f1		       85 00		      sta	$0
-     13  c0f3
-     14  c0f3
-     15  c0f3		       a5 82		      lda	M_STR_BASE + 1 + 1
-     16  c0f5		       20 34 c0 	      jsr	is_hex
-     17  c0f8		       d0 0b		      bne	.not_hex_string
-     18  c0fa		       a5 82		      lda	M_STR_BASE + 1 + 1
-     19  c0fc		       20 4d c0 	      jsr	hex_to_nibble
-     20  c0ff		       18		      clc
-     21  c100		       05 00		      ora	$0
-     22  c102
-     23  c102		       4c 08 c1 	      jmp	.done_hex
-     24  c105
-     25  c105				   .not_hex_string
-     26  c105		       4c d0 c1 	      jmp	invalid_intel_hex
-     27  c108
-     28  c108				   .done_hex
-     29  c108
-    111  c108		       18		      clc
-    112  c109		       85 11		      sta	M_HEX_RECORD_LEN
-    113  c10b		       2a		      rol
-    114  c10c		       69 0b		      adc	#$0B	; The record should be (data length << 1) + 11 bytes long
-    115  c10e		       c5 10		      cmp	M_STR_LEN
-    116  c110		       f0 03		      beq	.check_type
-    117  c112		       4c d0 c1 	      jmp	invalid_intel_hex
-    118  c115
-    119  c115				   .check_type
-      0  c115					      hex_byte_string_to_num	M_STR_BASE + 7, invalid_intel_hex
-      1  c115
-      2  c115		       a5 87		      lda	M_STR_BASE + 7
-      3  c117		       20 34 c0 	      jsr	is_hex
-      4  c11a		       d0 1e		      bne	.not_hex_string
-      5  c11c		       a5 87		      lda	M_STR_BASE + 7
-      6  c11e		       20 4d c0 	      jsr	hex_to_nibble
-      7  c121		       18		      clc
-      8  c122		       2a		      rol
-      9  c123		       2a		      rol
-     10  c124		       2a		      rol
-     11  c125		       2a		      rol
-     12  c126		       85 00		      sta	$0
-     13  c128
-     14  c128
-     15  c128		       a5 88		      lda	M_STR_BASE + 7 + 1
-     16  c12a		       20 34 c0 	      jsr	is_hex
-     17  c12d		       d0 0b		      bne	.not_hex_string
-     18  c12f		       a5 88		      lda	M_STR_BASE + 7 + 1
-     19  c131		       20 4d c0 	      jsr	hex_to_nibble
-     20  c134		       18		      clc
-     21  c135		       05 00		      ora	$0
-     22  c137
-     23  c137		       4c 3d c1 	      jmp	.done_hex
-     24  c13a
-     25  c13a				   .not_hex_string
-     26  c13a		       4c d0 c1 	      jmp	invalid_intel_hex
-     27  c13d
-     28  c13d				   .done_hex
-     29  c13d
-    121  c13d		       f0 08		      beq	.data_record
-    122  c13f
-    123  c13f		       c9 01		      cmp	#01
-    124  c141		       d0 01		      bne	.unsupported_record
-    125  c143		       60		      rts		; Ignore EOF ($0) records
-    126  c144
-    127  c144				   .unsupported_record
-    128  c144		       4c dc c1 	      jmp	invalid_type_intel_hex
-    129  c147
-    130  c147				   .data_record
-    131  c147							; Get address of data record
-      0  c147					      hex_byte_string_to_num	M_STR_BASE + 3, invalid_intel_hex	; High byte
-      1  c147
-      2  c147		       a5 83		      lda	M_STR_BASE + 3
-      3  c149		       20 34 c0 	      jsr	is_hex
-      4  c14c		       d0 1e		      bne	.not_hex_string
-      5  c14e		       a5 83		      lda	M_STR_BASE + 3
-      6  c150		       20 4d c0 	      jsr	hex_to_nibble
-      7  c153		       18		      clc
-      8  c154		       2a		      rol
-      9  c155		       2a		      rol
-     10  c156		       2a		      rol
-     11  c157		       2a		      rol
-     12  c158		       85 00		      sta	$0
-     13  c15a
-     14  c15a
-     15  c15a		       a5 84		      lda	M_STR_BASE + 3 + 1
-     16  c15c		       20 34 c0 	      jsr	is_hex
-     17  c15f		       d0 0b		      bne	.not_hex_string
-     18  c161		       a5 84		      lda	M_STR_BASE + 3 + 1
-     19  c163		       20 4d c0 	      jsr	hex_to_nibble
-     20  c166		       18		      clc
-     21  c167		       05 00		      ora	$0
-     22  c169
-     23  c169		       4c 6f c1 	      jmp	.done_hex
-     24  c16c
-     25  c16c				   .not_hex_string
-     26  c16c		       4c d0 c1 	      jmp	invalid_intel_hex
-     27  c16f
-     28  c16f				   .done_hex
-     29  c16f
-    133  c16f		       85 13		      sta	M_HEX_RECORD_ADDR + 1
-      0  c171					      hex_byte_string_to_num	M_STR_BASE + 5, invalid_intel_hex	; Low byte
-      1  c171
-      2  c171		       a5 85		      lda	M_STR_BASE + 5
-      3  c173		       20 34 c0 	      jsr	is_hex
-      4  c176		       d0 1e		      bne	.not_hex_string
-      5  c178		       a5 85		      lda	M_STR_BASE + 5
-      6  c17a		       20 4d c0 	      jsr	hex_to_nibble
-      7  c17d		       18		      clc
-      8  c17e		       2a		      rol
-      9  c17f		       2a		      rol
-     10  c180		       2a		      rol
-     11  c181		       2a		      rol
-     12  c182		       85 00		      sta	$0
-     13  c184
-     14  c184
-     15  c184		       a5 86		      lda	M_STR_BASE + 5 + 1
-     16  c186		       20 34 c0 	      jsr	is_hex
-     17  c189		       d0 0b		      bne	.not_hex_string
-     18  c18b		       a5 86		      lda	M_STR_BASE + 5 + 1
-     19  c18d		       20 4d c0 	      jsr	hex_to_nibble
-     20  c190		       18		      clc
-     21  c191		       05 00		      ora	$0
-     22  c193
-     23  c193		       4c 99 c1 	      jmp	.done_hex
-     24  c196
-     25  c196				   .not_hex_string
-     26  c196		       4c d0 c1 	      jmp	invalid_intel_hex
-     27  c199
-     28  c199				   .done_hex
-     29  c199
-    135  c199		       85 12		      sta	M_HEX_RECORD_ADDR
-    136  c19b
-    137  c19b							; Check record integrity
-    138  c19b		       a0 00		      ldy	#$0
-    139  c19d
-    140  c19d				   .check_record_loop
-    141  c19d		       b9 89 00 	      lda	M_STR_BASE + 9,y
-    142  c1a0		       20 34 c0 	      jsr	is_hex
-    143  c1a3		       f0 03		      beq	.record_char_is_hex
-    144  c1a5		       4c d0 c1 	      jmp	invalid_intel_hex
-    145  c1a8
-    146  c1a8				   .record_char_is_hex
-    147  c1a8		       c8		      iny
-    148  c1a9		       c4 11		      cpy	M_HEX_RECORD_LEN
-    149  c1ab		       d0 f0		      bne	.check_record_loop
-    150  c1ad
-    151  c1ad							; Write bytes to memory
-    152  c1ad		       a0 00		      ldy	#$0
-    153  c1af		       a2 00		      ldx	#$0
-    154  c1b1
-    155  c1b1				   .data_write_loop
-    156  c1b1		       b5 89		      lda	M_STR_BASE + 9,x
-    157  c1b3		       20 4d c0 	      jsr	hex_to_nibble
-    158  c1b6		       18		      clc
-    159  c1b7		       2a		      rol
-    160  c1b8		       2a		      rol
-    161  c1b9		       2a		      rol
-    162  c1ba		       2a		      rol
-    163  c1bb		       85 00		      sta	$0
-    164  c1bd		       e8		      inx
-    165  c1be		       b5 89		      lda	M_STR_BASE + 9,x
-    166  c1c0		       20 4d c0 	      jsr	hex_to_nibble
-    167  c1c3		       18		      clc
-    168  c1c4		       05 00		      ora	$0
-    169  c1c6		       91 12		      sta	(M_HEX_RECORD_ADDR),y	; Store byte to address
-    170  c1c8		       e8		      inx
-    171  c1c9		       c8		      iny
-    172  c1ca		       c4 11		      cpy	M_HEX_RECORD_LEN
-    173  c1cc		       d0 e3		      bne	.data_write_loop
-    174  c1ce
-    175  c1ce		       00		      brk
-    176  c1cf							; Done writing!
-    177  c1cf		       60		      rts
-    178  c1d0
-    179  c1d0
-    180  c1d0				   invalid_intel_hex
-      0  c1d0					      uarta_puts	monitorIntelHexInvalid
-      1  c1d0		       a9 32		      lda	#<[monitorIntelHexInvalid]
-      2  c1d2		       85 00		      sta	$0
-      3  c1d4		       a9 c2		      lda	#>[monitorIntelHexInvalid]
-      4  c1d6		       85 01		      sta	$1
-      5  c1d8		       20 57 c0 	      jsr	uarta_puts_impl
-    182  c1db		       60		      rts
-    183  c1dc
-    184  c1dc				   invalid_type_intel_hex
-      0  c1dc					      uarta_puts	monitorIntelHexInvalidType
-      1  c1dc		       a9 4c		      lda	#<[monitorIntelHexInvalidType]
-      2  c1de		       85 00		      sta	$0
-      3  c1e0		       a9 c2		      lda	#>[monitorIntelHexInvalidType]
-      4  c1e2		       85 01		      sta	$1
-      5  c1e4		       20 57 c0 	      jsr	uarta_puts_impl
-    186  c1e7		       60		      rts
-    187  c1e8
-    188  c1e8		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
-    189  c1f5
-    190  c1f5		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
-    191  c217		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
-    192  c220		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
-    193  c232
-    194  c232		       49 6e 76 61*monitorIntelHexInvalid .byte.b	"Invalid Intel Hex Record", $0A, $0
-    195  c24c		       49 6e 76 61*monitorIntelHexInvalidType .byte.b	"Invalid record type. Valid types are 00 (data) and 01 (EOF)", $0A, $0
-    196  c289
-    197  c289				   monitorHelpText
-    198  c289		       0a		      .byte.b	$0A
-    199  c28a		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
-    200  c294		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
-    201  c29f		       20 20 61 20*	      .byte.b	"  a - Set address [a XXXX]", $0A
-    202  c2ba		       0a 00		      .byte.b	$0A, $0
+      0  c069					      include	"monitor.dasm"
+      1  c069
+      2  c069					      processor	6502
+      3  c069
+      4  c069		       00 80	   M_STR_BASE equ	$80
+      5  c069		       00 10	   M_STR_LEN  equ	$10
+      6  c069		       00 11	   M_HEX_RECORD_LEN equ	$11
+      7  c069		       00 12	   M_HEX_RECORD_ADDR equ	$12
+      8  c069		       00 14	   M_TEMP_ADDR equ	$14
+      9  c069		       00 16	   M_CURRENT_ADDR equ	$16
+     10  c069
+     11  c069				   start_monitor subroutine
+      0  c069					      uarta_puts	monitorInfoText
+      1  c069		       a9 d9		      lda	#<[monitorInfoText]
+      2  c06b		       85 00		      sta	$0
+      3  c06d		       a9 c3		      lda	#>[monitorInfoText]
+      4  c06f		       85 01		      sta	$1
+      5  c071		       20 5b c0 	      jsr	uarta_puts_impl
+     13  c074
+     14  c074				   .monitor_loop
+     15  c074		       a9 24		      lda	#$24	; Write the prompt ('$ ')
+      0  c076					      uarta_putb
+      1  c076		       8d 03 02 	      sta	DUART_TX_A
+     17  c079		       a9 20		      lda	#$20
+      0  c07b					      uarta_putb
+      1  c07b		       8d 03 02 	      sta	DUART_TX_A
+     19  c07e
+     20  c07e		       20 88 c0 	      jsr	monitor_get_string	; Print the string with surrounding quotes
+     21  c081		       20 c3 c0 	      jsr	monitor_parse_command
+     22  c084		       4c 74 c0 	      jmp	.monitor_loop
+     23  c087		       60		      rts
+     24  c088
+     25  c088				   monitor_get_string subroutine
+     26  c088		       a0 00		      ldy	#$0
+     27  c08a
+     28  c08a				   .check_char
+      0  c08a					      uarta_bytes_available
+      1  c08a		       a9 01		      lda	#$01
+      2  c08c		       2c 01 02 	      bit	DUART_STATUS_A
+     30  c08f		       f0 1b		      beq	.no_char	; No character available
+     31  c091
+      0  c091					      uarta_getb		; Get byte from UART
+      1  c091		       ad 03 02 	      lda	DUART_RX_A
+     33  c094
+     34  c094		       c9 0a		      cmp	#$0A	; Check if it's a newline
+     35  c096		       f0 22		      beq	.newline
+     36  c098		       c9 08		      cmp	#$08	; Check if it's a backspace
+     37  c09a		       f0 13		      beq	.backspace
+     38  c09c
+     39  c09c		       aa		      tax
+     40  c09d		       c0 7f		      cpy	#$7F	; Make sure buffer doesn't overrun
+     41  c09f		       f0 e9		      beq	.check_char
+     42  c0a1		       8a		      txa
+     43  c0a2
+     44  c0a2				   .store_char
+     45  c0a2		       99 80 00 	      sta	M_STR_BASE,y
+     46  c0a5		       c8		      iny
+      0  c0a6					      uarta_putb
+      1  c0a6		       8d 03 02 	      sta	DUART_TX_A
+     48  c0a9		       4c 8a c0 	      jmp	.check_char
+     49  c0ac
+     50  c0ac				   .no_char
+     51  c0ac		       4c 8a c0 	      jmp	.check_char
+     52  c0af
+     53  c0af				   .backspace
+     54  c0af		       c0 00		      cpy	#$0
+     55  c0b1		       f0 04		      beq	.backspace_done
+     56  c0b3		       88		      dey		; Remove character if y > 0
+      0  c0b4					      uarta_putb
+      1  c0b4		       8d 03 02 	      sta	DUART_TX_A
+     58  c0b7				   .backspace_done
+     59  c0b7		       4c 8a c0 	      jmp	.check_char
+     60  c0ba
+     61  c0ba				   .newline
+      0  c0ba					      uarta_putb
+      1  c0ba		       8d 03 02 	      sta	DUART_TX_A
+     63  c0bd		       a9 00		      lda	#$0
+     64  c0bf		       99 80 00 	      sta	M_STR_BASE,y	; Add null terminator
+     65  c0c2		       60		      rts
+     66  c0c3
+     67  c0c3
+     68  c0c3							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     69  c0c3							;
+     70  c0c3							; monitor_parse_command
+     71  c0c3							;
+     72  c0c3							; Parses the command present at MONITOR_STR_BASE
+     73  c0c3							;
+     74  c0c3							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     75  c0c3
+     76  c0c3				   monitor_parse_command subroutine
+      0  c0c3					      strlen	M_STR_BASE
+      1  c0c3		       a9 80		      lda	#<[M_STR_BASE]
+      2  c0c5		       85 00		      sta	$0
+      3  c0c7		       a9 00		      lda	#>[M_STR_BASE]
+      4  c0c9		       85 01		      sta	$1
+      5  c0cb		       20 09 c0 	      jsr	strlen_impl
+     78  c0ce		       85 10		      sta	M_STR_LEN
+     79  c0d0
+     80  c0d0							; If there are no characters, just return
+     81  c0d0		       c9 00		      cmp	#$0
+     82  c0d2		       d0 01		      bne	.parse_command
+     83  c0d4		       60		      rts
+     84  c0d5
+     85  c0d5				   .parse_command
+     86  c0d5		       a5 80		      lda	M_STR_BASE
+     87  c0d7
+     88  c0d7							; Check if Intel hex (starts with :)
+     89  c0d7		       c9 3a		      cmp	#':
+     90  c0d9		       d0 04		      bne	.not_iHex
+     91  c0db		       20 1b c1 	      jsr	monitor_parse_ihex
+     92  c0de		       60		      rts
+     93  c0df
+     94  c0df				   .not_iHex
+     95  c0df		       c9 3f		      cmp	#'?
+     96  c0e1		       d0 0c		      bne	.not_help
+      0  c0e3					      uarta_puts	monitorHelpText
+      1  c0e3		       a9 7d		      lda	#<[monitorHelpText]
+      2  c0e5		       85 00		      sta	$0
+      3  c0e7		       a9 c4		      lda	#>[monitorHelpText]
+      4  c0e9		       85 01		      sta	$1
+      5  c0eb		       20 5b c0 	      jsr	uarta_puts_impl
+     98  c0ee		       60		      rts
+     99  c0ef
+    100  c0ef				   .not_help
+    101  c0ef		       c9 61		      cmp	#'a
+    102  c0f1		       d0 04		      bne	.not_address
+    103  c0f3		       20 2b c2 	      jsr	monitor_current_address
+    104  c0f6		       60		      rts
+    105  c0f7
+    106  c0f7				   .not_address
+    107  c0f7		       c9 78		      cmp	#'x
+    108  c0f9		       d0 04		      bne	.not_x_addr
+    109  c0fb		       20 90 c2 	      jsr	monitor_examine_addr_range
+    110  c0fe		       60		      rts
+    111  c0ff
+    112  c0ff				   .not_x_addr
+      0  c0ff					      uarta_puts	monitorUnknownText
+      1  c0ff		       a9 04		      lda	#<[monitorUnknownText]
+      2  c101		       85 00		      sta	$0
+      3  c103		       a9 c4		      lda	#>[monitorUnknownText]
+      4  c105		       85 01		      sta	$1
+      5  c107		       20 5b c0 	      jsr	uarta_puts_impl
+      0  c10a					      uarta_puts	M_STR_BASE
+      1  c10a		       a9 80		      lda	#<[M_STR_BASE]
+      2  c10c		       85 00		      sta	$0
+      3  c10e		       a9 00		      lda	#>[M_STR_BASE]
+      4  c110		       85 01		      sta	$1
+      5  c112		       20 5b c0 	      jsr	uarta_puts_impl
+    115  c115		       a9 0a		      lda	#$0A
+      0  c117					      uarta_putb
+      1  c117		       8d 03 02 	      sta	DUART_TX_A
+    117  c11a		       60		      rts
+    118  c11b
+    119  c11b							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    120  c11b							;
+    121  c11b							; monitor_parse_ihex
+    122  c11b							;
+    123  c11b							; Parses Intel HEX records
+    124  c11b							;
+    125  c11b							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    126  c11b
+    127  c11b				   monitor_parse_ihex subroutine
+    128  c11b							; Parse Intel HEX format string
+    129  c11b
+    130  c11b							; Check that command is long enough to include record and checksum
+    131  c11b		       a5 10		      lda	M_STR_LEN
+    132  c11d		       c9 0b		      cmp	#$0B	; Check that it's at least 11 bytes long
+    133  c11f		       b0 03		      bcs	.check_record_length
+    134  c121		       4c 13 c2 	      jmp	invalid_intel_hex
+    135  c124
+    136  c124				   .check_record_length
+    137  c124							; Get the number of data bytes in the record (01-02) and check that the input is
+    138  c124							; long enough
+    139  c124
+      0  c124					      hex_byte_string_to_num	M_STR_BASE + 1, invalid_intel_hex
+      1  c124
+      2  c124		       a5 81		      lda	M_STR_BASE + 1
+      3  c126		       20 38 c0 	      jsr	is_hex
+      4  c129		       d0 1e		      bne	.not_hex_string
+      5  c12b		       a5 81		      lda	M_STR_BASE + 1
+      6  c12d		       20 51 c0 	      jsr	hex_to_nibble
+      7  c130		       18		      clc
+      8  c131		       2a		      rol
+      9  c132		       2a		      rol
+     10  c133		       2a		      rol
+     11  c134		       2a		      rol
+     12  c135		       85 00		      sta	$0
+     13  c137
+     14  c137
+     15  c137		       a5 82		      lda	M_STR_BASE + 1 + 1
+     16  c139		       20 38 c0 	      jsr	is_hex
+     17  c13c		       d0 0b		      bne	.not_hex_string
+     18  c13e		       a5 82		      lda	M_STR_BASE + 1 + 1
+     19  c140		       20 51 c0 	      jsr	hex_to_nibble
+     20  c143		       18		      clc
+     21  c144		       05 00		      ora	$0
+     22  c146
+     23  c146		       4c 4c c1 	      jmp	.done_hex
+     24  c149
+     25  c149				   .not_hex_string
+     26  c149		       4c 13 c2 	      jmp	invalid_intel_hex
+     27  c14c
+     28  c14c				   .done_hex
+     29  c14c
+    141  c14c		       18		      clc
+    142  c14d		       85 11		      sta	M_HEX_RECORD_LEN
+    143  c14f		       2a		      rol
+    144  c150		       69 0b		      adc	#$0B	; The record should be (data length << 1) + 11 bytes long
+    145  c152		       c5 10		      cmp	M_STR_LEN
+    146  c154		       f0 03		      beq	.check_type
+    147  c156		       4c 13 c2 	      jmp	invalid_intel_hex
+    148  c159
+    149  c159				   .check_type
+      0  c159					      hex_byte_string_to_num	M_STR_BASE + 7, invalid_intel_hex
+      1  c159
+      2  c159		       a5 87		      lda	M_STR_BASE + 7
+      3  c15b		       20 38 c0 	      jsr	is_hex
+      4  c15e		       d0 1e		      bne	.not_hex_string
+      5  c160		       a5 87		      lda	M_STR_BASE + 7
+      6  c162		       20 51 c0 	      jsr	hex_to_nibble
+      7  c165		       18		      clc
+      8  c166		       2a		      rol
+      9  c167		       2a		      rol
+     10  c168		       2a		      rol
+     11  c169		       2a		      rol
+     12  c16a		       85 00		      sta	$0
+     13  c16c
+     14  c16c
+     15  c16c		       a5 88		      lda	M_STR_BASE + 7 + 1
+     16  c16e		       20 38 c0 	      jsr	is_hex
+     17  c171		       d0 0b		      bne	.not_hex_string
+     18  c173		       a5 88		      lda	M_STR_BASE + 7 + 1
+     19  c175		       20 51 c0 	      jsr	hex_to_nibble
+     20  c178		       18		      clc
+     21  c179		       05 00		      ora	$0
+     22  c17b
+     23  c17b		       4c 81 c1 	      jmp	.done_hex
+     24  c17e
+     25  c17e				   .not_hex_string
+     26  c17e		       4c 13 c2 	      jmp	invalid_intel_hex
+     27  c181
+     28  c181				   .done_hex
+     29  c181
+    151  c181		       f0 08		      beq	.data_record
+    152  c183
+    153  c183		       c9 01		      cmp	#01
+    154  c185		       d0 01		      bne	.unsupported_record
+    155  c187		       60		      rts		; Ignore EOF ($0) records
+    156  c188
+    157  c188				   .unsupported_record
+    158  c188		       4c 1f c2 	      jmp	invalid_type_intel_hex
+    159  c18b
+    160  c18b				   .data_record
+    161  c18b							; Get address of data record
+      0  c18b					      hex_byte_string_to_num	M_STR_BASE + 3, invalid_intel_hex	; High byte
+      1  c18b
+      2  c18b		       a5 83		      lda	M_STR_BASE + 3
+      3  c18d		       20 38 c0 	      jsr	is_hex
+      4  c190		       d0 1e		      bne	.not_hex_string
+      5  c192		       a5 83		      lda	M_STR_BASE + 3
+      6  c194		       20 51 c0 	      jsr	hex_to_nibble
+      7  c197		       18		      clc
+      8  c198		       2a		      rol
+      9  c199		       2a		      rol
+     10  c19a		       2a		      rol
+     11  c19b		       2a		      rol
+     12  c19c		       85 00		      sta	$0
+     13  c19e
+     14  c19e
+     15  c19e		       a5 84		      lda	M_STR_BASE + 3 + 1
+     16  c1a0		       20 38 c0 	      jsr	is_hex
+     17  c1a3		       d0 0b		      bne	.not_hex_string
+     18  c1a5		       a5 84		      lda	M_STR_BASE + 3 + 1
+     19  c1a7		       20 51 c0 	      jsr	hex_to_nibble
+     20  c1aa		       18		      clc
+     21  c1ab		       05 00		      ora	$0
+     22  c1ad
+     23  c1ad		       4c b3 c1 	      jmp	.done_hex
+     24  c1b0
+     25  c1b0				   .not_hex_string
+     26  c1b0		       4c 13 c2 	      jmp	invalid_intel_hex
+     27  c1b3
+     28  c1b3				   .done_hex
+     29  c1b3
+    163  c1b3		       85 13		      sta	M_HEX_RECORD_ADDR + 1
+      0  c1b5					      hex_byte_string_to_num	M_STR_BASE + 5, invalid_intel_hex	; Low byte
+      1  c1b5
+      2  c1b5		       a5 85		      lda	M_STR_BASE + 5
+      3  c1b7		       20 38 c0 	      jsr	is_hex
+      4  c1ba		       d0 1e		      bne	.not_hex_string
+      5  c1bc		       a5 85		      lda	M_STR_BASE + 5
+      6  c1be		       20 51 c0 	      jsr	hex_to_nibble
+      7  c1c1		       18		      clc
+      8  c1c2		       2a		      rol
+      9  c1c3		       2a		      rol
+     10  c1c4		       2a		      rol
+     11  c1c5		       2a		      rol
+     12  c1c6		       85 00		      sta	$0
+     13  c1c8
+     14  c1c8
+     15  c1c8		       a5 86		      lda	M_STR_BASE + 5 + 1
+     16  c1ca		       20 38 c0 	      jsr	is_hex
+     17  c1cd		       d0 0b		      bne	.not_hex_string
+     18  c1cf		       a5 86		      lda	M_STR_BASE + 5 + 1
+     19  c1d1		       20 51 c0 	      jsr	hex_to_nibble
+     20  c1d4		       18		      clc
+     21  c1d5		       05 00		      ora	$0
+     22  c1d7
+     23  c1d7		       4c dd c1 	      jmp	.done_hex
+     24  c1da
+     25  c1da				   .not_hex_string
+     26  c1da		       4c 13 c2 	      jmp	invalid_intel_hex
+     27  c1dd
+     28  c1dd				   .done_hex
+     29  c1dd
+    165  c1dd		       85 12		      sta	M_HEX_RECORD_ADDR
+    166  c1df
+    167  c1df							; Check record integrity
+    168  c1df		       a0 00		      ldy	#$0
+    169  c1e1
+    170  c1e1				   .check_record_loop
+    171  c1e1		       b9 89 00 	      lda	M_STR_BASE + 9,y
+    172  c1e4		       20 38 c0 	      jsr	is_hex
+    173  c1e7		       f0 03		      beq	.record_char_is_hex
+    174  c1e9		       4c 13 c2 	      jmp	invalid_intel_hex
+    175  c1ec
+    176  c1ec				   .record_char_is_hex
+    177  c1ec		       c8		      iny
+    178  c1ed		       c4 11		      cpy	M_HEX_RECORD_LEN
+    179  c1ef		       d0 f0		      bne	.check_record_loop
+    180  c1f1
+    181  c1f1							; Write bytes to memory
+    182  c1f1		       a0 00		      ldy	#$0
+    183  c1f3		       a2 00		      ldx	#$0
+    184  c1f5
+    185  c1f5				   .data_write_loop
+    186  c1f5		       b5 89		      lda	M_STR_BASE + 9,x
+    187  c1f7		       20 51 c0 	      jsr	hex_to_nibble
+    188  c1fa		       18		      clc
+    189  c1fb		       2a		      rol
+    190  c1fc		       2a		      rol
+    191  c1fd		       2a		      rol
+    192  c1fe		       2a		      rol
+    193  c1ff		       85 00		      sta	$0
+    194  c201		       e8		      inx
+    195  c202		       b5 89		      lda	M_STR_BASE + 9,x
+    196  c204		       20 51 c0 	      jsr	hex_to_nibble
+    197  c207		       18		      clc
+    198  c208		       05 00		      ora	$0
+    199  c20a		       91 12		      sta	(M_HEX_RECORD_ADDR),y	; Store byte to address
+    200  c20c		       e8		      inx
+    201  c20d		       c8		      iny
+    202  c20e		       c4 11		      cpy	M_HEX_RECORD_LEN
+    203  c210		       d0 e3		      bne	.data_write_loop
+    204  c212
+    205  c212							; Done writing!
+    206  c212		       60		      rts
+    207  c213
+    208  c213
+    209  c213				   invalid_intel_hex
+      0  c213					      uarta_puts	monitorIntelHexInvalid
+      1  c213		       a9 26		      lda	#<[monitorIntelHexInvalid]
+      2  c215		       85 00		      sta	$0
+      3  c217		       a9 c4		      lda	#>[monitorIntelHexInvalid]
+      4  c219		       85 01		      sta	$1
+      5  c21b		       20 5b c0 	      jsr	uarta_puts_impl
+    211  c21e		       60		      rts
+    212  c21f
+    213  c21f				   invalid_type_intel_hex
+      0  c21f					      uarta_puts	monitorIntelHexInvalidType
+      1  c21f		       a9 40		      lda	#<[monitorIntelHexInvalidType]
+      2  c221		       85 00		      sta	$0
+      3  c223		       a9 c4		      lda	#>[monitorIntelHexInvalidType]
+      4  c225		       85 01		      sta	$1
+      5  c227		       20 5b c0 	      jsr	uarta_puts_impl
+    215  c22a		       60		      rts
+    216  c22b
+    217  c22b							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    218  c22b							;
+    219  c22b							; monitor_change_address
+    220  c22b							; Changes the current address
+    221  c22b							;
+    222  c22b							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    223  c22b
+    224  c22b				   monitor_current_address subroutine
+    225  c22b							; Check command length
+    226  c22b		       a5 10		      lda	M_STR_LEN
+    227  c22d		       c9 05		      cmp	#$5
+    228  c22f		       f0 03		      beq	.length_valid
+    229  c231		       4c c0 c3 	      jmp	monitor_invalid_syntax
+    230  c234
+    231  c234				   .length_valid
+      0  c234					      hex_byte_string_to_num	M_STR_BASE + 1, monitor_invalid_syntax
+      1  c234
+      2  c234		       a5 81		      lda	M_STR_BASE + 1
+      3  c236		       20 38 c0 	      jsr	is_hex
+      4  c239		       d0 1e		      bne	.not_hex_string
+      5  c23b		       a5 81		      lda	M_STR_BASE + 1
+      6  c23d		       20 51 c0 	      jsr	hex_to_nibble
+      7  c240		       18		      clc
+      8  c241		       2a		      rol
+      9  c242		       2a		      rol
+     10  c243		       2a		      rol
+     11  c244		       2a		      rol
+     12  c245		       85 00		      sta	$0
+     13  c247
+     14  c247
+     15  c247		       a5 82		      lda	M_STR_BASE + 1 + 1
+     16  c249		       20 38 c0 	      jsr	is_hex
+     17  c24c		       d0 0b		      bne	.not_hex_string
+     18  c24e		       a5 82		      lda	M_STR_BASE + 1 + 1
+     19  c250		       20 51 c0 	      jsr	hex_to_nibble
+     20  c253		       18		      clc
+     21  c254		       05 00		      ora	$0
+     22  c256
+     23  c256		       4c 5c c2 	      jmp	.done_hex
+     24  c259
+     25  c259				   .not_hex_string
+     26  c259		       4c c0 c3 	      jmp	monitor_invalid_syntax
+     27  c25c
+     28  c25c				   .done_hex
+     29  c25c
+    233  c25c		       85 15		      sta	M_TEMP_ADDR + 1
+      0  c25e					      hex_byte_string_to_num	M_STR_BASE + 3, monitor_invalid_syntax
+      1  c25e
+      2  c25e		       a5 83		      lda	M_STR_BASE + 3
+      3  c260		       20 38 c0 	      jsr	is_hex
+      4  c263		       d0 1e		      bne	.not_hex_string
+      5  c265		       a5 83		      lda	M_STR_BASE + 3
+      6  c267		       20 51 c0 	      jsr	hex_to_nibble
+      7  c26a		       18		      clc
+      8  c26b		       2a		      rol
+      9  c26c		       2a		      rol
+     10  c26d		       2a		      rol
+     11  c26e		       2a		      rol
+     12  c26f		       85 00		      sta	$0
+     13  c271
+     14  c271
+     15  c271		       a5 84		      lda	M_STR_BASE + 3 + 1
+     16  c273		       20 38 c0 	      jsr	is_hex
+     17  c276		       d0 0b		      bne	.not_hex_string
+     18  c278		       a5 84		      lda	M_STR_BASE + 3 + 1
+     19  c27a		       20 51 c0 	      jsr	hex_to_nibble
+     20  c27d		       18		      clc
+     21  c27e		       05 00		      ora	$0
+     22  c280
+     23  c280		       4c 86 c2 	      jmp	.done_hex
+     24  c283
+     25  c283				   .not_hex_string
+     26  c283		       4c c0 c3 	      jmp	monitor_invalid_syntax
+     27  c286
+     28  c286				   .done_hex
+     29  c286
+    235  c286		       85 16		      sta	M_CURRENT_ADDR
+    236  c288		       a5 15		      lda	M_TEMP_ADDR + 1
+    237  c28a		       85 17		      sta	M_CURRENT_ADDR + 1
+    238  c28c
+    239  c28c		       20 81 c3 	      jsr	monitor_print_address_contents
+    240  c28f		       60		      rts
+    241  c290
+    242  c290
+    243  c290							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    244  c290							;
+    245  c290							; monitor_examine_addr_range
+    246  c290							; Examines a range of addresses
+    247  c290							; xXXXX.XX
+    248  c290							;
+    249  c290							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    250  c290
+    251  c290				   monitor_examine_addr_range subroutine
+    252  c290							; Check command length
+    253  c290		       a5 10		      lda	M_STR_LEN
+    254  c292		       c9 08		      cmp	#$8
+    255  c294		       f0 03		      beq	.length_valid
+    256  c296		       4c c0 c3 	      jmp	monitor_invalid_syntax
+    257  c299
+    258  c299				   .length_valid
+    259  c299							; Get start address
+      0  c299					      hex_byte_string_to_num	M_STR_BASE + 1, monitor_invalid_syntax
+      1  c299
+      2  c299		       a5 81		      lda	M_STR_BASE + 1
+      3  c29b		       20 38 c0 	      jsr	is_hex
+      4  c29e		       d0 1e		      bne	.not_hex_string
+      5  c2a0		       a5 81		      lda	M_STR_BASE + 1
+      6  c2a2		       20 51 c0 	      jsr	hex_to_nibble
+      7  c2a5		       18		      clc
+      8  c2a6		       2a		      rol
+      9  c2a7		       2a		      rol
+     10  c2a8		       2a		      rol
+     11  c2a9		       2a		      rol
+     12  c2aa		       85 00		      sta	$0
+     13  c2ac
+     14  c2ac
+     15  c2ac		       a5 82		      lda	M_STR_BASE + 1 + 1
+     16  c2ae		       20 38 c0 	      jsr	is_hex
+     17  c2b1		       d0 0b		      bne	.not_hex_string
+     18  c2b3		       a5 82		      lda	M_STR_BASE + 1 + 1
+     19  c2b5		       20 51 c0 	      jsr	hex_to_nibble
+     20  c2b8		       18		      clc
+     21  c2b9		       05 00		      ora	$0
+     22  c2bb
+     23  c2bb		       4c c1 c2 	      jmp	.done_hex
+     24  c2be
+     25  c2be				   .not_hex_string
+     26  c2be		       4c c0 c3 	      jmp	monitor_invalid_syntax
+     27  c2c1
+     28  c2c1				   .done_hex
+     29  c2c1
+    261  c2c1		       85 15		      sta	M_TEMP_ADDR + 1
+      0  c2c3					      hex_byte_string_to_num	M_STR_BASE + 3, monitor_invalid_syntax
+      1  c2c3
+      2  c2c3		       a5 83		      lda	M_STR_BASE + 3
+      3  c2c5		       20 38 c0 	      jsr	is_hex
+      4  c2c8		       d0 1e		      bne	.not_hex_string
+      5  c2ca		       a5 83		      lda	M_STR_BASE + 3
+      6  c2cc		       20 51 c0 	      jsr	hex_to_nibble
+      7  c2cf		       18		      clc
+      8  c2d0		       2a		      rol
+      9  c2d1		       2a		      rol
+     10  c2d2		       2a		      rol
+     11  c2d3		       2a		      rol
+     12  c2d4		       85 00		      sta	$0
+     13  c2d6
+     14  c2d6
+     15  c2d6		       a5 84		      lda	M_STR_BASE + 3 + 1
+     16  c2d8		       20 38 c0 	      jsr	is_hex
+     17  c2db		       d0 0b		      bne	.not_hex_string
+     18  c2dd		       a5 84		      lda	M_STR_BASE + 3 + 1
+     19  c2df		       20 51 c0 	      jsr	hex_to_nibble
+     20  c2e2		       18		      clc
+     21  c2e3		       05 00		      ora	$0
+     22  c2e5
+     23  c2e5		       4c eb c2 	      jmp	.done_hex
+     24  c2e8
+     25  c2e8				   .not_hex_string
+     26  c2e8		       4c c0 c3 	      jmp	monitor_invalid_syntax
+     27  c2eb
+     28  c2eb				   .done_hex
+     29  c2eb
+    263  c2eb		       85 14		      sta	M_TEMP_ADDR
+    264  c2ed
+    265  c2ed							; Get length
+      0  c2ed					      hex_byte_string_to_num	M_STR_BASE + 6, monitor_invalid_syntax
+      1  c2ed
+      2  c2ed		       a5 86		      lda	M_STR_BASE + 6
+      3  c2ef		       20 38 c0 	      jsr	is_hex
+      4  c2f2		       d0 1e		      bne	.not_hex_string
+      5  c2f4		       a5 86		      lda	M_STR_BASE + 6
+      6  c2f6		       20 51 c0 	      jsr	hex_to_nibble
+      7  c2f9		       18		      clc
+      8  c2fa		       2a		      rol
+      9  c2fb		       2a		      rol
+     10  c2fc		       2a		      rol
+     11  c2fd		       2a		      rol
+     12  c2fe		       85 00		      sta	$0
+     13  c300
+     14  c300
+     15  c300		       a5 87		      lda	M_STR_BASE + 6 + 1
+     16  c302		       20 38 c0 	      jsr	is_hex
+     17  c305		       d0 0b		      bne	.not_hex_string
+     18  c307		       a5 87		      lda	M_STR_BASE + 6 + 1
+     19  c309		       20 51 c0 	      jsr	hex_to_nibble
+     20  c30c		       18		      clc
+     21  c30d		       05 00		      ora	$0
+     22  c30f
+     23  c30f		       4c 15 c3 	      jmp	.done_hex
+     24  c312
+     25  c312				   .not_hex_string
+     26  c312		       4c c0 c3 	      jmp	monitor_invalid_syntax
+     27  c315
+     28  c315				   .done_hex
+     29  c315
+    267  c315		       85 06		      sta	$6
+    268  c317
+    269  c317		       a2 00		      ldx	#$0
+    270  c319		       a0 00		      ldy	#$0
+    271  c31b
+    272  c31b				   .print_line
+    273  c31b							; Print start address
+    274  c31b		       a5 15		      lda	M_TEMP_ADDR + 1
+    275  c31d		       20 1f c0 	      jsr	num_to_hex_string
+    276  c320		       a5 00		      lda	$0
+      0  c322					      uarta_putb
+      1  c322		       8d 03 02 	      sta	DUART_TX_A
+    278  c325		       a5 01		      lda	$1
+      0  c327					      uarta_putb
+      1  c327		       8d 03 02 	      sta	DUART_TX_A
+    280  c32a		       a5 14		      lda	M_TEMP_ADDR
+    281  c32c		       20 1f c0 	      jsr	num_to_hex_string
+    282  c32f		       a5 00		      lda	$0
+      0  c331					      uarta_putb
+      1  c331		       8d 03 02 	      sta	DUART_TX_A
+    284  c334		       a5 01		      lda	$1
+      0  c336					      uarta_putb
+      1  c336		       8d 03 02 	      sta	DUART_TX_A
+    286  c339
+    287  c339		       a9 3a		      lda	#':
+      0  c33b					      uarta_putb
+      1  c33b		       8d 03 02 	      sta	DUART_TX_A
+    289  c33e		       a9 20		      lda	#$20
+      0  c340					      uarta_putb
+      1  c340		       8d 03 02 	      sta	DUART_TX_A
+    291  c343
+    292  c343				   .print_char
+    293  c343		       b1 14		      lda	(M_TEMP_ADDR),y
+    294  c345		       20 1f c0 	      jsr	num_to_hex_string
+    295  c348		       a5 00		      lda	$0
+      0  c34a					      uarta_putb
+      1  c34a		       8d 03 02 	      sta	DUART_TX_A
+    297  c34d		       a5 01		      lda	$1
+      0  c34f					      uarta_putb
+      1  c34f		       8d 03 02 	      sta	DUART_TX_A
+    299  c352		       a9 20		      lda	#$20
+      0  c354					      uarta_putb
+      1  c354		       8d 03 02 	      sta	DUART_TX_A
+    301  c357		       c8		      iny
+    302  c358		       e8		      inx
+    303  c359		       e4 06		      cpx	$6	; Have all bytes been printed?
+    304  c35b		       f0 1b		      beq	.print_done
+    305  c35d		       c0 10		      cpy	#$10	; Have all bytes on this line been printed?
+    306  c35f		       d0 e2		      bne	.print_char
+    307  c361		       a0 00		      ldy	#$0
+    308  c363
+    309  c363							; Increment stored address
+    310  c363		       18		      clc
+    311  c364		       a5 14		      lda	M_TEMP_ADDR
+    312  c366		       69 10		      adc	#$10
+    313  c368		       85 14		      sta	M_TEMP_ADDR
+    314  c36a		       a5 15		      lda	M_TEMP_ADDR + 1
+    315  c36c		       69 00		      adc	#$0
+    316  c36e		       85 15		      sta	M_TEMP_ADDR + 1
+    317  c370
+    318  c370		       a9 0a		      lda	#$0A
+      0  c372					      uarta_putb
+      1  c372		       8d 03 02 	      sta	DUART_TX_A
+    320  c375		       4c 1b c3 	      jmp	.print_line
+    321  c378
+    322  c378				   .print_done
+    323  c378		       a9 0a		      lda	#$0A
+      0  c37a					      uarta_putb
+      1  c37a		       8d 03 02 	      sta	DUART_TX_A
+      0  c37d					      uarta_putb
+      1  c37d		       8d 03 02 	      sta	DUART_TX_A
+    326  c380		       60		      rts
+    327  c381
+    328  c381				   monitor_print_address_contents subroutine
+    329  c381							; Print address
+    330  c381		       a5 17		      lda	M_CURRENT_ADDR + 1
+    331  c383		       20 1f c0 	      jsr	num_to_hex_string
+    332  c386		       a5 00		      lda	$0
+      0  c388					      uarta_putb
+      1  c388		       8d 03 02 	      sta	DUART_TX_A
+    334  c38b		       a5 01		      lda	$1
+      0  c38d					      uarta_putb
+      1  c38d		       8d 03 02 	      sta	DUART_TX_A
+    336  c390
+    337  c390		       a5 16		      lda	M_CURRENT_ADDR + 0
+    338  c392		       20 1f c0 	      jsr	num_to_hex_string
+    339  c395		       a5 00		      lda	$0
+      0  c397					      uarta_putb
+      1  c397		       8d 03 02 	      sta	DUART_TX_A
+    341  c39a		       a5 01		      lda	$1
+      0  c39c					      uarta_putb
+      1  c39c		       8d 03 02 	      sta	DUART_TX_A
+    343  c39f
+    344  c39f		       a9 3a		      lda	#':
+      0  c3a1					      uarta_putb
+      1  c3a1		       8d 03 02 	      sta	DUART_TX_A
+    346  c3a4		       a9 20		      lda	#$20
+      0  c3a6					      uarta_putb
+      1  c3a6		       8d 03 02 	      sta	DUART_TX_A
+    348  c3a9
+    349  c3a9							; Print data
+    350  c3a9		       a0 00		      ldy	#$0
+    351  c3ab		       b1 16		      lda	(M_CURRENT_ADDR),y
+    352  c3ad		       20 1f c0 	      jsr	num_to_hex_string
+    353  c3b0		       a5 00		      lda	$0
+      0  c3b2					      uarta_putb
+      1  c3b2		       8d 03 02 	      sta	DUART_TX_A
+    355  c3b5		       a5 01		      lda	$1
+      0  c3b7					      uarta_putb
+      1  c3b7		       8d 03 02 	      sta	DUART_TX_A
+    357  c3ba
+    358  c3ba		       a9 0a		      lda	#$0A
+      0  c3bc					      uarta_putb
+      1  c3bc		       8d 03 02 	      sta	DUART_TX_A
+    360  c3bf		       60		      rts
+    361  c3c0
+    362  c3c0
+    363  c3c0
+    364  c3c0				   monitor_invalid_syntax
+      0  c3c0					      uarta_puts	monitorInvalidSyntaxText
+      1  c3c0		       a9 16		      lda	#<[monitorInvalidSyntaxText]
+      2  c3c2		       85 00		      sta	$0
+      3  c3c4		       a9 c4		      lda	#>[monitorInvalidSyntaxText]
+      4  c3c6		       85 01		      sta	$1
+      5  c3c8		       20 5b c0 	      jsr	uarta_puts_impl
+    366  c3cb		       60		      rts
+    367  c3cc
+    368  c3cc
+    369  c3cc							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    370  c3cc							;
+    371  c3cc							; Strings
+    372  c3cc							;
+    373  c3cc							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    374  c3cc
+    375  c3cc		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
+    376  c3d9
+    377  c3d9		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
+    378  c3fb		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
+    379  c404		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
+    380  c416		       49 6e 76 61*monitorInvalidSyntaxText .byte.b	"Invalid syntax", $0A, $0
+    381  c426
+    382  c426		       49 6e 76 61*monitorIntelHexInvalid .byte.b	"Invalid Intel Hex Record", $0A, $0
+    383  c440		       49 6e 76 61*monitorIntelHexInvalidType .byte.b	"Invalid record type. Valid types are 00 (data) and 01 (EOF)", $0A, $0
+    384  c47d
+    385  c47d				   monitorHelpText
+    386  c47d		       0a		      .byte.b	$0A
+    387  c47e		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
+    388  c488		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
+    389  c493		       20 20 61 20*	      .byte.b	"  a - Set address [aXXXX]", $0A
+    390  c4ad		       20 20 78 20*	      .byte.b	"  x - Examine address [xXXXX.CC] (XXXX- addr, CC- num bytes)", $0A
+    391  c4ea		       0a 20 20 49*	      .byte.b	$0A, "  Intel HEX Syntax:", $0A
+    392  c4ff		       20 20 20 20*	      .byte.b	"    :[record size][address][record type][bytes][checksum]", $0A
+    393  c539		       0a 00		      .byte.b	$0A, $0
 ------- FILE main.dasm
-     19  c2bc
-     20  c2bc
-     21  c2bc							; Interrupts
+     19  c53b
+     20  c53b
+     21  c53b							; Interrupts
      22  fffa					      org	$FFFA
      23  fffa		       00 c0		      .WORD.w	nmiHandler
      24  fffc		       03 c0		      .WORD.w	resetHandler
