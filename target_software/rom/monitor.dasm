@@ -3,7 +3,8 @@
 
 M_STR_BASE: equ $80
 M_STR_LEN:  equ $10
-
+M_HEX_RECORD_LEN: equ $11
+M_HEX_RECORD_ADDR: equ $12
 
 start_monitor subroutine
   uarta_puts monitorInfoText
@@ -100,13 +101,87 @@ monitor_parse_ihex subroutine
   lda M_STR_LEN
   cmp #$0B      ; Check that it's at least 11 bytes long
   bcs .check_record_length
-  uarta_puts monitorIntelHexInvalid
-  rts
+  jmp invalid_intel_hex
 
 .check_record_length
   ; Get the number of data bytes in the record (01-02) and check that the input is
   ; long enough
 
+  hex_byte_string_to_num M_STR_BASE + 1, invalid_intel_hex
+  clc
+  sta M_HEX_RECORD_LEN
+  rol
+  adc #$0B                      ; The record should be (data length << 1) + 11 bytes long
+  cmp M_STR_LEN
+  beq .check_type
+  jmp invalid_intel_hex
+
+.check_type
+  hex_byte_string_to_num M_STR_BASE + 7, invalid_intel_hex
+  beq .data_record
+
+  cmp #01
+  bne .unsupported_record
+  rts                   ; Ignore EOF ($0) records
+
+.unsupported_record
+  jmp invalid_type_intel_hex
+
+.data_record
+  ; Get address of data record
+  hex_byte_string_to_num M_STR_BASE + 3, invalid_intel_hex ; High byte
+  sta M_HEX_RECORD_ADDR + 1
+  hex_byte_string_to_num M_STR_BASE + 5, invalid_intel_hex ; Low byte
+  sta M_HEX_RECORD_ADDR
+
+  ; Check record integrity
+  ldy #$0
+
+.check_record_loop
+  lda M_STR_BASE + 9,y
+  jsr is_hex
+  beq .record_char_is_hex
+  jmp invalid_intel_hex
+
+.record_char_is_hex
+  iny
+  cpy M_HEX_RECORD_LEN
+  bne .check_record_loop
+
+  ; Write bytes to memory
+  ldy #$0
+  ldx #$0
+
+.data_write_loop
+  lda M_STR_BASE + 9,x
+  jsr hex_to_nibble
+  clc
+  rol
+  rol
+  rol
+  rol
+  sta $0
+  inx
+  lda M_STR_BASE + 9,x
+  jsr hex_to_nibble
+  clc
+  ora $0
+  sta (M_HEX_RECORD_ADDR),y    ; Store byte to address
+  inx
+  iny
+  cpy M_HEX_RECORD_LEN
+  bne .data_write_loop
+
+  ; Done writing!
+  rts
+
+
+invalid_intel_hex:
+  uarta_puts monitorIntelHexInvalid
+  rts
+
+invalid_type_intel_hex:
+  uarta_puts monitorIntelHexInvalidType
   rts
   
 gotStrText: .byte "Got string: ", $0
@@ -116,6 +191,7 @@ monitorLengthText: .byte "Length: ", $0
 monitorUnknownText: .byte "Unknown command: ", $0
 
 monitorIntelHexInvalid: .byte "Invalid Intel Hex Record", $0A, $0
+monitorIntelHexInvalidType: .byte "Invalid record type. Valid types are 00 (data) and 01 (EOF)", $0A, $0
 
 monitorHelpText: 
   .byte $0A

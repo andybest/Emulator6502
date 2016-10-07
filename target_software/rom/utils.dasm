@@ -27,6 +27,38 @@ strlen_impl subroutine  ; Stores length of string in acc
   tya
   rts
 
+  mac hex_byte_string_to_num
+    ; Check first digit
+    lda {1}
+    jsr is_hex
+    bne .not_hex_string
+    lda {1}
+    jsr hex_to_nibble
+    clc
+    rol
+    rol
+    rol
+    rol
+    sta $0
+
+    ; Check second digit
+    lda {1} + 1
+    jsr is_hex
+    bne .not_hex_string
+    lda {1} + 1
+    jsr hex_to_nibble
+    clc
+    ora $0
+    
+    jmp .done_hex
+
+.not_hex_string
+    jmp {2}
+    
+.done_hex
+
+  endm
+
 nibble_to_hex subroutine
   cmp #$A
   bcs .gt_9
@@ -57,23 +89,23 @@ is_hex subroutine           ; Checks if ASCII value in acc is a hex digit
   bcc .not_hex
   cmp #$3A
   bcs .not_a_number
-  lda #$1
+  lda #$0
   rts
 .not_a_number
   cmp #$41
   bcc .not_hex
   cmp #$47
   bcs .not_hex
-  lda #$1
+  lda #$0
   rts
 .not_hex
-  lda #$0
+  lda #$1
   rts
 
 hex_to_nibble subroutine   ; Convert ascii hex to nibble
-  cmp #$39        ; Is it a letter? (A-F)
+  cmp #$41        ; Is it a letter? (A-F)
   bcs .letter
-  sbc #$30
+  sbc #$2F
   rts
 .letter
   sbc #$37
