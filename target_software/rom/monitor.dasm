@@ -1,7 +1,7 @@
 
   processor 6502
 
-M_STR_BASE: equ $F0
+M_STR_BASE: equ $80
 M_STR_LEN:  equ $10
 
 
@@ -32,6 +32,11 @@ monitor_get_string subroutine
   beq .newline
   cmp #$08                    ; Check if it's a backspace
   beq .backspace
+
+  tax
+  cpy #$7F                    ; Make sure buffer doesn't overrun
+  beq .check_char
+  txa
 
 .store_char
   sta M_STR_BASE,y
@@ -78,8 +83,15 @@ monitor_parse_command subroutine
   rts
 
 .not_iHex
-  uarta_puts monitorNotHexText
   rts
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; monitor_parse_ihex
+;
+; Parses Intel HEX records
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 monitor_parse_ihex subroutine
   ; Parse Intel HEX format string
@@ -87,12 +99,14 @@ monitor_parse_ihex subroutine
   ; Check that command is long enough to include record and checksum
   lda M_STR_LEN
   cmp #$0B      ; Check that it's at least 11 bytes long
-  bcs .check_record
+  bcs .check_record_length
   uarta_puts monitorIntelHexInvalid
   rts
-.check_record
 
-  uarta_puts monitorIntelHexText
+.check_record_length
+  ; Get the number of data bytes in the record (01-02) and check that the input is
+  ; long enough
+
   rts
   
 gotStrText: .byte "Got string: ", $0
@@ -102,12 +116,6 @@ monitorLengthText: .byte "Length: ", $0
 monitorUnknownText: .byte "Unknown command: ", $0
 
 monitorIntelHexInvalid: .byte "Invalid Intel Hex Record", $0A, $0
-
-monitorNotHexText: .byte "Not hex", $0A, $0
-monitorIntelHexText: .byte "Intel Hex!", $0A, $0
-monitorWrongNumArgsText: .byte "Wrong number of arguments", $0A, $0
-monitorBadArgs: .byte "Arguments in invalid format", $0A, $0
-monitorNotHex: .byte "Argument not valid hex", $0A, $0
 
 monitorHelpText: 
   .byte $0A

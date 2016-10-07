@@ -161,15 +161,15 @@
       1  c065
       2  c065					      processor	6502
       3  c065
-      4  c065		       00 f0	   M_STR_BASE equ	$F0
+      4  c065		       00 80	   M_STR_BASE equ	$80
       5  c065		       00 10	   M_STR_LEN  equ	$10
       6  c065
       7  c065
       8  c065				   start_monitor subroutine
       0  c065					      uarta_puts	monitorInfoText
-      1  c065		       a9 07		      lda	#<[monitorInfoText]
+      1  c065		       a9 f7		      lda	#<[monitorInfoText]
       2  c067		       85 00		      sta	$0
-      3  c069		       a9 c1		      lda	#>[monitorInfoText]
+      3  c069		       a9 c0		      lda	#>[monitorInfoText]
       4  c06b		       85 01		      sta	$1
       5  c06d		       20 57 c0 	      jsr	uarta_puts_impl
      10  c070
@@ -182,7 +182,7 @@
       1  c077		       8d 03 02 	      sta	DUART_TX_A
      16  c07a
      17  c07a		       20 84 c0 	      jsr	monitor_get_string	; Print the string with surrounding quotes
-     18  c07d		       20 b9 c0 	      jsr	monitor_parse_command
+     18  c07d		       20 bf c0 	      jsr	monitor_parse_command
      19  c080		       4c 70 c0 	      jmp	.monitor_loop
      20  c083		       60		      rts
      21  c084
@@ -193,125 +193,123 @@
       0  c086					      uarta_bytes_available
       1  c086		       a9 01		      lda	#$01
       2  c088		       2c 01 02 	      bit	DUART_STATUS_A
-     27  c08b		       f0 15		      beq	.no_char	; No character available
+     27  c08b		       f0 1b		      beq	.no_char	; No character available
      28  c08d
       0  c08d					      uarta_getb		; Get byte from UART
       1  c08d		       ad 03 02 	      lda	DUART_RX_A
      30  c090
      31  c090		       c9 0a		      cmp	#$0A	; Check if it's a newline
-     32  c092		       f0 1c		      beq	.newline
+     32  c092		       f0 22		      beq	.newline
      33  c094		       c9 08		      cmp	#$08	; Check if it's a backspace
-     34  c096		       f0 0d		      beq	.backspace
+     34  c096		       f0 13		      beq	.backspace
      35  c098
-     36  c098				   .store_char
-     37  c098		       99 f0 00 	      sta	M_STR_BASE,y
-     38  c09b		       c8		      iny
-      0  c09c					      uarta_putb
-      1  c09c		       8d 03 02 	      sta	DUART_TX_A
-     40  c09f		       4c 86 c0 	      jmp	.check_char
-     41  c0a2
-     42  c0a2				   .no_char
-     43  c0a2		       4c 86 c0 	      jmp	.check_char
-     44  c0a5
-     45  c0a5				   .backspace
-     46  c0a5		       c0 00		      cpy	#$0
-     47  c0a7		       f0 04		      beq	.backspace_done
-     48  c0a9		       88		      dey		; Remove character if y > 0
-      0  c0aa					      uarta_putb
-      1  c0aa		       8d 03 02 	      sta	DUART_TX_A
-     50  c0ad				   .backspace_done
-     51  c0ad		       4c 86 c0 	      jmp	.check_char
-     52  c0b0
-     53  c0b0				   .newline
+     36  c098		       aa		      tax
+     37  c099		       c0 7f		      cpy	#$7F	; Make sure buffer doesn't overrun
+     38  c09b		       f0 e9		      beq	.check_char
+     39  c09d		       8a		      txa
+     40  c09e
+     41  c09e				   .store_char
+     42  c09e		       99 80 00 	      sta	M_STR_BASE,y
+     43  c0a1		       c8		      iny
+      0  c0a2					      uarta_putb
+      1  c0a2		       8d 03 02 	      sta	DUART_TX_A
+     45  c0a5		       4c 86 c0 	      jmp	.check_char
+     46  c0a8
+     47  c0a8				   .no_char
+     48  c0a8		       4c 86 c0 	      jmp	.check_char
+     49  c0ab
+     50  c0ab				   .backspace
+     51  c0ab		       c0 00		      cpy	#$0
+     52  c0ad		       f0 04		      beq	.backspace_done
+     53  c0af		       88		      dey		; Remove character if y > 0
       0  c0b0					      uarta_putb
       1  c0b0		       8d 03 02 	      sta	DUART_TX_A
-     55  c0b3		       a9 00		      lda	#$0
-     56  c0b5		       99 f0 00 	      sta	M_STR_BASE,y	; Add null terminator
-     57  c0b8		       60		      rts
-     58  c0b9
-     59  c0b9
-     60  c0b9							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     61  c0b9							;
-     62  c0b9							; monitor_parse_command
-     63  c0b9							;
-     64  c0b9							; Parses the command present at MONITOR_STR_BASE
-     65  c0b9							;
-     66  c0b9							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-     67  c0b9
-     68  c0b9				   monitor_parse_command subroutine
-      0  c0b9					      strlen	M_STR_BASE
-      1  c0b9		       a9 f0		      lda	#<[M_STR_BASE]
-      2  c0bb		       85 00		      sta	$0
-      3  c0bd		       a9 00		      lda	#>[M_STR_BASE]
-      4  c0bf		       85 01		      sta	$1
-      5  c0c1		       20 09 c0 	      jsr	strlen_impl
-     70  c0c4		       85 10		      sta	M_STR_LEN
-     71  c0c6
-     72  c0c6		       a5 f0		      lda	M_STR_BASE
-     73  c0c8
-     74  c0c8							; Check if Intel hex (starts with :)
-     75  c0c8		       c9 3a		      cmp	#':
-     76  c0ca		       d0 04		      bne	.not_iHex
-     77  c0cc		       20 dc c0 	      jsr	monitor_parse_ihex
-     78  c0cf		       60		      rts
-     79  c0d0
-     80  c0d0				   .not_iHex
-      0  c0d0					      uarta_puts	monitorNotHexText
-      1  c0d0		       a9 5e		      lda	#<[monitorNotHexText]
-      2  c0d2		       85 00		      sta	$0
-      3  c0d4		       a9 c1		      lda	#>[monitorNotHexText]
-      4  c0d6		       85 01		      sta	$1
-      5  c0d8		       20 57 c0 	      jsr	uarta_puts_impl
-     82  c0db		       60		      rts
-     83  c0dc
-     84  c0dc				   monitor_parse_ihex subroutine
-     85  c0dc							; Parse Intel HEX format string
-     86  c0dc
-     87  c0dc							; Check that command is long enough to include record and checksum
-     88  c0dc		       a5 10		      lda	M_STR_LEN
-     89  c0de		       c9 0b		      cmp	#$0B	; Check that it's at least 11 bytes long
-     90  c0e0		       b0 0c		      bcs	.check_record
-      0  c0e2					      uarta_puts	monitorIntelHexInvalid
-      1  c0e2		       a9 44		      lda	#<[monitorIntelHexInvalid]
-      2  c0e4		       85 00		      sta	$0
-      3  c0e6		       a9 c1		      lda	#>[monitorIntelHexInvalid]
-      4  c0e8		       85 01		      sta	$1
-      5  c0ea		       20 57 c0 	      jsr	uarta_puts_impl
-     92  c0ed		       60		      rts
-     93  c0ee				   .check_record
-     94  c0ee
-      0  c0ee					      uarta_puts	monitorIntelHexText
-      1  c0ee		       a9 67		      lda	#<[monitorIntelHexText]
-      2  c0f0		       85 00		      sta	$0
-      3  c0f2		       a9 c1		      lda	#>[monitorIntelHexText]
-      4  c0f4		       85 01		      sta	$1
-      5  c0f6		       20 57 c0 	      jsr	uarta_puts_impl
-     96  c0f9		       60		      rts
-     97  c0fa
-     98  c0fa		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
-     99  c107
-    100  c107		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
-    101  c129		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
-    102  c132		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
-    103  c144
-    104  c144		       49 6e 76 61*monitorIntelHexInvalid .byte.b	"Invalid Intel Hex Record", $0A, $0
-    105  c15e
-    106  c15e		       4e 6f 74 20*monitorNotHexText .byte.b	"Not hex", $0A, $0
-    107  c167		       49 6e 74 65*monitorIntelHexText .byte.b	"Intel Hex!", $0A, $0
-    108  c173		       57 72 6f 6e*monitorWrongNumArgsText .byte.b	"Wrong number of arguments", $0A, $0
-    109  c18e		       41 72 67 75*monitorBadArgs .byte.b	"Arguments in invalid format", $0A, $0
-    110  c1ab		       41 72 67 75*monitorNotHex .byte.b	"Argument not valid hex", $0A, $0
-    111  c1c3
-    112  c1c3				   monitorHelpText
-    113  c1c3		       0a		      .byte.b	$0A
-    114  c1c4		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
-    115  c1ce		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
-    116  c1d9		       20 20 61 20*	      .byte.b	"  a - Set address [a XXXX]", $0A
-    117  c1f4		       0a 00		      .byte.b	$0A, $0
+     55  c0b3				   .backspace_done
+     56  c0b3		       4c 86 c0 	      jmp	.check_char
+     57  c0b6
+     58  c0b6				   .newline
+      0  c0b6					      uarta_putb
+      1  c0b6		       8d 03 02 	      sta	DUART_TX_A
+     60  c0b9		       a9 00		      lda	#$0
+     61  c0bb		       99 80 00 	      sta	M_STR_BASE,y	; Add null terminator
+     62  c0be		       60		      rts
+     63  c0bf
+     64  c0bf
+     65  c0bf							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     66  c0bf							;
+     67  c0bf							; monitor_parse_command
+     68  c0bf							;
+     69  c0bf							; Parses the command present at MONITOR_STR_BASE
+     70  c0bf							;
+     71  c0bf							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     72  c0bf
+     73  c0bf				   monitor_parse_command subroutine
+      0  c0bf					      strlen	M_STR_BASE
+      1  c0bf		       a9 80		      lda	#<[M_STR_BASE]
+      2  c0c1		       85 00		      sta	$0
+      3  c0c3		       a9 00		      lda	#>[M_STR_BASE]
+      4  c0c5		       85 01		      sta	$1
+      5  c0c7		       20 09 c0 	      jsr	strlen_impl
+     75  c0ca		       85 10		      sta	M_STR_LEN
+     76  c0cc
+     77  c0cc		       a5 80		      lda	M_STR_BASE
+     78  c0ce
+     79  c0ce							; Check if Intel hex (starts with :)
+     80  c0ce		       c9 3a		      cmp	#':
+     81  c0d0		       d0 04		      bne	.not_iHex
+     82  c0d2		       20 d7 c0 	      jsr	monitor_parse_ihex
+     83  c0d5		       60		      rts
+     84  c0d6
+     85  c0d6				   .not_iHex
+     86  c0d6		       60		      rts
+     87  c0d7
+     88  c0d7							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     89  c0d7							;
+     90  c0d7							; monitor_parse_ihex
+     91  c0d7							;
+     92  c0d7							; Parses Intel HEX records
+     93  c0d7							;
+     94  c0d7							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     95  c0d7
+     96  c0d7				   monitor_parse_ihex subroutine
+     97  c0d7							; Parse Intel HEX format string
+     98  c0d7
+     99  c0d7							; Check that command is long enough to include record and checksum
+    100  c0d7		       a5 10		      lda	M_STR_LEN
+    101  c0d9		       c9 0b		      cmp	#$0B	; Check that it's at least 11 bytes long
+    102  c0db		       b0 0c		      bcs	.check_record_length
+      0  c0dd					      uarta_puts	monitorIntelHexInvalid
+      1  c0dd		       a9 34		      lda	#<[monitorIntelHexInvalid]
+      2  c0df		       85 00		      sta	$0
+      3  c0e1		       a9 c1		      lda	#>[monitorIntelHexInvalid]
+      4  c0e3		       85 01		      sta	$1
+      5  c0e5		       20 57 c0 	      jsr	uarta_puts_impl
+    104  c0e8		       60		      rts
+    105  c0e9
+    106  c0e9				   .check_record_length
+    107  c0e9							; Get the number of data bytes in the record (01-02) and check that the input is
+    108  c0e9							; long enough
+    109  c0e9
+    110  c0e9		       60		      rts
+    111  c0ea
+    112  c0ea		       47 6f 74 20*gotStrText .byte.b	"Got string: ", $0
+    113  c0f7
+    114  c0f7		       47 72 69 66*monitorInfoText .byte.b	"Grif65 monitor v0.1 by Andy Best", $0A, $0
+    115  c119		       4c 65 6e 67*monitorLengthText .byte.b	"Length: ", $0
+    116  c122		       55 6e 6b 6e*monitorUnknownText .byte.b	"Unknown command: ", $0
+    117  c134
+    118  c134		       49 6e 76 61*monitorIntelHexInvalid .byte.b	"Invalid Intel Hex Record", $0A, $0
+    119  c14e
+    120  c14e				   monitorHelpText
+    121  c14e		       0a		      .byte.b	$0A
+    122  c14f		       43 6f 6d 6d*	      .byte.b	"Commands:", $0A
+    123  c159		       20 20 3f 20*	      .byte.b	"  ? - Help", $0A
+    124  c164		       20 20 61 20*	      .byte.b	"  a - Set address [a XXXX]", $0A
+    125  c17f		       0a 00		      .byte.b	$0A, $0
 ------- FILE main.dasm
-     19  c1f6
-     20  c1f6
-     21  c1f6							; Interrupts
+     19  c181
+     20  c181
+     21  c181							; Interrupts
      22  fffa					      org	$FFFA
      23  fffa		       00 c0		      .WORD.w	nmiHandler
      24  fffc		       03 c0		      .WORD.w	resetHandler
