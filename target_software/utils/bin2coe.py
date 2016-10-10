@@ -23,7 +23,6 @@ def convert_file():
   bytes_to_skip = 0
   if args.skip_bytes:
     bytes_to_skip = int(args.skip_bytes)
-  print(args)
   
   with open(args.input, 'rb') as inputFile:
     with open(args.output, 'w') as outputFile:
