@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-  Bin2coe
+  Bin2mif
 
-  Converts a binary file to Xilinx COE format
+  Converts a binary file to hex format that can be read by verilog
 
 """
 
@@ -26,16 +26,10 @@ def convert_file():
   
   with open(args.input, 'rb') as inputFile:
     with open(args.output, 'w') as outputFile:
-      write_coe_header(outputFile)
-      write_coe_vector(inputFile, outputFile, bytes_to_skip)
+      write_vector(inputFile, outputFile, bytes_to_skip)
 
 
-def write_coe_header(f):
-  f.write('memory_initialization_radix = 16;\n')
-  f.write('memory_initialization_vector =\n')
-
-
-def write_coe_vector(inputFile, outputFile, skip):
+def write_vector(inputFile, outputFile, skip):
   # Skip bytes
   if skip > 0:
     try:
@@ -49,10 +43,7 @@ def write_coe_vector(inputFile, outputFile, skip):
   while byte:
     outputFile.write(byte.encode('hex'))
     byte = inputFile.read(1)
-    if byte:
-      outputFile.write(',\n')
-    
-  outputFile.write(';\n')
+    outputFile.write('\n')
   
 if __name__ == '__main__':
   convert_file()
