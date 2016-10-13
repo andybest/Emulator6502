@@ -10,13 +10,17 @@ nmiHandler:
   jmp *
   
 resetHandler:
-  jsr start_monitor
-  jmp *                 ; Shouldn't reach here.
-
+  jmp start
+  
   include "utils.dasm"
   include "uart.dasm"
   include "monitor.dasm"
-  
+
+start:
+  jsr start_monitor
+  jmp *                 ; Shouldn't reach here.
+
+
 
   ; Interrupts
   org $FFFA

@@ -4,8 +4,8 @@
 
 ; UART Register locations
 DUART_BASE:     equ $0200
-DUART_TX_A:     equ DUART_BASE + 3
-DUART_RX_A:     equ DUART_BASE + 3
+DUART_TX_A:     equ DUART_BASE
+DUART_RX_A:     equ DUART_BASE
 
 DUART_STATUS_A  equ DUART_BASE + 1
 
