@@ -2,8 +2,6 @@
   
   processor 6502
   
-
-  
   org $C000
 irqHandler:
 nmiHandler:
@@ -17,6 +15,10 @@ resetHandler:
   include "monitor.dasm"
 
 start:
+  cld
+  ldx #$FF              ; Set stack pointer
+  txs
+  
   jsr start_monitor
   jmp *                 ; Shouldn't reach here.
 

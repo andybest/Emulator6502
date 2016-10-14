@@ -31,9 +31,11 @@ monitor_get_string subroutine
   
   uarta_getb                  ; Get byte from UART
   
-  cmp #$0A                    ; Check if it's a newline
+  ;cmp #$0A                    ; Check if it's a newline
+  cmp #$0D                    ; Check if it's a CR
   beq .newline
-  cmp #$08                    ; Check if it's a backspace
+  ;cmp #$08                    ; Check if it's a backspace
+  cmp #$7F                    ; Check if it's a delete
   beq .backspace
 
   tax
